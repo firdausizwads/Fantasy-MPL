@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Allows Arena's secure live-preview proxy during development.
-  // This setting does not grant access to private application data.
-  allowedDevOrigins: ['3000-i8inmsdfikywtendx0ne8.e2b.app']
+  // Arena development previews use rotating secure subdomains.
+  // Production Vercel deployments are unaffected by this development-only allowlist.
+  allowedDevOrigins: ['*.e2b.app']
 };
 
 export default nextConfig;
