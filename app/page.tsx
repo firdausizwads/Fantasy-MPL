@@ -73,7 +73,7 @@ export default function App(){
   function makeTransfer(r:Region,outName:string,inName:string){setSession(s=>{const current=s.rosters[r]||ROSTERS[r].map(p=>p.name);const next=current.map(n=>n===outName?inName:n);const left=(s.transfers[r]??3)-1;const captains={...s.captains};if(captains[r]===outName)captains[r]=inName;return {...s,rosters:{...s.rosters,[r]:next},transfers:{...s.transfers,[r]:left},captains}});notify(`${inName} transferred in for ${outName}.`)}
   const region=session.active;
 
-  return <div className="shell">
+  return <div className={`shell theme${region}`}>
     <Sidebar view={view} setView={setView} region={region}/>
     <main>
       <Topbar session={session} region={region} onRegion={()=>setRegionModal(true)} onAdmin={()=>setView('admin')} onSignOut={signOut}/>
@@ -90,12 +90,12 @@ export default function App(){
   </div>;
 }
 
-function Logo(){return <div className="logo"><span className="logoMark">M</span><span><b>Fantasy MPL</b><small>OWN THE META</small></span></div>}
+function Logo(){return <div className="logo"><img className="brandLogo" src="/brand/fantasy-mpl-emblem.png" alt="Fantasy MPL emblem"/><span><b>Fantasy MPL</b><small>FANTASY · PREDICTIONS · COMMUNITY</small></span></div>}
 
 function Auth({onComplete}:{onComplete:(name:string,email:string)=>void}){
   const [name,setName]=useState('');const [email,setEmail]=useState('');const [error,setError]=useState('');
   function submit(e:FormEvent){e.preventDefault();if(name.trim().length<3){setError('Display name must contain at least 3 characters.');return}if(!email.includes('@')){setError('Enter a valid email address.');return}onComplete(name.trim(),email.trim())}
-  return <div className="authPage"><div className="authGlow one"/><div className="authGlow two"/><div className="authIntro"><Logo/><div className="seasonTag"><i/> SEASON 18 · THREE REGIONS</div><h1>Make the call.<br/><em>Own the meta.</em></h1><p>Predict every series, draft your dream pro roster and challenge the most passionate MPL communities.</p><div className="regionFlags"><span>🇲🇾</span><span>🇮🇩</span><span>🇵🇭</span><b>Separate regional competitions</b></div></div><form className="authCard" onSubmit={submit}><span className="step">FIRST ACCESS</span><h2>Create your manager profile</h2><p>This working preview saves your account locally in this browser.</p><label>DISPLAY NAME<input value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. AqilZ" autoFocus/></label><label>EMAIL ADDRESS<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" type="email"/></label>{error&&<div className="formError">{error}</div>}<button className="primary" type="submit">Enter the arena <span>→</span></button><div className="demoNote"><i>✓</i><span>No password is required for this local preview. Production authentication will use Supabase.</span></div></form></div>
+  return <div className="authPage brandLaunch"><div className="authGlow one"/><div className="authGlow two"/><div className="authIntro"><Logo/><div className="seasonTag"><i/> SEASON 18 · THREE REGIONS</div><h1>Build your roster.<br/><em>Back your region.</em></h1><p>The home of regional MPL fantasy. Predict fixtures, manage professional players and compete with your community.</p><div className="regionFlags"><span>🇲🇾</span><span>🇮🇩</span><span>🇵🇭</span><b>Three leagues. Three identities. One platform.</b></div></div><form className="authCard" onSubmit={submit}><span className="step">FIRST ACCESS</span><h2>Create your manager profile</h2><p>This working preview saves your account locally in this browser.</p><label>DISPLAY NAME<input value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. AqilZ" autoFocus/></label><label>EMAIL ADDRESS<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" type="email"/></label>{error&&<div className="formError">{error}</div>}<button className="primary" type="submit">Enter the arena <span>→</span></button><div className="demoNote"><i>✓</i><span>No password is required for this local preview. Production authentication will use Supabase.</span></div></form></div>
 }
 
 function RegionGate({joined,onChoose,close}:{joined:Region[];onChoose:(r:Region)=>void;close?:()=>void}){
