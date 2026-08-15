@@ -373,3 +373,28 @@ body{text-transform:uppercase;letter-spacing:.005em}input,textarea{text-transfor
 /* Supabase-backed prediction status */
 .cloudDataStatus{display:flex;align-items:center;gap:10px;margin:12px 0;padding:10px 13px;border:1px solid #dce3eb;background:#fff;border-radius:8px}.cloudDataStatus>span{padding:5px 7px;border-radius:5px;font-size:8px;font-weight:900;white-space:nowrap}.cloudDataStatus>span.connected{background:#e4f5f0;color:#08766b}.cloudDataStatus>span.local{background:#fff3d3;color:#8c6508}.cloudDataStatus p{margin:0;color:var(--muted);font-size:9px!important}.cloudLoading{padding:45px;text-align:center;color:var(--muted);font-size:10px;font-weight:900}.fullMatch.matchLocked{background:#f3f5f7}.fullMatch.matchLocked .teams{opacity:.74}.fullMatch.matchLocked .predictionControls button,.fullMatch.matchLocked .predictionControls select{cursor:not-allowed}.mvpCard:disabled{cursor:not-allowed}.saveBar button:disabled{cursor:not-allowed}
 @media(max-width:720px){.cloudDataStatus{align-items:flex-start;flex-direction:column}.cloudLoading{padding:30px 15px}}
+
+/* --- Realtime cloud draft additions --------------------------------------- */
+.draftLiveBadge{justify-self:center;display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(51,208,133,.35);background:rgba(51,208,133,.08);color:#33d085;border-radius:20px;padding:5px 11px;font-size:7px;font-weight:900;letter-spacing:.8px}
+.draftLiveBadge span{font-size:8px;animation:livePulse 1.6s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.35}}
+.draftWaiting{min-height:calc(100vh - 200px);display:grid;place-content:center;justify-items:center;text-align:center;padding:30px}
+.draftWaiting>span{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:#fff;font-size:22px;color:var(--region)}
+.draftWaiting h2{font-size:24px;margin:14px 0 4px}
+.draftWaiting p{color:var(--muted);font-size:10px;max-width:420px;margin:0 0 18px}
+.draftWaitNote{font-size:9px;color:var(--muted);border:1px dashed var(--line);border-radius:9px;padding:10px 16px}
+.draftCommissioner{display:grid;gap:9px;justify-items:stretch;min-width:280px}
+.draftCommissioner label{display:grid;gap:5px;text-align:left;font-size:7px;font-weight:900;letter-spacing:.8px;color:var(--muted)}
+.draftCommissioner input{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:10px;font-size:11px}
+.timerBar{grid-column:1/3;height:4px;border-radius:3px;background:rgba(0,0,0,.08);margin-top:8px;overflow:hidden}
+.timerBar i{display:block;height:100%;background:var(--region);border-radius:3px;transition:width .4s linear}
+.messageReactions{display:flex;gap:3px;margin-top:3px}
+.messageReactions button{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:5px;padding:2px 5px;font-size:5px;font-weight:900}
+.messageReactions button.mine{border-color:var(--region);color:var(--region);background:rgba(var(--region-rgb),.07)}
+.draftFinalRosters{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:20px;max-width:640px}
+.draftFinalRosters article{border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 16px;min-width:150px;text-align:left}
+.draftFinalRosters article b{display:block;font-size:9px;margin-bottom:6px;color:var(--region)}
+.draftFinalRosters article small{display:block;font-size:7px;color:var(--muted);padding:2px 0}
+.cloudRoomActions{display:grid;gap:8px}
+.cloudRoomActions .primary:disabled{opacity:.55}
+@media(max-width:720px){.draftLiveBadge{display:none}.draftCommissioner{min-width:0;width:100%}.draftFinalRosters article{min-width:120px}}
