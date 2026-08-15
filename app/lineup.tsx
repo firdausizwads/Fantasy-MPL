@@ -247,6 +247,27 @@ export default function CloudLineup({
     notify(`Week ${week?.number ?? ''} lineup submitted — locked in Supabase.`);
   }
 
+  async function autoFill() {
+    if (!supabase || locked || busy) return;
+    setBusy(true);
+    const current = await ensureLineup();
+    if (!current) { setBusy(false); return; }
+    const newSlots: SlotRow[] = [];
+    for (const role of ROLE_SLOTS) {
+      if (slots.some(s => s.slot_role === role)) continue;
+      const candidate = owned.find(p => p.role === role);
+      if (!candidate) continue;
+      const { data, error } = await supabase.from('lineup_players')
+        .insert({ lineup_id: current.id, player_id: candidate.id, team_id: candidate.teamId, slot_role: role })
+        .select('id,player_id,slot_role').single();
+      if (error) { notify(error.message); break; }
+      newSlots.push(data as SlotRow);
+    }
+    if (newSlots.length) setSlots(prev => [...prev, ...newSlots]);
+    setBusy(false);
+    if (newSlots.length) notify(`${newSlots.length} slot${newSlots.length > 1 ? 's' : ''} filled from your drafted roster.`);
+  }
+
   // ---- Render ----------------------------------------------------------------
 
   if (loading) {
@@ -265,66 +286,70 @@ export default function CloudLineup({
   const captainId = lineup?.captain_player_id || '';
   const submitted = lineup?.status === 'submitted';
   const canSubmit = filledCount === 5 && Boolean(captainId) && !locked && !busy;
+  const hasEmptySlots = ROLE_SLOTS.some(role => !slots.some(s => s.slot_role === role) && owned.some(p => p.role === role));
 
   return <section className="panel lineupPanel">
-    <div className="lineupToolbar">
+    <div className="lineupHead">
       <div>
+        <span className="lineupTag">● CLOUD ROSTER · SUPABASE</span>
         <h2>Weekly lineup & captain</h2>
-        <p>Persistent selection saved to Supabase · captain earns 2× points</p>
       </div>
       <div className="lineupSelectors">
-        <select value={leagueId} onChange={e => { setLeagueId(e.target.value); setLineup(null); setSlots([]); }}>
-          {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-        </select>
-        <select value={weekId} onChange={e => { setWeekId(e.target.value); setLineup(null); setSlots([]); }}>
-          {weeks.map(w => <option key={w.id} value={w.id}>WEEK {w.number}{w.finalized ? ' · FINAL' : ''}</option>)}
-        </select>
+        <label><small>LEAGUE</small>
+          <select value={leagueId} onChange={e => { setLeagueId(e.target.value); setLineup(null); setSlots([]); }}>
+            {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        </label>
+        <label><small>WEEK</small>
+          <select value={weekId} onChange={e => { setWeekId(e.target.value); setLineup(null); setSlots([]); }}>
+            {weeks.map(w => <option key={w.id} value={w.id}>WEEK {w.number}{w.finalized ? ' · FINAL' : ''}</option>)}
+          </select>
+        </label>
       </div>
     </div>
 
     <div className={`lineupStatus ${submitted ? 'submitted' : locked ? 'lockedState' : ''}`}>
       <span>{locked ? '🔒' : submitted ? '✓' : '◷'}</span>
-      <p>{locked
-        ? 'This lineup is locked. Selections can no longer change.'
-        : submitted
-          ? `Submitted ${lineup?.submitted_at ? new Date(lineup.submitted_at).toLocaleString() : ''} — you can still update until the deadline.`
-          : `${filledCount} / 5 role slots filled${captainId ? ' · captain chosen' : ' · captain pending'}.`}</p>
-      {league?.lineupLocksAt && <small>DEADLINE · {new Date(league.lineupLocksAt).toLocaleString()}</small>}
+      <div>
+        <b>{locked ? 'LINEUP LOCKED' : submitted ? 'LINEUP SUBMITTED' : `${filledCount} / 5 SLOTS FILLED`}</b>
+        <p>{locked
+          ? 'The deadline has passed. Selections can no longer change.'
+          : submitted
+            ? `Saved ${lineup?.submitted_at ? new Date(lineup.submitted_at).toLocaleString() : ''} — edits reopen the lineup until the deadline.`
+            : captainId ? 'Captain chosen. Fill every role, then submit.' : 'Tap a player card to set your captain.'}</p>
+      </div>
+      {league?.lineupLocksAt && <time><small>DEADLINE</small>{new Date(league.lineupLocksAt).toLocaleString()}</time>}
     </div>
 
     <div className="lineupSlots">
       {ROLE_SLOTS.map(role => {
         const slot = slots.find(s => s.slot_role === role);
         const player = slot ? playerById[slot.player_id] : undefined;
-        const candidates = owned.filter(p => p.role === role);
-        return <article className={`lineupSlot ${player ? 'filled' : ''} ${player && captainId === player.id ? 'isCaptain' : ''}`} key={role}>
+        const candidate = owned.find(p => p.role === role);
+        if (player) {
+          const isCaptain = captainId === player.id;
+          return <button className={`lineupSlot filled ${isCaptain ? 'isCaptain' : ''}`} key={role} disabled={locked} onClick={() => setCaptain(player.id)} title={isCaptain ? `${player.handle} is your captain` : `Make ${player.handle} captain`}>
+            <small>{role}</small>
+            <i>{player.photo ? <img src={player.photo} alt={`${player.handle} profile`} /> : <b>PHOTO<br />PENDING</b>}</i>
+            <strong>{player.handle}</strong>
+            <em>{player.teamCode}</em>
+            <span className={`capBadge ${isCaptain ? 'on' : ''}`}>{isCaptain ? '★ CAPTAIN 2×' : 'TAP FOR CAPTAIN'}</span>
+          </button>;
+        }
+        return <div className="lineupSlot empty" key={role}>
           <small>{role}</small>
-          {player
-            ? <>
-                <i>{player.photo ? <img src={player.photo} alt={`${player.handle} profile`} /> : <b>PHOTO<br />PENDING</b>}</i>
-                <strong>{player.handle}</strong>
-                <em>{player.teamName}</em>
-                <button className={captainId === player.id ? 'captainOn' : ''} disabled={locked} onClick={() => setCaptain(player.id)}>
-                  {captainId === player.id ? '★ CAPTAIN · 2×' : 'MAKE CAPTAIN'}
-                </button>
-              </>
-            : <p className="slotHint">{candidates.length ? 'Select below' : 'No drafted player for this role'}</p>}
-          {!locked && candidates.length > 0 && (!player || candidates.length > 1) &&
-            <div className="slotChoices">
-              {candidates.map(c => <button key={c.id} disabled={busy || slot?.player_id === c.id} onClick={() => assign(role, c)}>
-                {slot?.player_id === c.id ? `✓ ${c.handle}` : `USE ${c.handle}`}
-              </button>)}
-            </div>}
-        </article>;
+          <i className="emptyFace">＋</i>
+          {candidate
+            ? <button className="slotAdd" disabled={locked || busy} onClick={() => assign(role, candidate)}>ADD {candidate.handle.toUpperCase()}</button>
+            : <p className="slotHint">NO DRAFTED PLAYER</p>}
+        </div>;
       })}
     </div>
 
     <div className="lineupFooter">
-      <p>{locked
-        ? 'Lineup locked by the server deadline.'
-        : canSubmit
-          ? 'Everything is valid — submit to confirm this week.'
-          : 'Fill all five roles and choose a captain to submit.'}</p>
+      {hasEmptySlots && !locked
+        ? <button className="secondary" disabled={busy} onClick={autoFill}>⚡ Auto-fill from draft</button>
+        : <p>{locked ? 'Lineup locked by the server deadline.' : canSubmit ? 'Everything is valid — submit to confirm this week.' : !captainId ? 'Tap a player card to choose your captain.' : 'Fill all five roles to submit.'}</p>}
       <button className="primary" disabled={!canSubmit} onClick={submit}>
         {submitted ? 'UPDATE SUBMISSION' : 'SUBMIT WEEKLY LINEUP'}
       </button>
