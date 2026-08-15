@@ -445,3 +445,65 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 .lineupFooterActions .primary{padding:12px 22px;font-size:9px;letter-spacing:.4px}
 @media(max-width:1080px){.lineupSlots{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:720px){.lineupPanel{padding:14px;gap:13px}.lineupSection .sectionTitle{flex-direction:column;align-items:stretch;gap:10px}.lineupSelectors{width:100%}.lineupSelectors label{flex:1}.lineupSelectors select{max-width:none;min-width:0;width:100%}.lineupSlots{grid-template-columns:repeat(2,1fr);gap:9px}.lineupSlots>*:last-child{grid-column:1/3}.lineupStatus{flex-wrap:wrap}.lineupStatus time{text-align:left;width:100%;padding-left:44px}.lineupFooter{flex-direction:column;align-items:stretch}.lineupFooterActions{flex-direction:column;align-items:stretch}.lineupFooterActions .primary,.lineupAutoFill{width:100%;text-align:center}}
+
+/* --- Cloud scoring admin + league standings -------------------------------- */
+.adminCloudPanel,.standingsPanel{padding:20px;display:grid;gap:15px;overflow:visible}
+.adminCloudTag{display:inline-block;font-size:7px;font-weight:900;letter-spacing:.9px;color:#33d085;margin-bottom:5px}
+.adminCloudHead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.adminCloudHead h2{font-size:16px;margin:0}
+.adminCloudHead p{font-size:8px;color:var(--muted);margin:4px 0 0}
+.adminWeekPick{display:grid;gap:4px}
+.adminWeekPick small{font-size:6px;font-weight:900;letter-spacing:.8px;color:var(--muted)}
+.adminWeekPick select{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px;font-size:9px;font-weight:800;cursor:pointer}
+.adminMatchList{display:grid;gap:7px}
+.adminEmptyNote{font-size:9px;color:var(--muted);text-align:center;padding:18px;border:1px dashed var(--line);border-radius:10px;margin:0}
+.adminMatchRow{display:grid;grid-template-columns:90px 1fr 72px 1fr 86px auto;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#fff}
+.adminMatchRow.verified,.adminMatchRow.finalized{border-color:rgba(51,208,133,.35)}
+.adminMatchTime{font-size:8px;font-weight:800;color:var(--muted)}
+.adminMatchRow>b{font-size:10px;text-align:center}
+.adminMatchRow>strong{font-size:12px;text-align:center;font-variant-numeric:tabular-nums}
+.adminMatchRow>em{font-style:normal;font-size:7px;font-weight:900;color:var(--muted);text-align:center}
+.adminMatchRow>em.ok{color:#1d9c60}
+.adminMatchRow .secondary{padding:8px 12px;font-size:8px;display:inline-block}
+.adminScoreBar{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid var(--line);padding-top:15px}
+.adminScoreBar b{display:block;font-size:9px;letter-spacing:.6px}
+.adminScoreBar p{font-size:8px;color:var(--muted);margin:3px 0 0}
+.adminScoreBar .primary{padding:12px 20px;font-size:9px;flex:none}
+.adminResultModal{max-width:480px;max-height:88vh;overflow-y:auto}
+.resultScoreRow{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:12px;margin:14px 0 18px}
+.resultScoreRow label{display:grid;gap:5px;font-size:8px;font-weight:900;letter-spacing:.6px;text-align:center}
+.resultScoreRow input{border:1px solid var(--line);background:#f7f8fa;border-radius:9px;padding:12px;font-size:16px;font-weight:800;text-align:center;width:100%}
+.resultScoreRow>b{font-size:7px;color:var(--muted);padding-bottom:16px}
+.adminResultModal h3{font-size:9px;letter-spacing:.7px;margin:0 0 8px}
+.statTable{display:grid;gap:4px;margin-bottom:16px}
+.statHead{display:grid;grid-template-columns:1fr 58px 58px;gap:6px;font-size:6px;font-weight:900;letter-spacing:.8px;color:var(--muted);padding:0 4px}
+.statHead span:nth-child(n+2){text-align:center}
+.statRow{display:grid;grid-template-columns:1fr 58px 58px;gap:6px;align-items:center}
+.statRow>span{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fbfcfd}
+.statRow b{display:block;font-size:9px}
+.statRow small{font-size:6px;color:var(--muted)}
+.statRow input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 4px;font-size:11px;font-weight:800;text-align:center;width:100%}
+.standingsHead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.standingsHead h2{font-size:16px;margin:0}
+.standingsHead select{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px;font-size:9px;font-weight:800}
+.standingsTable{display:grid;gap:5px}
+.standingsHeader{display:grid;grid-template-columns:34px 1fr 60px 90px;gap:10px;font-size:6px;font-weight:900;letter-spacing:.8px;color:var(--muted);padding:0 12px}
+.standingsHeader span:nth-child(n+3){text-align:right}
+.standingsRow{display:grid;grid-template-columns:34px 1fr 60px 90px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.standingsRow.me{border-color:rgba(var(--region-rgb),.5);background:rgba(var(--region-rgb),.04)}
+.standingsRow b{font-size:10px}
+.standingsRow em{font-style:normal;font-size:9px;color:var(--muted);text-align:right}
+.standingsRow strong{font-size:10px;text-align:right;font-variant-numeric:tabular-nums}
+.standRank{width:24px;height:24px;display:grid;place-items:center;border-radius:7px;background:#eef1f5;font-size:9px;font-weight:900}
+.standRank.r1{background:rgba(217,165,20,.18);color:#a87b0a}
+.standRank.r2{background:#e4e8ee;color:#5c6880}
+.standRank.r3{background:rgba(193,120,60,.15);color:#a3562a}
+.breakdownTitle{font-size:9px;letter-spacing:.7px;margin:4px 0 0}
+.breakdownList{display:grid;gap:4px}
+.breakdownRow{display:grid;grid-template-columns:74px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:7px 4px}
+.breakdownRow:last-child{border-bottom:0}
+.breakdownRow span{font-size:7px;color:var(--muted)}
+.breakdownRow p{font-size:8px;margin:0}
+.breakdownRow b.gain{color:#1d9c60;font-size:9px}
+.breakdownRow b.loss{color:#d24b5d;font-size:9px}
+@media(max-width:720px){.adminMatchRow{grid-template-columns:1fr 62px 1fr;grid-template-rows:auto auto auto;row-gap:6px}.adminMatchTime{grid-column:1/4}.adminMatchRow>em{grid-column:1/2;text-align:left}.adminMatchRow .secondary{grid-column:2/4;justify-self:end}.adminScoreBar{flex-direction:column;align-items:stretch;text-align:center}.standingsHeader,.standingsRow{grid-template-columns:30px 1fr 74px}.standingsHeader span:nth-child(3),.standingsRow em{display:none}}
