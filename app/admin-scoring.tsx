@@ -37,6 +37,8 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [lastRun, setLastRun] = useState<{ lineups: number; transactions: number } | null>(null);
+  const [mvpPick, setMvpPick] = useState('');
+  const [mvpSearch, setMvpSearch] = useState('');
 
   useEffect(() => {
     let mounted = true;
@@ -154,12 +156,26 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   async function runScoring() {
     if (!supabase || !weekId) return;
     setBusy(true);
-    const { data, error } = await supabase.rpc('score_week_fantasy', { target_week: weekId });
+    if (mvpPick) {
+      const { error: mvpError } = await supabase.rpc('admin_set_weekly_mvp', {
+        target_week: weekId, target_player: mvpPick
+      });
+      if (mvpError) { notify(mvpError.message); setBusy(false); return; }
+    }
+    const [fantasyRes, predictionRes] = await Promise.all([
+      supabase.rpc('score_week_fantasy', { target_week: weekId }),
+      supabase.rpc('score_week_predictions', { target_week: weekId })
+    ]);
     setBusy(false);
-    if (error) { notify(error.message); return; }
-    const row = Array.isArray(data) ? data[0] : data;
-    setLastRun({ lineups: row?.lineups_scored ?? 0, transactions: row?.transactions_created ?? 0 });
-    notify(`Scoring complete — ${row?.lineups_scored ?? 0} lineups, ${row?.transactions_created ?? 0} point transactions.`);
+    if (fantasyRes.error) { notify(fantasyRes.error.message); return; }
+    if (predictionRes.error) { notify(predictionRes.error.message); return; }
+    const f = Array.isArray(fantasyRes.data) ? fantasyRes.data[0] : fantasyRes.data;
+    const p = Array.isArray(predictionRes.data) ? predictionRes.data[0] : predictionRes.data;
+    setLastRun({
+      lineups: f?.lineups_scored ?? 0,
+      transactions: (f?.transactions_created ?? 0) + (p?.transactions_created ?? 0)
+    });
+    notify(`Scoring complete — ${f?.lineups_scored ?? 0} lineups, ${p?.predictions_scored ?? 0} predictions, ${(f?.transactions_created ?? 0) + (p?.transactions_created ?? 0)} transactions.`);
   }
 
   if (loading) return <section className="panel adminCloudPanel"><div className="cloudLoading">LOADING VERIFIED COMPETITION DATA…</div></section>;
@@ -193,6 +209,21 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         </em>
         <button className="secondary" onClick={() => openResultEditor(m)}>{m.homeScore !== null ? 'Edit result' : 'Enter result'}</button>
       </div>)}
+    </div>
+
+    <div className="adminMvpPick">
+      <div>
+        <b>OFFICIAL WEEKLY MVP</b>
+        <p>Verify the league's official MVP before scoring — correct picks earn +100.</p>
+      </div>
+      <input value={mvpSearch} onChange={e => setMvpSearch(e.target.value)} placeholder="SEARCH PLAYER…" />
+      <select value={mvpPick} onChange={e => setMvpPick(e.target.value)}>
+        <option value="">NOT SET</option>
+        {roster
+          .filter(p => !mvpSearch || p.handle.toLowerCase().includes(mvpSearch.toLowerCase()))
+          .slice(0, 40)
+          .map(p => <option key={p.id} value={p.id}>{p.handle} · {p.role}</option>)}
+      </select>
     </div>
 
     <div className="adminScoreBar">

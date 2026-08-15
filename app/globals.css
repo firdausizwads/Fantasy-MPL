@@ -507,3 +507,15 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 .breakdownRow b.gain{color:#1d9c60;font-size:9px}
 .breakdownRow b.loss{color:#d24b5d;font-size:9px}
 @media(max-width:720px){.adminMatchRow{grid-template-columns:1fr 62px 1fr;grid-template-rows:auto auto auto;row-gap:6px}.adminMatchTime{grid-column:1/4}.adminMatchRow>em{grid-column:1/2;text-align:left}.adminMatchRow .secondary{grid-column:2/4;justify-self:end}.adminScoreBar{flex-direction:column;align-items:stretch;text-align:center}.standingsHeader,.standingsRow{grid-template-columns:30px 1fr 74px}.standingsHeader span:nth-child(3),.standingsRow em{display:none}}
+
+/* --- Prediction scoring & regional leaderboard ------------------------------ */
+.cloudBoardWrap{padding-bottom:0;margin-bottom:-8px}
+.myRankPill{border:1px solid rgba(var(--region-rgb),.4);background:rgba(var(--region-rgb),.07);color:var(--region);border-radius:18px;padding:7px 13px;font-size:8px;font-weight:900;letter-spacing:.6px;flex:none}
+.standingsHeader.boardCols,.standingsRow.boardCols{grid-template-columns:34px 1fr 66px 66px 84px}
+.standingsRow.boardCols b{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+.historyWeekPick{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:8px 10px;font-size:9px;font-weight:800;cursor:pointer;margin-top:4px}
+.adminMvpPick{display:grid;grid-template-columns:1fr 170px 220px;gap:12px;align-items:center;border:1px solid var(--line);border-radius:11px;padding:12px 16px;background:#fbfcfd}
+.adminMvpPick b{display:block;font-size:8px;letter-spacing:.7px}
+.adminMvpPick p{font-size:8px;color:var(--muted);margin:3px 0 0}
+.adminMvpPick input,.adminMvpPick select{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:9px 11px;font-size:9px;font-weight:700;width:100%}
+@media(max-width:900px){.adminMvpPick{grid-template-columns:1fr}.standingsHeader.boardCols,.standingsRow.boardCols{grid-template-columns:30px 1fr 84px}.standingsHeader.boardCols span:nth-child(3),.standingsHeader.boardCols span:nth-child(4),.standingsRow.boardCols em{display:none}}
