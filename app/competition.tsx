@@ -128,12 +128,15 @@ export default function CloudCompetition({
         if (!home || !away) return;
         home.gameWins += m.homeScore!; home.gameLosses += m.awayScore!;
         away.gameWins += m.awayScore!; away.gameLosses += m.homeScore!;
+        // Official MPL match points: sweep win 3 · close win 2 · close loss 1 · sweep loss 0
         if (m.winnerTeamId === m.homeTeamId) {
           home.matchWins += 1; away.matchLosses += 1;
-          home.points += 2; away.points += m.awayScore! > 0 ? 1 : 0;
+          home.points += m.awayScore! === 0 ? 3 : 2;
+          away.points += m.awayScore! > 0 ? 1 : 0;
         } else if (m.winnerTeamId === m.awayTeamId) {
           away.matchWins += 1; home.matchLosses += 1;
-          away.points += 2; home.points += m.homeScore! > 0 ? 1 : 0;
+          away.points += m.homeScore! === 0 ? 3 : 2;
+          home.points += m.homeScore! > 0 ? 1 : 0;
         }
       });
     Object.values(table).forEach(row => { row.diff = row.gameWins - row.gameLosses; });
@@ -215,16 +218,16 @@ export default function CloudCompetition({
             <span>DATA INTEGRITY FIRST</span>
           </section>
         : <section className="panel officialStandings">
-            <div className="standingTableHead"><span>#</span><span>TEAM</span><span>MATCH W–L</span><span>GAME W–L</span><span>DIFF</span><span>PTS</span></div>
+            <div className="standingTableHead"><span>#</span><span>TEAM</span><span>MATCH W–L</span><span>GAME W–L</span><span>MATCH PTS</span><span>AGGREGATE</span></div>
             {standings.map((row, i) => <div className="officialStandingRow" key={row.team.id}>
               <strong>{i + 1}</strong>
               <span>{row.team.logo && <img src={row.team.logo} alt={`${row.team.name} logo`} />}<b>{row.team.name}</b></span>
               <span>{row.matchWins}–{row.matchLosses}</span>
               <span>{row.gameWins}–{row.gameLosses}</span>
-              <span>{row.diff > 0 ? `+${row.diff}` : row.diff}</span>
               <strong>{row.points}</strong>
+              <span className={row.diff > 0 ? 'aggUp' : row.diff < 0 ? 'aggDown' : ''}>{row.diff > 0 ? `+${row.diff}` : row.diff}</span>
             </div>)}
-            <div className="standingFoot">Computed live from {verifiedCount} verified result{verifiedCount === 1 ? '' : 's'}</div>
+            <div className="standingFoot">Sweep win 3 · close win 2 · close loss 1 · sweep loss 0 — computed live from {verifiedCount} verified result{verifiedCount === 1 ? '' : 's'}</div>
           </section>}
   </div>;
 }

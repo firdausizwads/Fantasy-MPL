@@ -558,3 +558,9 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 .fixtureRowActions .secondary{padding:7px 10px;font-size:7px;display:inline-block}
 .fixtureRowActions .danger{color:#d24b5d;border-color:rgba(210,75,93,.35)}
 @media(max-width:900px){.fixtureManagerGrid{grid-template-columns:1fr}}
+
+/* --- Standings: match pts + aggregate columns -------------------------------- */
+.officialStandingRow .aggUp{color:#1d9c60;font-weight:800}
+.officialStandingRow .aggDown{color:#d24b5d;font-weight:800}
+@media(max-width:720px){.standingTableHead span:nth-child(6),.officialStandingRow>span:nth-child(6){display:none}}
+@media(max-width:720px){.standingTableHead span:nth-child(5){display:block}.standingTableHead,.officialStandingRow{grid-template-columns:25px 1.4fr .7fr .6fr}}
