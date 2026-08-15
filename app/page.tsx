@@ -144,8 +144,9 @@ export default function App(){
       ]);
       if(!mounted)return;
       const joined=((memberships||[]).map((item:any)=>item.region_code).filter((code:string)=>['MY','ID','PH'].includes(code))) as Region[];
+      let storedRegion:Region|undefined;try{const raw=localStorage.getItem('fmpl_active_region');if(raw&&joined.includes(raw as Region))storedRegion=raw as Region}catch{}
       setCloudUserId(user.id);
-      setSession({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',joined,active:joined[0]});
+      setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',joined,active:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
       setReady(true);
     }
     supabase.auth.getSession().then(({data})=>hydrate(data.session?.user||null));
@@ -162,6 +163,7 @@ export default function App(){
 
   async function joinRegion(region:Region){
     if(supabase&&cloudUserId){const {error}=await supabase.from('region_memberships').insert({user_id:cloudUserId,region_code:region});if(error&&error.code!=='23505'){notify(error.message);return}}
+    try{localStorage.setItem('fmpl_active_region',region)}catch{}
     setSession(s=>({...s,active:region,joined:s.joined.includes(region)?s.joined:[...s.joined,region]}));
     setRegionModal(false);setView('dashboard');notify(`${REGIONS[region].name} selected`);
   }
