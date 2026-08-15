@@ -140,8 +140,17 @@ export default function CloudCompetition({
         }
       });
     Object.values(table).forEach(row => { row.diff = row.gameWins - row.gameLosses; });
+    // Ranking rules:
+    // 1. Match points (sweep win 3 · close win 2 · close loss 1 · sweep loss 0)
+    // 2. Aggregate (game diff) — 0 ranks above -1, so unplayed teams sit above swept teams
+    // 3. Game wins — a team with a game win ranks above one without
+    // 4. Match wins, then name
     return Object.values(table).sort((a, b) =>
-      b.points - a.points || b.diff - a.diff || b.gameWins - a.gameWins || a.team.name.localeCompare(b.team.name));
+      b.points - a.points
+      || b.diff - a.diff
+      || b.gameWins - a.gameWins
+      || b.matchWins - a.matchWins
+      || a.team.name.localeCompare(b.team.name));
   }, [matches, teams]);
 
   const verifiedCount = matches.filter(m => m.resultState === 'verified' || m.resultState === 'finalized').length;
