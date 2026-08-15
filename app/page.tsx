@@ -9,6 +9,7 @@ import CloudLineup from './lineup';
 import LeagueStandings from './standings';
 import AdminScoring from './admin-scoring';
 import { CloudLeaderboard, CloudPointHistory } from './cloud-scores';
+import CloudTransfers from './transfers';
 
 type Region = 'MY' | 'ID' | 'PH';
 type View = 'dashboard' | 'predictions' | 'fantasy' | 'leagues' | 'leaderboard' | 'directory' | 'competition' | 'playoffs' | 'meta' | 'creators' | 'advisor' | 'profile' | 'prizes' | 'admin';
@@ -193,7 +194,7 @@ export default function App(){
       <Topbar session={session} region={region} onMenu={()=>setMobileOpen(true)} onRegion={()=>setRegionModal(true)} onAdmin={()=>setView('admin')} onSignOut={signOut}/>
       {view==='dashboard' && <Dashboard session={session} region={region} setView={setView} picks={session.picks} savePick={savePick}/>} 
       {view==='predictions' && <Predictions region={region} userId={cloudUserId} picks={session.picks} scores={session.exactScores} submittedAt={session.submittedAt[region]} savePick={savePick} saveScore={saveScore} submit={()=>submitRegion(region)} notify={notify}/>} 
-      {view==='fantasy' && <div className="page fantasyStack">{supabase&&cloudUserId&&<CloudLineup region={region} userId={cloudUserId} notify={notify}/>}{supabase&&cloudUserId&&<LeagueStandings region={region} userId={cloudUserId} notify={notify}/>}<Fantasy region={region} captain={session.captains[region]} rosterNames={session.rosters[region]} transfers={session.transfers[region]??3} saveCaptain={name=>saveCaptain(region,name)} makeTransfer={(outName,inName)=>makeTransfer(region,outName,inName)} notify={notify}/></div>} 
+      {view==='fantasy' && <div className="page fantasyStack">{supabase&&cloudUserId&&<CloudLineup region={region} userId={cloudUserId} notify={notify}/>}{supabase&&cloudUserId&&<CloudTransfers region={region} userId={cloudUserId} notify={notify}/>}{supabase&&cloudUserId&&<LeagueStandings region={region} userId={cloudUserId} notify={notify}/>}<Fantasy region={region} captain={session.captains[region]} rosterNames={session.rosters[region]} transfers={session.transfers[region]??3} saveCaptain={name=>saveCaptain(region,name)} makeTransfer={(outName,inName)=>makeTransfer(region,outName,inName)} notify={notify}/></div>} 
       {view==='leagues' && <Leagues region={region} userId={cloudUserId} managerName={session.name} notify={notify}/>} 
       {view==='leaderboard' && <>{supabase&&cloudUserId&&<div className="page cloudBoardWrap"><CloudLeaderboard region={region} userId={cloudUserId} countryOf={code=><FlagIcon code={code}/>}/></div>}<Leaderboard region={region} manager={session.name} country={session.country}/></>} 
       {view==='directory' && <TeamDirectory region={region}/>} 
