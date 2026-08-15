@@ -271,15 +271,29 @@ export default function CloudLineup({
   // ---- Render ----------------------------------------------------------------
 
   if (loading) {
-    return <section className="panel lineupPanel"><div className="cloudLoading">LOADING YOUR CLOUD ROSTERS…</div></section>;
+    return <div className="lineupSection">
+      <section className="pageBanner lineupBanner">
+        <div>
+          <span className="seasonTag"><i /> CLOUD FANTASY · SUPABASE</span>
+          <h1>Weekly Lineup & Captain</h1>
+          <p>Loading your drafted rosters…</p>
+        </div>
+        <div className="bannerSide"><small>STATUS</small><strong>LOADING…</strong></div>
+      </section>
+    </div>;
   }
 
   if (!leagues.length) {
-    return <section className="panel lineupPanel lineupEmpty">
-      <span>◇</span>
-      <h3>No drafted cloud roster yet</h3>
-      <p>Complete a live league draft first. Your drafted players will appear here for weekly lineup and captain selection.</p>
-    </section>;
+    return <div className="lineupSection">
+      <section className="pageBanner lineupBanner">
+        <div>
+          <span className="seasonTag"><i /> CLOUD FANTASY · SUPABASE</span>
+          <h1>Weekly Lineup & Captain</h1>
+          <p>Complete a live league draft and your roster will appear here for weekly selection.</p>
+        </div>
+        <div className="bannerSide"><small>DRAFTED LEAGUES</small><strong>0</strong></div>
+      </section>
+    </div>;
   }
 
   const filledCount = slots.length;
@@ -288,11 +302,23 @@ export default function CloudLineup({
   const canSubmit = filledCount === 5 && Boolean(captainId) && !locked && !busy;
   const hasEmptySlots = ROLE_SLOTS.some(role => !slots.some(s => s.slot_role === role) && owned.some(p => p.role === role));
 
-  return <section className="panel lineupPanel">
-    <div className="lineupHead">
+  return <div className="lineupSection">
+    <section className="pageBanner lineupBanner">
       <div>
-        <span className="lineupTag">● CLOUD ROSTER · SUPABASE</span>
-        <h2>Weekly lineup & captain</h2>
+        <span className="seasonTag"><i /> CLOUD FANTASY · WEEK {week?.number ?? '—'}</span>
+        <h1>Weekly Lineup & Captain</h1>
+        <p>Set your five starters and captain for {league?.name || 'your league'}. Saved securely to Supabase.</p>
+      </div>
+      <div className="bannerSide">
+        <small>LINEUP STATUS</small>
+        <strong>{locked ? 'LOCKED' : submitted ? 'SUBMITTED' : `${filledCount} / 5 SET`}</strong>
+      </div>
+    </section>
+
+    <div className="sectionTitle">
+      <div>
+        <h2>Your starting five</h2>
+        <p>One player per role · tap a card to choose your 2× captain</p>
       </div>
       <div className="lineupSelectors">
         <label><small>LEAGUE</small>
@@ -308,51 +334,61 @@ export default function CloudLineup({
       </div>
     </div>
 
-    <div className={`lineupStatus ${submitted ? 'submitted' : locked ? 'lockedState' : ''}`}>
-      <span>{locked ? '🔒' : submitted ? '✓' : '◷'}</span>
-      <div>
-        <b>{locked ? 'LINEUP LOCKED' : submitted ? 'LINEUP SUBMITTED' : `${filledCount} / 5 SLOTS FILLED`}</b>
-        <p>{locked
-          ? 'The deadline has passed. Selections can no longer change.'
-          : submitted
-            ? `Saved ${lineup?.submitted_at ? new Date(lineup.submitted_at).toLocaleString() : ''} — edits reopen the lineup until the deadline.`
-            : captainId ? 'Captain chosen. Fill every role, then submit.' : 'Tap a player card to set your captain.'}</p>
+    <section className="panel lineupPanel">
+      <div className={`lineupStatus ${submitted ? 'submitted' : locked ? 'lockedState' : ''}`}>
+        <span>{locked ? '🔒' : submitted ? '✓' : '◷'}</span>
+        <div>
+          <b>{locked ? 'LINEUP LOCKED' : submitted ? 'LINEUP SUBMITTED' : `${filledCount} OF 5 SLOTS FILLED`}</b>
+          <p>{locked
+            ? 'The deadline has passed. Selections can no longer change.'
+            : submitted
+              ? `Saved ${lineup?.submitted_at ? new Date(lineup.submitted_at).toLocaleString() : ''} — edits reopen the lineup until the deadline.`
+              : captainId ? 'Captain chosen. Fill every role, then submit.' : 'Tap a player card to set your captain.'}</p>
+        </div>
+        {league?.lineupLocksAt && <time><small>DEADLINE</small>{new Date(league.lineupLocksAt).toLocaleString()}</time>}
       </div>
-      {league?.lineupLocksAt && <time><small>DEADLINE</small>{new Date(league.lineupLocksAt).toLocaleString()}</time>}
-    </div>
 
-    <div className="lineupSlots">
-      {ROLE_SLOTS.map(role => {
-        const slot = slots.find(s => s.slot_role === role);
-        const player = slot ? playerById[slot.player_id] : undefined;
-        const candidate = owned.find(p => p.role === role);
-        if (player) {
-          const isCaptain = captainId === player.id;
-          return <button className={`lineupSlot filled ${isCaptain ? 'isCaptain' : ''}`} key={role} disabled={locked} onClick={() => setCaptain(player.id)} title={isCaptain ? `${player.handle} is your captain` : `Make ${player.handle} captain`}>
+      <div className="lineupSlots">
+        {ROLE_SLOTS.map(role => {
+          const slot = slots.find(s => s.slot_role === role);
+          const player = slot ? playerById[slot.player_id] : undefined;
+          const candidate = owned.find(p => p.role === role);
+          if (player) {
+            const isCaptain = captainId === player.id;
+            return <button className={`lineupSlot filled ${isCaptain ? 'isCaptain' : ''}`} key={role} disabled={locked} onClick={() => setCaptain(player.id)} title={isCaptain ? `${player.handle} is your captain` : `Make ${player.handle} captain`}>
+              <small>{role}</small>
+              <i>{player.photo ? <img src={player.photo} alt={`${player.handle} profile`} /> : <b>PHOTO<br />PENDING</b>}</i>
+              <strong>{player.handle}</strong>
+              <em>{player.teamCode}</em>
+              <span className={`capBadge ${isCaptain ? 'on' : ''}`}>{isCaptain ? '★ CAPTAIN 2×' : 'TAP FOR CAPTAIN'}</span>
+            </button>;
+          }
+          return <div className="lineupSlot empty" key={role}>
             <small>{role}</small>
-            <i>{player.photo ? <img src={player.photo} alt={`${player.handle} profile`} /> : <b>PHOTO<br />PENDING</b>}</i>
-            <strong>{player.handle}</strong>
-            <em>{player.teamCode}</em>
-            <span className={`capBadge ${isCaptain ? 'on' : ''}`}>{isCaptain ? '★ CAPTAIN 2×' : 'TAP FOR CAPTAIN'}</span>
-          </button>;
-        }
-        return <div className="lineupSlot empty" key={role}>
-          <small>{role}</small>
-          <i className="emptyFace">＋</i>
-          {candidate
-            ? <button className="slotAdd" disabled={locked || busy} onClick={() => assign(role, candidate)}>ADD {candidate.handle.toUpperCase()}</button>
-            : <p className="slotHint">NO DRAFTED PLAYER</p>}
-        </div>;
-      })}
-    </div>
+            <i className="emptyFace">＋</i>
+            {candidate
+              ? <button className="slotAdd" disabled={locked || busy} onClick={() => assign(role, candidate)}>ADD {candidate.handle.toUpperCase()}</button>
+              : <p className="slotHint">NO DRAFTED PLAYER</p>}
+          </div>;
+        })}
+      </div>
 
-    <div className="lineupFooter">
-      {hasEmptySlots && !locked
-        ? <button className="secondary" disabled={busy} onClick={autoFill}>⚡ Auto-fill from draft</button>
-        : <p>{locked ? 'Lineup locked by the server deadline.' : canSubmit ? 'Everything is valid — submit to confirm this week.' : !captainId ? 'Tap a player card to choose your captain.' : 'Fill all five roles to submit.'}</p>}
-      <button className="primary" disabled={!canSubmit} onClick={submit}>
-        {submitted ? 'UPDATE SUBMISSION' : 'SUBMIT WEEKLY LINEUP'}
-      </button>
-    </div>
-  </section>;
+      <div className="lineupFooter">
+        <div className="lineupFooterInfo">
+          <span className={canSubmit || submitted ? 'ready' : 'pending'}>{canSubmit || submitted ? '✓' : '!'}</span>
+          <p>{locked
+            ? 'Lineup locked by the server deadline.'
+            : canSubmit
+              ? 'Everything is valid — submit to confirm this week.'
+              : !captainId ? 'Tap a player card to choose your captain.' : 'Fill all five roles to submit.'}</p>
+        </div>
+        <div className="lineupFooterActions">
+          {hasEmptySlots && !locked && <button className="lineupAutoFill" disabled={busy} onClick={autoFill}>⚡ AUTO-FILL FROM DRAFT</button>}
+          <button className="primary" disabled={!canSubmit} onClick={submit}>
+            {submitted ? 'UPDATE SUBMISSION' : 'SUBMIT WEEKLY LINEUP'}
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>;
 }
