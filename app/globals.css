@@ -539,3 +539,7 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 .transferList small{font-size:7px;color:var(--muted)}
 .transferList em{font-style:normal;font-size:7px;font-weight:900;color:var(--region)}
 @media(max-width:900px){.transferColumns{grid-template-columns:1fr}.transferList{max-height:240px}}
+
+/* --- Live competition schedule & standings ---------------------------------- */
+.fixtureState{font-style:normal;font-size:7px;font-weight:900;color:var(--muted)}
+.fixtureState.ok{color:#1d9c60}

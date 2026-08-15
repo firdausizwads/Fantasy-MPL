@@ -10,6 +10,7 @@ import LeagueStandings from './standings';
 import AdminScoring from './admin-scoring';
 import { CloudLeaderboard, CloudPointHistory } from './cloud-scores';
 import CloudTransfers from './transfers';
+import CloudCompetition from './competition';
 
 type Region = 'MY' | 'ID' | 'PH';
 type View = 'dashboard' | 'predictions' | 'fantasy' | 'leagues' | 'leaderboard' | 'directory' | 'competition' | 'playoffs' | 'meta' | 'creators' | 'advisor' | 'profile' | 'prizes' | 'admin';
@@ -198,7 +199,7 @@ export default function App(){
       {view==='leagues' && <Leagues region={region} userId={cloudUserId} managerName={session.name} notify={notify}/>} 
       {view==='leaderboard' && <>{supabase&&cloudUserId&&<div className="page cloudBoardWrap"><CloudLeaderboard region={region} userId={cloudUserId} countryOf={code=><FlagIcon code={code}/>}/></div>}<Leaderboard region={region} manager={session.name} country={session.country}/></>} 
       {view==='directory' && <TeamDirectory region={region}/>} 
-      {view==='competition' && <CompetitionHub region={region}/>} 
+      {view==='competition' && (supabase?<CloudCompetition region={region} PageBanner={PageBanner}/>:<CompetitionHub region={region}/>)} 
       {view==='creators' && <CreatorHub region={region} notify={notify}/>} 
       {view==='advisor' && <LineupAdvisor region={region} notify={notify}/>} 
       {view==='meta' && <MetaLab region={region} notify={notify}/>} 
