@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import officialTeams from './official-teams.json';
 import officialPlayers from './official-players.json';
+import { supabase, supabaseConfigured } from '../lib/supabase/client';
 
 type Region = 'MY' | 'ID' | 'PH';
 type View = 'dashboard' | 'predictions' | 'fantasy' | 'leagues' | 'leaderboard' | 'directory' | 'competition' | 'playoffs' | 'meta' | 'creators' | 'advisor' | 'profile' | 'prizes' | 'admin';
@@ -118,12 +119,33 @@ export default function App(){
   const [regionModal,setRegionModal]=useState(false);
   const [toast,setToast]=useState('');
   const [mobileOpen,setMobileOpen]=useState(false);
+  const [cloudUserId,setCloudUserId]=useState('');
 
   useEffect(()=>{
-    try { const raw=localStorage.getItem('fmpl_session'); if(raw){const saved=JSON.parse(raw);setSession({...initialSession,...saved,dataVersion:4,country:saved.country||'',fullName:saved.fullName||saved.name||'',address:saved.address||'',bio:saved.bio||'',dob:saved.dob||'',avatar:saved.avatar||'',picks:saved.dataVersion>=2?saved.picks||{}:{},exactScores:saved.dataVersion>=2?saved.exactScores||{}:{},submittedAt:saved.dataVersion>=2?saved.submittedAt||{}:{},captains:saved.dataVersion>=2?saved.captains||{}:{},rosters:saved.dataVersion>=3?saved.rosters||{}:{},transfers:saved.dataVersion>=3?saved.transfers||{}:{}})} } catch {}
-    setReady(true);
+    if(!supabase){
+      try { const raw=localStorage.getItem('fmpl_session'); if(raw){const saved=JSON.parse(raw);setSession({...initialSession,...saved,dataVersion:4,country:saved.country||'',fullName:saved.fullName||saved.name||'',address:saved.address||'',bio:saved.bio||'',dob:saved.dob||'',avatar:saved.avatar||'',picks:saved.dataVersion>=2?saved.picks||{}:{},exactScores:saved.dataVersion>=2?saved.exactScores||{}:{},submittedAt:saved.dataVersion>=2?saved.submittedAt||{}:{},captains:saved.dataVersion>=2?saved.captains||{}:{},rosters:saved.dataVersion>=3?saved.rosters||{}:{},transfers:saved.dataVersion>=3?saved.transfers||{}:{}})} } catch {}
+      setReady(true);
+      return;
+    }
+    let mounted=true;
+    async function hydrate(user:any){
+      if(!user){if(mounted){setCloudUserId('');setSession(initialSession);setReady(true)}return}
+      const [{data:profile},{data:privateProfile},{data:memberships}]=await Promise.all([
+        supabase!.from('profiles').select('manager_name,country_code,avatar_url,bio').eq('id',user.id).maybeSingle(),
+        supabase!.from('profile_private').select('full_name,address,date_of_birth').eq('user_id',user.id).maybeSingle(),
+        supabase!.from('region_memberships').select('region_code').eq('user_id',user.id).order('joined_at')
+      ]);
+      if(!mounted)return;
+      const joined=((memberships||[]).map((item:any)=>item.region_code).filter((code:string)=>['MY','ID','PH'].includes(code))) as Region[];
+      setCloudUserId(user.id);
+      setSession({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',joined,active:joined[0]});
+      setReady(true);
+    }
+    supabase.auth.getSession().then(({data})=>hydrate(data.session?.user||null));
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,authSession)=>{setTimeout(()=>hydrate(authSession?.user||null),0)});
+    return()=>{mounted=false;subscription.unsubscribe()};
   },[]);
-  useEffect(()=>{ if(ready && session.email) localStorage.setItem('fmpl_session',JSON.stringify(session)); },[session,ready]);
+  useEffect(()=>{ if(ready && session.email && !supabaseConfigured) localStorage.setItem('fmpl_session',JSON.stringify(session)); },[session,ready]);
 
   const notify=(message:string)=>{setToast(message);window.setTimeout(()=>setToast(''),2600)};
   if(!ready) return <div className="loading"><Logo/><span>Preparing the arena…</span></div>;
@@ -131,11 +153,28 @@ export default function App(){
   if(!session.country) return <CountrySetup name={session.name} onComplete={country=>setSession(s=>({...s,country}))}/>;
   if(!session.active) return <RegionGate joined={session.joined} onChoose={(r)=>joinRegion(r)} />;
 
-  function joinRegion(region:Region){
+  async function joinRegion(region:Region){
+    if(supabase&&cloudUserId){const {error}=await supabase.from('region_memberships').insert({user_id:cloudUserId,region_code:region});if(error&&error.code!=='23505'){notify(error.message);return}}
     setSession(s=>({...s,active:region,joined:s.joined.includes(region)?s.joined:[...s.joined,region]}));
     setRegionModal(false);setView('dashboard');notify(`${REGIONS[region].name} selected`);
   }
-  function signOut(){ localStorage.removeItem('fmpl_session'); setSession(initialSession); setView('dashboard'); }
+  async function signOut(){if(supabase)await supabase.auth.signOut();localStorage.removeItem('fmpl_session');setCloudUserId('');setSession(initialSession);setView('dashboard');}
+  async function saveProfile(profile:Partial<Session>){
+    if(!supabase||!cloudUserId){setSession(s=>({...s,...profile}));return}
+    let avatarUrl=profile.avatar??session.avatar;
+    if(avatarUrl?.startsWith('data:')){
+      const blob=await fetch(avatarUrl).then(response=>response.blob());
+      const path=`${cloudUserId}/profile.jpg`;
+      const {error:uploadError}=await supabase.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'});
+      if(uploadError){notify(uploadError.message);return}
+      avatarUrl=supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl+`?v=${Date.now()}`;
+    }
+    const {error:publicError}=await supabase.from('profiles').update({manager_name:profile.name??session.name,country_code:profile.country??session.country,bio:profile.bio??session.bio,avatar_url:avatarUrl||null}).eq('id',cloudUserId);
+    if(publicError){notify(publicError.message);return}
+    const {error:privateError}=await supabase.from('profile_private').update({full_name:profile.fullName??session.fullName,address:profile.address||null,date_of_birth:profile.dob||null}).eq('user_id',cloudUserId);
+    if(privateError){notify(privateError.message);return}
+    setSession(s=>({...s,...profile,avatar:avatarUrl||''}));
+  }
   function savePick(key:string,value:string){ setSession(s=>({...s,picks:{...s.picks,[key]:value}})); }
   function saveScore(key:string,value:string){setSession(s=>({...s,exactScores:{...s.exactScores,[key]:value}}))}
   function submitRegion(r:Region){setSession(s=>({...s,submittedAt:{...s.submittedAt,[r]:new Date().toISOString()}}));notify('Week 5 predictions submitted successfully!')}
@@ -158,7 +197,7 @@ export default function App(){
       {view==='advisor' && <LineupAdvisor region={region} notify={notify}/>} 
       {view==='meta' && <MetaLab region={region} notify={notify}/>} 
       {view==='playoffs' && <PlayoffPredictor region={region} notify={notify}/>} 
-      {view==='profile' && <ProfilePage session={session} save={profile=>setSession(s=>({...s,...profile}))} notify={notify}/>} 
+      {view==='profile' && <ProfilePage session={session} save={saveProfile} notify={notify}/>} 
       {view==='prizes' && <PrizesPage region={region}/>} 
       {view==='admin' && <AdminConsole region={region} notify={notify}/>} 
     </main>
@@ -171,11 +210,7 @@ export default function App(){
 function Logo(){return <div className="logo"><img className="brandLogo" src="/brand/fantasy-mpl-emblem.png" alt="Fantasy MPL emblem"/><span><b>Fantasy MPL</b><small>FANTASY · PREDICTIONS · COMMUNITY</small></span></div>}
 function VerifiedBadge({label='Verified'}:{label?:string}){return <span className="verifiedBadge" title={label} aria-label={label}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.1 1.7 2.7-.2 1.1 2.5 2.5 1.1-.2 2.7L22 12l-1.7 2.1.2 2.7-2.5 1.1-1.1 2.5-2.7-.2L12 22l-2.1-1.7-2.7.2-1.1-2.5-2.5-1.1.2-2.7L2 12l1.7-2.1-.2-2.7L6 6.1l1.1-2.5 2.7.2Z" fill="currentColor"/><path d="m7.4 12.2 2.8 2.7 6.3-6.1" fill="none" stroke="white" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>}
 
-function Auth({onComplete}:{onComplete:(fullName:string,name:string,email:string,country:string)=>void}){
-  const [fullName,setFullName]=useState('');const [name,setName]=useState('');const [email,setEmail]=useState('');const [country,setCountry]=useState('');const [error,setError]=useState('');
-  function submit(e:FormEvent){e.preventDefault();if(fullName.trim().length<3){setError('Full name is required.');return}if(name.trim().length<3){setError('Display name must contain at least 3 characters.');return}if(!email.includes('@')){setError('Enter a valid email address.');return}if(!country){setError('Choose your country.');return}onComplete(fullName.trim(),name.trim(),email.trim(),country)}
-  return <div className="authPage brandLaunch"><div className="authGlow one"/><div className="authGlow two"/><div className="authIntro"><Logo/><div className="seasonTag"><i/> SEASON 18 · THREE REGIONS</div><h1>Build your roster.<br/><em>Back your region.</em></h1><p>The home of regional MPL fantasy. Predict fixtures, manage professional players and compete with your community.</p><div className="regionFlags authLeagueMarks"><span><LeagueMark region="MY"/></span><span><LeagueMark region="ID"/></span><span><LeagueMark region="PH"/></span><b>Three leagues. Three identities. One platform.</b></div><TeamMarquee/></div><form className="authCard" onSubmit={submit}><span className="step">FIRST ACCESS</span><h2>Create your manager profile</h2><p>This working preview saves your account locally in this browser.</p><label>FULL NAME *<input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="YOUR FULL NAME" autoFocus/></label><label>MANAGER NAME<input value={name} onChange={e=>setName(e.target.value)} placeholder="E.G. AQILZ"/></label><label>EMAIL ADDRESS<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" type="email"/></label><label>COUNTRY<select value={country} onChange={e=>setCountry(e.target.value)}><option value="">CHOOSE YOUR COUNTRY</option>{COUNTRIES.map(c=><option key={c.code} value={c.code}>{c.name.toUpperCase()}</option>)}</select></label>{error&&<div className="formError">{error}</div>}<button className="primary" type="submit">Enter the arena <span>→</span></button><div className="demoNote"><i>✓</i><span>No password is required for this local preview. Production authentication will use Supabase.</span></div></form></div>
-}
+function Auth({onComplete}:{onComplete:(fullName:string,name:string,email:string,country:string)=>void}){const [mode,setMode]=useState<'register'|'signin'>('register');const [fullName,setFullName]=useState('');const [name,setName]=useState('');const [email,setEmail]=useState('');const [country,setCountry]=useState('');const [password,setPassword]=useState('');const [error,setError]=useState('');const [message,setMessage]=useState('');const [loading,setLoading]=useState(false);async function submit(e:FormEvent){e.preventDefault();setError('');setMessage('');if(!email.includes('@')){setError('Enter a valid email address.');return}if(password.length<8&&supabaseConfigured){setError('Password must contain at least 8 characters.');return}setLoading(true);if(!supabase){if(mode==='register'){if(fullName.trim().length<3||name.trim().length<3||!country){setError('Complete every required registration field.');setLoading(false);return}onComplete(fullName.trim(),name.trim(),email.trim(),country)}else setError('Cloud sign-in requires Supabase environment variables.');setLoading(false);return}if(mode==='signin'){const {error}=await supabase.auth.signInWithPassword({email:email.trim(),password});if(error)setError(error.message)}else{if(fullName.trim().length<3){setError('Full name is required.');setLoading(false);return}if(name.trim().length<3){setError('Manager name must contain at least 3 characters.');setLoading(false);return}if(!country){setError('Choose your country.');setLoading(false);return}const {data,error}=await supabase.auth.signUp({email:email.trim(),password,options:{data:{full_name:fullName.trim(),manager_name:name.trim(),country_code:country}}});if(error)setError(error.message);else if(!data.session)setMessage('Account created. Check your email to confirm your address, then sign in.')}setLoading(false)}return <div className="authPage brandLaunch"><div className="authGlow one"/><div className="authGlow two"/><div className="authIntro"><Logo/><div className="seasonTag"><i/> SEASON 18 · THREE REGIONS</div><h1>Build your roster.<br/><em>Back your region.</em></h1><p>The home of regional MPL fantasy. Predict fixtures, manage professional players and compete with your community.</p><div className="regionFlags authLeagueMarks"><span><LeagueMark region="MY"/></span><span><LeagueMark region="ID"/></span><span><LeagueMark region="PH"/></span><b>Three leagues. Three identities. One platform.</b></div><TeamMarquee/></div><form className="authCard cloudAuthCard" onSubmit={submit}><div className="authModeTabs"><button type="button" className={mode==='register'?'active':''} onClick={()=>{setMode('register');setError('');setMessage('')}}>CREATE ACCOUNT</button><button type="button" className={mode==='signin'?'active':''} onClick={()=>{setMode('signin');setError('');setMessage('')}}>SIGN IN</button></div><span className="step">{mode==='register'?'JOIN FANTASY MPL':'WELCOME BACK'}</span><h2>{mode==='register'?'Create your manager profile':'Sign in to your account'}</h2><p>{supabaseConfigured?'YOUR ACCOUNT AND PROFILE WILL BE STORED SECURELY IN SUPABASE.':'LOCAL DEVELOPMENT PREVIEW — CLOUD AUTH IS NOT CONFIGURED HERE.'}</p>{mode==='register'&&<><label>FULL NAME *<input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="YOUR FULL NAME" autoFocus/></label><label>MANAGER NAME *<input value={name} onChange={e=>setName(e.target.value)} placeholder="E.G. AQILZ"/></label></>}<label>EMAIL ADDRESS<input value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" type="email" autoFocus={mode==='signin'}/></label><label>PASSWORD<input value={password} onChange={e=>setPassword(e.target.value)} placeholder="MINIMUM 8 CHARACTERS" type="password" autoComplete={mode==='register'?'new-password':'current-password'}/></label>{mode==='register'&&<label>COUNTRY<select value={country} onChange={e=>setCountry(e.target.value)}><option value="">CHOOSE YOUR COUNTRY</option>{COUNTRIES.map(c=><option key={c.code} value={c.code}>{c.name.toUpperCase()}</option>)}</select></label>}{error&&<div className="formError">{error}</div>}{message&&<div className="formSuccess">{message}</div>}<button className="primary" type="submit" disabled={loading}>{loading?'PLEASE WAIT…':mode==='register'?'CREATE ACCOUNT →':'SIGN IN →'}</button><div className="demoNote"><i>✓</i><span>{supabaseConfigured?'SECURE AUTHENTICATION · PRIVATE PROFILE DATA · CLOUD SESSION':'LOCAL PREVIEW FALLBACK ACTIVE'}</span></div></form></div>}
 
 function TeamMarquee(){const items=[...AUTH_TEAM_ROTATION,...AUTH_TEAM_ROTATION];return <section className="teamMarquee"><div className="teamMarqueeLabel"><span>SEASON 18 TEAM SHOWCASE</span><b>MALAYSIA · INDONESIA · PHILIPPINES</b></div><div className="teamMarqueeViewport"><div className="teamMarqueeTrack">{items.map((code,index)=>{const team=TEAM_INDEX[code],region=TEAM_REGION[code];return <article className={`marqueeTeam marquee${region}`} key={`${code}-${index}`}><div className="marqueeTeamLogo"><img src={team.logo} alt={`${team.name} logo`}/></div><div><small>{REGIONS[region].name}</small><strong>{team.name}</strong></div><span><img src={REGIONS[region].logo} alt=""/></span></article>})}</div></div></section>}
 
