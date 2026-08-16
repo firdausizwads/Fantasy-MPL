@@ -1972,6 +1972,7 @@ export type Database = {
       }
       export_my_data: { Args: Record<PropertyKey, never>; Returns: Json }
       delete_my_account: { Args: { confirmation_name: string }; Returns: undefined }
+      my_dashboard_summary: { Args: { target_region: string }; Returns: Json }
       auto_pick_expired_turn: {
         Args: { target_draft: string }
         Returns: {

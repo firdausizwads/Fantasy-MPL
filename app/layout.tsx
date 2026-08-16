@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
+import './dashboard-real.css';
 import './draft-lab.css';
 
 const jakarta = localFont({

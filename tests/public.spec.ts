@@ -22,6 +22,10 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible();
     await page.getByRole('button', { name: /MPL Malaysia/i }).click();
     await expect(page.getByText(/WELCOME BACK, TESTMANAGER/i)).toBeVisible();
+    await expect(page.getByText('1,248', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('#284', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('Borneo Rivals', { exact: true })).toHaveCount(0);
+    await expect(page.getByText(/NO VERIFIED DATA/i)).toBeVisible();
   });
 
   test('every open match requires winner and exact score', async ({ page, isMobile }) => {

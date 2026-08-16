@@ -1,20 +1,25 @@
-FANTASY MPL — LIVE DRAFT LAB
+FANTASY MPL — REAL DASHBOARD AND LEADERBOARD
 
+A. DATABASE FIRST
+1. Open Supabase Dashboard > SQL Editor.
+2. Open and run:
+   supabase/migrations/016_real_dashboard_summary.sql
+3. Expected result:
+   dashboard_summary_ready: true
+
+B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-   Do not copy the outer fantasy-mpl-live-draft-lab folder.
+   Do not copy the outer fantasy-mpl-real-dashboard folder.
 2. Allow Windows to replace matching files.
-3. Delete this old file from the repository:
-   app/lineup-advisor.tsx
-4. Do not delete league database tables or old applied migrations.
-   My Leagues is hidden for beta, while shared backend dependencies remain intact.
-5. No Supabase SQL migration is required for this package.
-6. Commit message:
-   Replace Lineup Advisor with public Live Draft Lab
+3. No test or account data is deleted by this migration.
 
-Recommended checks:
-  npm run typecheck
-  npm run build
-  npm run test:e2e
+C. COMMIT
+Commit message:
+  Replace demo dashboard and rankings with real data
 
-The recommendation panel is intentionally data-gated. It will not invent hero advice
-before a licensed or approved current-patch professional draft dataset is connected.
+D. VERIFY AFTER DEPLOYMENT
+1. Sign in and open Dashboard.
+2. With no scored results, points/rank/accuracy must display —.
+3. The leaderboard must display the clean no-results state.
+4. Fake values 1,248, #284, 72%, Borneo Rivals and fabricated managers
+   must not appear on the Dashboard or Leaderboard page.
