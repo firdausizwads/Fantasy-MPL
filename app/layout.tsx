@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Sora } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -47,5 +49,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body className={`${jakarta.variable} ${sora.variable}`}>{children}</body></html>;
+  return (
+    <html lang="en">
+      <body className={`${jakarta.variable} ${sora.variable}`}>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
 }
