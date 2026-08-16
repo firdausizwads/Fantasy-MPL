@@ -1,42 +1,21 @@
-FANTASY MPL — ORDERED PROFESSIONAL DRAFT PIPELINE
+FANTASY MPL — PRODUCTION AUDIT HOTFIX
 
-A. DATABASE FIRST
-1. Open Supabase Dashboard > SQL Editor.
-2. Run:
-   supabase/migrations/020_ordered_draft_import_pipeline.sql
-3. Expected:
-   ordered_import_ready: true
-   metric_rebuild_ready: true
-
-B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-ordered-draft-pipeline folder.
-3. Replace matching files.
+2. Do not copy the outer fantasy-mpl-production-audit-hotfix folder.
+3. Replace app/draft-lab.css.
+4. Commit message:
+   Fix public Live Draft header contrast
 
-C. COMMIT
-  Add verified ordered professional draft importer
+No Supabase migration is required.
 
-D. USE
-Admin Console > Draft Intelligence > Ordered Professional Draft
-
-Required for every game:
-- approved source
-- patch
-- source match key
-- game number
-- played-at timestamp
-- blue and red team
-- winner side
-- exact source game URL
-- all 20 ordered actions
-
-The importer rejects incomplete sequences, incorrect sides/phases, unknown heroes,
-duplicate heroes, unknown teams, future dates and unapproved sources.
-
-After a successful import PostgreSQL rebuilds, for that source/patch/region:
-- games analyzed
-- hero picks, bans, wins and calculated rates
-- ally-pair synergy evidence (minimum 3 samples)
-- enemy matchup evidence (minimum 3 samples)
-
-The public model remains gated until its configured minimum sample is reached.
+Verified after the production audit:
+- all public routes return HTTP 200
+- security headers are present
+- desktop Live Draft interaction works
+- mobile Live Draft interaction works
+- region switching works
+- no browser console errors
+- no uncaught page errors
+- no failed network responses
+- npm audit reports zero vulnerabilities
+- TypeScript and production build pass
