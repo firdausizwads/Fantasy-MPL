@@ -564,3 +564,6 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 .officialStandingRow .aggDown{color:#d24b5d;font-weight:800}
 @media(max-width:720px){.standingTableHead span:nth-child(6),.officialStandingRow>span:nth-child(6){display:none}}
 @media(max-width:720px){.standingTableHead span:nth-child(5){display:block}.standingTableHead,.officialStandingRow{grid-template-columns:25px 1.4fr .7fr .6fr}}
+
+/* Public policy links */
+.authLegalLinks{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}.authLegalLinks a{color:#71849a;text-decoration:none;font-size:7px;font-weight:900;letter-spacing:.55px}.authLegalLinks a:hover{color:#75d5ca}
