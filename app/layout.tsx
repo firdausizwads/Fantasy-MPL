@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import './dashboard-real.css';
+import './prediction-windows.css';
 import './draft-lab.css';
 
 const jakarta = localFont({

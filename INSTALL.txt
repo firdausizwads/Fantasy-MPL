@@ -1,25 +1,31 @@
-FANTASY MPL — REAL DASHBOARD AND LEADERBOARD
+FANTASY MPL — 24-HOUR PREDICTION WINDOWS
 
 A. DATABASE FIRST
 1. Open Supabase Dashboard > SQL Editor.
 2. Open and run:
-   supabase/migrations/016_real_dashboard_summary.sql
-3. Expected result:
-   dashboard_summary_ready: true
+   supabase/migrations/017_prediction_windows.sql
+3. Expected result columns:
+   match_window_ready: true
+   mvp_window_ready: true
+   synchronized_matches: the number of scheduled match records
+
+This migration does not delete predictions or accounts.
+It synchronizes match lock deadlines to scheduled match times and weekly MVP
+lock deadlines to the first non-cancelled match in each regional week.
 
 B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-   Do not copy the outer fantasy-mpl-real-dashboard folder.
-2. Allow Windows to replace matching files.
-3. No test or account data is deleted by this migration.
+2. Do not copy the outer fantasy-mpl-prediction-windows folder.
+3. Allow Windows to replace app/page.tsx and app/layout.tsx.
 
 C. COMMIT
 Commit message:
-  Replace demo dashboard and rankings with real data
+  Add server-enforced 24-hour prediction windows
 
-D. VERIFY AFTER DEPLOYMENT
-1. Sign in and open Dashboard.
-2. With no scored results, points/rank/accuracy must display —.
-3. The leaderboard must display the clean no-results state.
-4. Fake values 1,248, #284, 72%, Borneo Rivals and fabricated managers
-   must not appear on the Dashboard or Leaderboard page.
+D. EXPECTED UI
+Before opening: PREDICTIONS OPEN IN / MVP VOTING OPEN IN
+During window: PREDICTIONS LOCK IN / MVP VOTING LOCK IN
+At deadline: PREDICTIONS LOCKED / MVP VOTING LOCKED
+
+All countdowns update every second. PostgreSQL RLS and validation triggers reject
+writes before opening and at or after the deadline.
