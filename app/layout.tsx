@@ -1,21 +1,23 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, Sora } from 'next/font/google';
+import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
+const jakarta = localFont({
+  src: './fonts/PlusJakartaSans-Variable.ttf',
   variable: '--font-body',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800']
+  weight: '200 800',
+  style: 'normal'
 });
 
-const sora = Sora({
-  subsets: ['latin'],
+const sora = localFont({
+  src: './fonts/Sora-Variable.ttf',
   variable: '--font-display',
   display: 'swap',
-  weight: ['500', '600', '700', '800']
+  weight: '100 800',
+  style: 'normal'
 });
 
 export const metadata: Metadata = {
