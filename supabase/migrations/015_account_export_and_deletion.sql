@@ -206,10 +206,9 @@ begin
   delete from public.league_moderation
     where actioned_by = current_user_id;
 
-  -- Remove public avatar objects before deleting the Auth user.
-  delete from storage.objects
-  where bucket_id = 'avatars'
-    and (storage.foldername(name))[1] = current_user_id::text;
+  -- Avatar files must be removed by the client through the Supabase Storage
+  -- API before this function runs. Supabase intentionally blocks direct
+  -- deletion from storage.objects because it would bypass object cleanup.
 
   -- Foreign-key cascades remove profiles, memberships, predictions, lineups,
   -- picks, ownership, chat messages and score records belonging to this user.

@@ -105,8 +105,20 @@ export default function ProfilePage({ session, save, notify, PageBanner }: {
     }
     if (deletePassword.length < 8) { notify('Enter your current password.'); return; }
     setBusy(true);
-    const { error: authError } = await supabase.auth.signInWithPassword({ email: session.email, password: deletePassword });
-    if (authError) { setBusy(false); notify('Password confirmation failed.'); return; }
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email: session.email, password: deletePassword });
+    if (authError || !authData.user) { setBusy(false); notify('Password confirmation failed.'); return; }
+
+    // Supabase requires files to be deleted through the Storage API. Direct
+    // DELETE statements against storage.objects are intentionally blocked.
+    const avatarFolder = authData.user.id;
+    const { data: avatarFiles, error: listError } = await supabase.storage.from('avatars').list(avatarFolder, { limit: 100 });
+    if (listError) { setBusy(false); notify(`Avatar cleanup failed: ${listError.message}`); return; }
+    if (avatarFiles.length) {
+      const avatarPaths = avatarFiles.map(file => `${avatarFolder}/${file.name}`);
+      const { error: removeError } = await supabase.storage.from('avatars').remove(avatarPaths);
+      if (removeError) { setBusy(false); notify(`Avatar cleanup failed: ${removeError.message}`); return; }
+    }
+
     const { error } = await supabase.rpc('delete_my_account', { confirmation_name: deleteName.trim() });
     setBusy(false);
     if (error) { notify(error.message); return; }
