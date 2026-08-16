@@ -567,3 +567,12 @@ button.lineupSlot:hover:not(:disabled){border-color:rgba(var(--region-rgb),.55);
 
 /* Public policy links */
 .authLegalLinks{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}.authLegalLinks a{color:#71849a;text-decoration:none;font-size:7px;font-weight:900;letter-spacing:.55px}.authLegalLinks a:hover{color:#75d5ca}
+
+/* Mobile cloud league cards must keep their primary action visible */
+@media(max-width:720px){
+  .leagueRow{display:grid!important;grid-template-columns:46px 1fr!important;gap:10px!important;padding:14px!important}
+  .leagueRow>.leagueIcon{grid-column:1;grid-row:1}
+  .leagueRow>div:first-of-type{grid-column:2;grid-row:1}
+  .leagueRow>div:nth-of-type(2),.leagueRow>div:nth-of-type(3){display:none!important}
+  .leagueRow>button{display:block!important;grid-column:1/3;width:100%;min-height:43px;margin-top:3px}
+}
