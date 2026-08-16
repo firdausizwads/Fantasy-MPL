@@ -39,6 +39,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      beta_reset_audit: {
+        Row: {
+          after_counts: Json
+          before_counts: Json
+          confirmation_phrase: string
+          database_session: string
+          executed_at: string
+          executed_by: string | null
+          id: string
+        }
+        Insert: {
+          after_counts: Json
+          before_counts: Json
+          confirmation_phrase: string
+          database_session: string
+          executed_at?: string
+          executed_by?: string | null
+          id?: string
+        }
+        Update: {
+          after_counts?: Json
+          before_counts?: Json
+          confirmation_phrase?: string
+          database_session?: string
+          executed_at?: string
+          executed_by?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       competition_weeks: {
         Row: {
           created_at: string
@@ -1973,6 +2003,9 @@ export type Database = {
       export_my_data: { Args: Record<PropertyKey, never>; Returns: Json }
       delete_my_account: { Args: { confirmation_name: string }; Returns: undefined }
       my_dashboard_summary: { Args: { target_region: string }; Returns: Json }
+      beta_activity_counts: { Args: Record<PropertyKey, never>; Returns: Json }
+      preview_beta_activity_reset: { Args: Record<PropertyKey, never>; Returns: Json }
+      run_beta_activity_reset: { Args: { confirmation: string }; Returns: Json }
       auto_pick_expired_turn: {
         Args: { target_draft: string }
         Returns: {

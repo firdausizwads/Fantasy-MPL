@@ -1,31 +1,46 @@
-FANTASY MPL — 24-HOUR PREDICTION WINDOWS
+FANTASY MPL — CONTROLLED CLOSED-BETA ACTIVITY RESET
 
-A. DATABASE FIRST
-1. Open Supabase Dashboard > SQL Editor.
-2. Open and run:
-   supabase/migrations/017_prediction_windows.sql
-3. Expected result columns:
-   match_window_ready: true
-   mvp_window_ready: true
-   synchronized_matches: the number of scheduled match records
+IMPORTANT
+- Running Migration 018 only installs guarded functions. It deletes nothing.
+- The reset itself is irreversible unless you have a database backup.
+- Accounts, profiles, avatars, memberships, fixtures, teams, players and
+  configuration are preserved.
 
-This migration does not delete predictions or accounts.
-It synchronizes match lock deadlines to scheduled match times and weekly MVP
-lock deadlines to the first non-cancelled match in each regional week.
+A. BEFORE RESET
+1. Download your account data from My Profile > Download My Data.
+2. Confirm your main account is still super_admin.
+3. If available on your Supabase plan, create/confirm a database backup.
 
-B. APPLICATION FILES
-1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-prediction-windows folder.
-3. Allow Windows to replace app/page.tsx and app/layout.tsx.
+B. INSTALL THE GUARDED RESET
+Run in Supabase SQL Editor:
+  supabase/migrations/018_controlled_beta_activity_reset.sql
 
-C. COMMIT
-Commit message:
-  Add server-enforced 24-hour prediction windows
+Expected:
+  preview_ready: true
+  reset_ready: true
 
-D. EXPECTED UI
-Before opening: PREDICTIONS OPEN IN / MVP VOTING OPEN IN
-During window: PREDICTIONS LOCK IN / MVP VOTING LOCK IN
-At deadline: PREDICTIONS LOCKED / MVP VOTING LOCKED
+C. SAFE PREVIEW — DELETES NOTHING
+Run:
+  select public.preview_beta_activity_reset();
 
-All countdowns update every second. PostgreSQL RLS and validation triggers reject
-writes before opening and at or after the deadline.
+Review the will_delete_counts and will_preserve arrays.
+
+D. EXECUTE THE RESET
+Only after reviewing the preview, run exactly:
+  select public.run_beta_activity_reset('RESET FANTASY MPL BETA ACTIVITY');
+
+Expected:
+  reset_complete: true
+  after counts: all zero
+  preserved_accounts: greater than zero
+  preserved_profiles: greater than zero
+  preserved_fixtures: greater than zero
+  preserved_players: greater than zero
+
+E. APPLICATION FILES
+Copy the CONTENTS of this folder into the repository root.
+Do not copy the outer fantasy-mpl-controlled-beta-reset folder.
+The app change clears stale browser prediction selections when cloud rows were reset.
+
+F. COMMIT
+  Add guarded closed-beta activity reset
