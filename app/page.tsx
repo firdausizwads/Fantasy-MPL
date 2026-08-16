@@ -157,6 +157,9 @@ export default function App(){
   useEffect(()=>{ if(ready && session.email && !supabaseConfigured) localStorage.setItem('fmpl_session',JSON.stringify(session)); },[session,ready]);
 
   const notify=(message:string)=>{setToast(message);window.setTimeout(()=>setToast(''),2600)};
+  const isAdmin=session.accountRole==='admin'||session.accountRole==='super_admin';
+  useEffect(()=>{if(view==='admin'&&!isAdmin)setView('dashboard')},[view,isAdmin]);
+
   if(!ready) return <div className="loading"><Logo/><span>Preparing the arena…</span></div>;
   if(!session.email) return <Auth onComplete={(fullName,name,email,country)=>setSession({...initialSession,fullName,name,email,country})}/>;
   if(!session.country) return <CountrySetup name={session.name} onComplete={country=>setSession(s=>({...s,country}))}/>;
@@ -191,8 +194,6 @@ export default function App(){
   function saveCaptain(r:Region,name:string){setSession(s=>({...s,captains:{...s.captains,[r]:name}}));notify(`${name} is your Week 5 captain.`)}
   function makeTransfer(r:Region,outName:string,inName:string){setSession(s=>{const current=s.rosters[r]||ROSTERS[r].map(p=>p.name);const next=current.map(n=>n===outName?inName:n);const left=(s.transfers[r]??3)-1;const captains={...s.captains};if(captains[r]===outName)captains[r]=inName;return {...s,rosters:{...s.rosters,[r]:next},transfers:{...s.transfers,[r]:left},captains}});notify(`${inName} transferred in for ${outName}.`)}
   const region=session.active;
-  const isAdmin=session.accountRole==='admin'||session.accountRole==='super_admin';
-  useEffect(()=>{if(view==='admin'&&!isAdmin)setView('dashboard')},[view,isAdmin]);
 
   return <div className={`shell theme${region}`}>
     <Sidebar view={view} setView={setView} region={region} canAdmin={isAdmin} onRegion={()=>setRegionModal(true)}/>
