@@ -1,0 +1,20 @@
+FANTASY MPL — LIVE DRAFT LAB
+
+1. Copy the CONTENTS of this folder into the repository root.
+   Do not copy the outer fantasy-mpl-live-draft-lab folder.
+2. Allow Windows to replace matching files.
+3. Delete this old file from the repository:
+   app/lineup-advisor.tsx
+4. Do not delete league database tables or old applied migrations.
+   My Leagues is hidden for beta, while shared backend dependencies remain intact.
+5. No Supabase SQL migration is required for this package.
+6. Commit message:
+   Replace Lineup Advisor with public Live Draft Lab
+
+Recommended checks:
+  npm run typecheck
+  npm run build
+  npm run test:e2e
+
+The recommendation panel is intentionally data-gated. It will not invent hero advice
+before a licensed or approved current-patch professional draft dataset is connected.

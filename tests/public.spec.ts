@@ -94,6 +94,15 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: 'Prediction Hub' })).toBeVisible();
   });
 
+  test('public Live Draft Lab records a legal draft action without login', async ({ page }) => {
+    await page.goto('/live-draft');
+    await expect(page.getByRole('heading', { name: /Follow the draft/i })).toBeVisible();
+    await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
+    await page.getByRole('button', { name: /ATLAS.*ROAM/i }).click();
+    await expect(page.getByRole('button', { name: /BAN slot 1: ATLAS/i })).toBeVisible();
+    await expect(page.locator('.draftTurn > span')).toHaveText('RED SIDE');
+  });
+
   test('policy pages and metadata routes are available', async ({ page, request }) => {
     for (const route of ['/privacy', '/terms', '/rules', '/community-guidelines']) {
       const response = await page.goto(route);

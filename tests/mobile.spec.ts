@@ -26,17 +26,15 @@ test.describe('mobile navigation', () => {
     await expect(drawer.getByRole('button', { name: /Admin Console/i })).toHaveCount(0);
   });
 
-  test('mobile league cards retain their open action', async ({ page }) => {
+  test('mobile navigation opens Live Draft Lab and hides deferred leagues', async ({ page }) => {
     await enterLocalDashboard(page);
     await page.getByRole('button', { name: 'Open navigation' }).click();
-    await page.getByRole('button', { name: /My Leagues/i }).click();
-    await expect(page.getByRole('heading', { name: /Play with your people/i })).toBeVisible();
-
-    await page.getByRole('button', { name: /Create private league/i }).click();
-    await page.getByLabel('LEAGUE NAME').fill('Mobile Rivals');
-    await page.getByRole('button', { name: /Create league & get invite code/i }).click();
-    await page.locator('.leagueRoom .close').click();
-
-    await expect(page.getByRole('button', { name: /Open league/i })).toBeVisible();
+    const drawer = page.locator('.mobileDrawer');
+    await expect(drawer.getByRole('button', { name: /My Leagues/i })).toHaveCount(0);
+    await drawer.getByRole('button', { name: /Live Draft Lab/i }).click();
+    await expect(page.getByRole('heading', { name: /Follow the draft/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /DRAFT/i }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'MODEL', exact: true }).click();
+    await expect(page.getByText(/Recommendation data pending/i)).toBeVisible();
   });
 });
