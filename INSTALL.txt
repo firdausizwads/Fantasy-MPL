@@ -1,43 +1,42 @@
-FANTASY MPL — DRAFT INTELLIGENCE FOUNDATION
+FANTASY MPL — ORDERED PROFESSIONAL DRAFT PIPELINE
 
 A. DATABASE FIRST
 1. Open Supabase Dashboard > SQL Editor.
 2. Run:
-   supabase/migrations/019_draft_intelligence_foundation.sql
+   supabase/migrations/020_ordered_draft_import_pipeline.sql
 3. Expected:
-   status_ready: true
-   recommendations_ready: true
-   import_ready: true
+   ordered_import_ready: true
+   metric_rebuild_ready: true
 
 B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-draft-intelligence-foundation folder.
-3. Allow Windows to replace matching files.
+2. Do not copy the outer fantasy-mpl-ordered-draft-pipeline folder.
+3. Replace matching files.
 
-C. DEPLOY
-Commit message:
-  Add governed Live Draft intelligence foundation
+C. COMMIT
+  Add verified ordered professional draft importer
 
-D. FIRST ADMIN CHECK
-1. Sign in with the super-admin account.
-2. Open Admin Console > Draft intelligence.
-3. Confirm:
-   PUBLIC MODEL: INACTIVE
-   APPROVED SOURCES: 0
-   VERIFIED GAMES: 0
-4. Open /live-draft and confirm the Model panel remains DATA GATED.
+D. USE
+Admin Console > Draft Intelligence > Ordered Professional Draft
 
-E. SOURCE SAFETY
-- Register candidate sources as PENDING first.
-- Do not select COMMERCIAL USE CONFIRMED or PRIMARY MODEL SOURCE until rights
-  and terms are documented.
-- Never put an API key in NEXT_PUBLIC_* variables.
-- Do not scrape normal website HTML.
+Required for every game:
+- approved source
+- patch
+- source match key
+- game number
+- played-at timestamp
+- blue and red team
+- winner side
+- exact source game URL
+- all 20 ordered actions
 
-F. METRICS IMPORT
-CSV format:
-  hero,games,picks,bans,wins
+The importer rejects incomplete sequences, incorrect sides/phases, unknown heroes,
+duplicate heroes, unknown teams, future dates and unapproved sources.
 
-Rates are calculated by PostgreSQL. Unknown heroes, negative values and impossible
-counts are rejected. Recommendations remain disabled until an approved primary
-source, active patch, active model and minimum regional sample all exist.
+After a successful import PostgreSQL rebuilds, for that source/patch/region:
+- games analyzed
+- hero picks, bans, wins and calculated rates
+- ally-pair synergy evidence (minimum 3 samples)
+- enemy matchup evidence (minimum 3 samples)
+
+The public model remains gated until its configured minimum sample is reached.

@@ -2051,6 +2051,26 @@ export type Database = {
         Args: { target_model: string; target_patch: string; target_minimum_sample?: number }
         Returns: undefined
       }
+      rebuild_draft_intelligence_metrics: {
+        Args: { target_source: string; target_patch: string; target_region: string }
+        Returns: Json
+      }
+      admin_import_pro_draft_game: {
+        Args: {
+          target_source: string
+          target_patch: string
+          target_region: string
+          target_source_match_key: string
+          target_game_number: number
+          target_played_at: string
+          target_blue_team_code: string
+          target_red_team_code: string
+          target_winner_side: string
+          target_source_url: string
+          target_actions: Json
+        }
+        Returns: Json
+      }
       auto_pick_expired_turn: {
         Args: { target_draft: string }
         Returns: {

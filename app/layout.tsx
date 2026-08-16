@@ -7,6 +7,7 @@ import './dashboard-real.css';
 import './prediction-windows.css';
 import './draft-lab.css';
 import './draft-intelligence.css';
+import './ordered-draft-import.css';
 
 const jakarta = localFont({
   src: './fonts/PlusJakartaSans-Variable.ttf',

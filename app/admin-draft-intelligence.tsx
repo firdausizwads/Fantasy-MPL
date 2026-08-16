@@ -8,10 +8,12 @@ type SourceRow = { id:string; name:string; provider_url:string; terms_url:string
 type PatchRow = { id:string; version:string; released_at:string|null; notes_url:string|null; active:boolean };
 type ModelRow = { id:string; name:string; version:string; description:string|null; minimum_sample:number; active:boolean; patch_id:string|null };
 type MetricSummary = { region_code:string; heroes:number; games:number; last_verified:string|null };
-type Config = { sources:SourceRow[]; patches:PatchRow[]; models:ModelRow[]; metrics_by_region:MetricSummary[]; verified_games:number; ordered_actions:number };
+type TeamRow = { id:string; code:string; name:string; region_code:string };
+type Config = { sources:SourceRow[]; patches:PatchRow[]; models:ModelRow[]; teams:TeamRow[]; metrics_by_region:MetricSummary[]; verified_games:number; ordered_actions:number };
 type MetricInput = { hero:string; games:number; picks:number; bans:number; wins:number };
+type DraftActionInput = { sequence:number; side:'BLUE'|'RED'; type:'BAN'|'PICK'; phase:number; hero:string };
 
-const emptyConfig:Config={sources:[],patches:[],models:[],metrics_by_region:[],verified_games:0,ordered_actions:0};
+const emptyConfig:Config={sources:[],patches:[],models:[],teams:[],metrics_by_region:[],verified_games:0,ordered_actions:0};
 
 export default function AdminDraftIntelligence({region,notify}:{region:Region;notify:(message:string)=>void}){
   const [config,setConfig]=useState<Config>(emptyConfig);
@@ -33,6 +35,14 @@ export default function AdminDraftIntelligence({region,notify}:{region:Region;no
   const [patchReleased,setPatchReleased]=useState('');
   const [patchNotes,setPatchNotes]=useState('');
   const [minimumSample,setMinimumSample]=useState(10);
+  const [matchKey,setMatchKey]=useState('');
+  const [gameNumber,setGameNumber]=useState(1);
+  const [playedAt,setPlayedAt]=useState('');
+  const [blueTeam,setBlueTeam]=useState('');
+  const [redTeam,setRedTeam]=useState('');
+  const [winnerSide,setWinnerSide]=useState<'BLUE'|'RED'>('BLUE');
+  const [draftSourceUrl,setDraftSourceUrl]=useState('');
+  const [actionsCsv,setActionsCsv]=useState('sequence,side,type,phase,hero\n1,BLUE,BAN,1,\n2,RED,BAN,1,\n3,BLUE,BAN,1,\n4,RED,BAN,1,\n5,BLUE,BAN,1,\n6,RED,BAN,1,\n7,BLUE,PICK,1,\n8,RED,PICK,1,\n9,RED,PICK,1,\n10,BLUE,PICK,1,\n11,BLUE,PICK,1,\n12,RED,PICK,1,\n13,RED,BAN,2,\n14,BLUE,BAN,2,\n15,RED,BAN,2,\n16,BLUE,BAN,2,\n17,RED,PICK,2,\n18,BLUE,PICK,2,\n19,BLUE,PICK,2,\n20,RED,PICK,2,');
 
   async function load(){
     if(!supabase)return;
@@ -41,11 +51,15 @@ export default function AdminDraftIntelligence({region,notify}:{region:Region;no
     if(error){notify(error.message);setLoading(false);return}
     const next=data as unknown as Config;
     setConfig(next);
-    setSourceId(current=>current||next.sources.find(item=>item.primary_for_model)?.id||next.sources[0]?.id||'');
+    const eligibleSources=next.sources.filter(item=>item.approval_status==='approved'&&item.commercial_use_confirmed);
+    setSourceId(current=>eligibleSources.some(item=>item.id===current)?current:eligibleSources.find(item=>item.primary_for_model)?.id||eligibleSources[0]?.id||'');
     setPatchId(current=>current||next.patches.find(item=>item.active)?.id||next.patches[0]?.id||'');
+    const regionalTeams=(next.teams||[]).filter(item=>item.region_code===region);
+    setBlueTeam(current=>regionalTeams.some(item=>item.code===current)?current:regionalTeams[0]?.code||'');
+    setRedTeam(current=>regionalTeams.some(item=>item.code===current)&&current!==regionalTeams[0]?.code?current:regionalTeams[1]?.code||'');
     setLoading(false);
   }
-  useEffect(()=>{load()},[]);
+  useEffect(()=>{load()},[region]);
 
   async function saveSource(event:FormEvent){
     event.preventDefault(); if(!supabase)return;
@@ -93,6 +107,33 @@ export default function AdminDraftIntelligence({region,notify}:{region:Region;no
     const result=data as {imported?:number};notify(`${result.imported||metrics.length} verified hero metrics imported for ${region}.`);await load();
   }
 
+  function parseDraftActions():DraftActionInput[]{
+    const lines=actionsCsv.trim().split(/\r?\n/).filter(Boolean);
+    if(lines[0]?.toLowerCase().replaceAll(' ','')==='sequence,side,type,phase,hero')lines.shift();
+    const expected:[string,string,number][]=[['BLUE','BAN',1],['RED','BAN',1],['BLUE','BAN',1],['RED','BAN',1],['BLUE','BAN',1],['RED','BAN',1],['BLUE','PICK',1],['RED','PICK',1],['RED','PICK',1],['BLUE','PICK',1],['BLUE','PICK',1],['RED','PICK',1],['RED','BAN',2],['BLUE','BAN',2],['RED','BAN',2],['BLUE','BAN',2],['RED','PICK',2],['BLUE','PICK',2],['BLUE','PICK',2],['RED','PICK',2]];
+    if(lines.length!==20)throw new Error('A complete professional draft requires exactly 20 action rows.');
+    const seen=new Set<string>();
+    return lines.map((line,index)=>{
+      const [sequenceRaw,sideRaw,typeRaw,phaseRaw,heroRaw]=line.split(',').map(value=>value.trim());
+      const sequence=Number(sequenceRaw),phase=Number(phaseRaw),side=sideRaw.toUpperCase(),type=typeRaw.toUpperCase(),hero=heroRaw.toUpperCase();
+      const rule=expected[index];
+      if(sequence!==index+1||side!==rule[0]||type!==rule[1]||phase!==rule[2])throw new Error(`Draft sequence mismatch on row ${index+2}.`);
+      if(!hero)throw new Error(`Hero is missing on row ${index+2}.`);
+      if(seen.has(hero))throw new Error(`${hero} appears more than once.`);seen.add(hero);
+      return{sequence,side:side as 'BLUE'|'RED',type:type as 'BAN'|'PICK',phase,hero};
+    });
+  }
+
+  async function importOrderedDraft(){
+    if(!supabase||!sourceId||!patchId){notify('Choose an approved source and patch.');return}
+    if(!matchKey.trim()||!playedAt||!blueTeam||!redTeam||blueTeam===redTeam||!draftSourceUrl.startsWith('http')){notify('Complete the match key, source URL, date and two different teams.');return}
+    let actions:DraftActionInput[];try{actions=parseDraftActions()}catch(error){notify(error instanceof Error?error.message:'Invalid ordered draft CSV.');return}
+    setBusy(true);
+    const {data,error}=await supabase.rpc('admin_import_pro_draft_game',{target_source:sourceId,target_patch:patchId,target_region:region,target_source_match_key:matchKey.trim(),target_game_number:gameNumber,target_played_at:new Date(playedAt).toISOString(),target_blue_team_code:blueTeam,target_red_team_code:redTeam,target_winner_side:winnerSide,target_source_url:draftSourceUrl.trim(),target_actions:actions});
+    setBusy(false);if(error){notify(error.message);return}
+    const result=data as {actions_imported?:number};notify(`${result.actions_imported||20} ordered actions verified and imported.`);setMatchKey('');setDraftSourceUrl('');await load();
+  }
+
   async function activateModel(modelId:string){
     if(!supabase||!patchId){notify('Choose the active patch first.');return}
     if(!window.confirm('Activate this model for public recommendations using the approved primary source?'))return;
@@ -119,7 +160,9 @@ export default function AdminDraftIntelligence({region,notify}:{region:Region;no
       <section className="panel metricsImport"><header><span>03</span><div><h3>VERIFIED METRICS IMPORT</h3><p>CSV COLUMNS: HERO, GAMES, PICKS, BANS, WINS.</p></div></header><div className="draftAdminTwo"><label>APPROVED SOURCE<select value={sourceId} onChange={e=>setSourceId(e.target.value)}><option value="">CHOOSE SOURCE</option>{approvedSources.map(source=><option value={source.id} key={source.id}>{source.name}</option>)}</select></label><label>PATCH<select value={patchId} onChange={e=>setPatchId(e.target.value)}><option value="">CHOOSE PATCH</option>{config.patches.map(patch=><option value={patch.id} key={patch.id}>{patch.version}{patch.active?' · ACTIVE':''}</option>)}</select></label></div><textarea className="metricsCsv" value={csv} onChange={e=>setCsv(e.target.value)} spellCheck={false}/><button className="primary" disabled={busy||!approvedSources.length} onClick={importMetrics}>VALIDATE & IMPORT {region} METRICS</button><div className="metricRegions">{(['MY','ID','PH'] as Region[]).map(code=>{const row=config.metrics_by_region.find(item=>item.region_code===code);return <span key={code}><b>{code}</b><strong>{row?.heroes||0} HEROES</strong><small>{row?.games||0} GAMES</small></span>})}</div></section>
     </div>
 
-    <section className="panel modelActivation"><header><span>04</span><div><h3>MODEL VERSIONING</h3><p>ACTIVATION REQUIRES AN APPROVED PRIMARY SOURCE, ACTIVE PATCH AND IMPORTED SAMPLE.</p></div><label>MINIMUM SAMPLE<input type="number" min="1" max="1000" value={minimumSample} onChange={e=>setMinimumSample(Number(e.target.value))}/></label></header>{config.models.map(model=><article key={model.id}><div><span>{model.name}</span><h3>{model.version}</h3><p>{model.description}</p></div><div><small>MINIMUM SAMPLE</small><b>{model.minimum_sample} GAMES</b></div><button className={model.active?'active':''} disabled={busy||model.active||!approvedSources.some(item=>item.primary_for_model)||!activePatch} onClick={()=>activateModel(model.id)}>{model.active?'● ACTIVE':'ACTIVATE MODEL'}</button></article>)}</section>
+    <section className="panel orderedDraftImport"><header><span>04</span><div><h3>ORDERED PROFESSIONAL DRAFT</h3><p>IMPORT ONE COMPLETE GAME AS THE VERIFIED 20-ACTION TOURNAMENT SEQUENCE. AGGREGATES AND PAIR EVIDENCE REBUILD AUTOMATICALLY.</p></div></header><div className="orderedDraftMeta"><label>APPROVED SOURCE<select value={sourceId} onChange={e=>setSourceId(e.target.value)}><option value="">CHOOSE SOURCE</option>{approvedSources.map(source=><option value={source.id} key={source.id}>{source.name}</option>)}</select></label><label>PATCH<select value={patchId} onChange={e=>setPatchId(e.target.value)}><option value="">CHOOSE PATCH</option>{config.patches.map(patch=><option value={patch.id} key={patch.id}>{patch.version}{patch.active?' · ACTIVE':''}</option>)}</select></label><label>SOURCE MATCH KEY<input value={matchKey} onChange={e=>setMatchKey(e.target.value)} placeholder="PROVIDER MATCH ID"/></label><label>GAME NUMBER<input type="number" min="1" max="20" value={gameNumber} onChange={e=>setGameNumber(Number(e.target.value))}/></label><label>PLAYED AT<input type="datetime-local" value={playedAt} onChange={e=>setPlayedAt(e.target.value)}/></label><label>BLUE SIDE<select value={blueTeam} onChange={e=>setBlueTeam(e.target.value)}>{config.teams.filter(team=>team.region_code===region&&team.code!==redTeam).map(team=><option value={team.code} key={team.id}>{team.name} · {team.code}</option>)}</select></label><label>RED SIDE<select value={redTeam} onChange={e=>setRedTeam(e.target.value)}>{config.teams.filter(team=>team.region_code===region&&team.code!==blueTeam).map(team=><option value={team.code} key={team.id}>{team.name} · {team.code}</option>)}</select></label><label>WINNER SIDE<select value={winnerSide} onChange={e=>setWinnerSide(e.target.value as 'BLUE'|'RED')}><option value="BLUE">BLUE</option><option value="RED">RED</option></select></label></div><label>SOURCE GAME URL<input value={draftSourceUrl} onChange={e=>setDraftSourceUrl(e.target.value)} placeholder="HTTPS://"/></label><div className="orderedDraftCsv"><div><span>ACTION CSV</span><small>SEQUENCE, SIDE, TYPE, PHASE AND HERO MUST MATCH THE TOURNAMENT FLOW.</small></div><textarea value={actionsCsv} onChange={e=>setActionsCsv(e.target.value)} spellCheck={false}/></div><button className="primary" disabled={busy||!approvedSources.length} onClick={importOrderedDraft}>VALIDATE & IMPORT COMPLETE GAME</button></section>
+
+    <section className="panel modelActivation"><header><span>05</span><div><h3>MODEL VERSIONING</h3><p>ACTIVATION REQUIRES AN APPROVED PRIMARY SOURCE, ACTIVE PATCH AND IMPORTED SAMPLE.</p></div><label>MINIMUM SAMPLE<input type="number" min="1" max="1000" value={minimumSample} onChange={e=>setMinimumSample(Number(e.target.value))}/></label></header>{config.models.map(model=><article key={model.id}><div><span>{model.name}</span><h3>{model.version}</h3><p>{model.description}</p></div><div><small>MINIMUM SAMPLE</small><b>{model.minimum_sample} GAMES</b></div><button className={model.active?'active':''} disabled={busy||model.active||!approvedSources.some(item=>item.primary_for_model)||!activePatch} onClick={()=>activateModel(model.id)}>{model.active?'● ACTIVE':'ACTIVATE MODEL'}</button></article>)}</section>
     <div className="draftGovernanceNote"><span>!</span><p><b>NO AUTOMATIC SCRAPING.</b> API ACCESS, ATTRIBUTION, CACHING, RATE LIMITS AND COMMERCIAL RIGHTS MUST BE RECORDED BEFORE A SOURCE CAN POWER PUBLIC RECOMMENDATIONS.</p></div>
   </div>;
 }
