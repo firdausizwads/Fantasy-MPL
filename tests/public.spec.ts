@@ -24,6 +24,31 @@ test.describe('public experience', () => {
     await expect(page.getByText(/WELCOME BACK, TESTMANAGER/i)).toBeVisible();
   });
 
+  test('every open match requires winner and exact score', async ({ page }) => {
+    await page.goto('/');
+    await page.getByLabel('FULL NAME *').fill('Prediction Test Manager');
+    await page.getByLabel('MANAGER NAME *').fill('PredictionManager');
+    await page.getByLabel('EMAIL ADDRESS').fill('prediction@example.com');
+    await page.getByLabel('PASSWORD').fill('test-password');
+    await page.getByLabel('COUNTRY').selectOption('MY');
+    await page.getByRole('button', { name: /CREATE ACCOUNT →/ }).click();
+    await page.getByRole('button', { name: /MPL Malaysia/i }).click();
+    await page.getByRole('button', { name: /Make this week's picks/i }).click();
+
+    const submit = page.getByRole('button', { name: /SUBMIT PREDICTIONS/i });
+    await expect(submit).toBeDisabled();
+
+    const matches = page.locator('.fullMatch');
+    for (let index = 0; index < await matches.count(); index++) {
+      const match = matches.nth(index);
+      await match.locator('.winnerControls button').first().click();
+      await match.locator('.mandatoryScore button').first().click();
+    }
+
+    await page.locator('.mvpCard').first().click();
+    await expect(submit).toBeEnabled();
+  });
+
   test('policy pages and metadata routes are available', async ({ page, request }) => {
     for (const route of ['/privacy', '/terms', '/rules', '/community-guidelines']) {
       const response = await page.goto(route);
