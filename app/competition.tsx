@@ -140,13 +140,15 @@ export default function CloudCompetition({
     Object.values(table).forEach(row => { row.diff = row.gameWins - row.gameLosses; });
     // Ranking rules (official MPL regular season):
     // 1. Match points — 1 per match win, 0 per loss
-    // 2. Game wins — a team that has taken games ranks above one that has not
-    // 3. Aggregate (game diff) — 0 ranks above negative, so unplayed teams sit above swept teams
-    // 4. Name as final tie-breaker
+    // 2. Aggregate (game diff) — -1 ranks above -2, 0 above any negative
+    // 3. Fewer matches played — same points and aggregate from fewer matches is better
+    //    (a team with games in hand ranks above one that already spent its matches)
+    // 4. Game wins, then name
     return Object.values(table).sort((a, b) =>
       b.points - a.points
-      || b.gameWins - a.gameWins
       || b.diff - a.diff
+      || (a.matchWins + a.matchLosses) - (b.matchWins + b.matchLosses)
+      || b.gameWins - a.gameWins
       || a.team.name.localeCompare(b.team.name));
   }, [matches, teams]);
 
