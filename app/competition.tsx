@@ -128,28 +128,25 @@ export default function CloudCompetition({
         if (!home || !away) return;
         home.gameWins += m.homeScore!; home.gameLosses += m.awayScore!;
         away.gameWins += m.awayScore!; away.gameLosses += m.homeScore!;
-        // Official MPL match points: sweep win 3 · close win 2 · close loss 1 · sweep loss 0
+        // Official MPL format: 1 match win = 1 point, loss = 0.
         if (m.winnerTeamId === m.homeTeamId) {
           home.matchWins += 1; away.matchLosses += 1;
-          home.points += m.awayScore! === 0 ? 3 : 2;
-          away.points += m.awayScore! > 0 ? 1 : 0;
+          home.points += 1;
         } else if (m.winnerTeamId === m.awayTeamId) {
           away.matchWins += 1; home.matchLosses += 1;
-          away.points += m.homeScore! === 0 ? 3 : 2;
-          home.points += m.homeScore! > 0 ? 1 : 0;
+          away.points += 1;
         }
       });
     Object.values(table).forEach(row => { row.diff = row.gameWins - row.gameLosses; });
-    // Ranking rules:
-    // 1. Match points (sweep win 3 · close win 2 · close loss 1 · sweep loss 0)
-    // 2. Aggregate (game diff) — 0 ranks above -1, so unplayed teams sit above swept teams
-    // 3. Game wins — a team with a game win ranks above one without
-    // 4. Match wins, then name
+    // Ranking rules (official MPL regular season):
+    // 1. Match points — 1 per match win, 0 per loss
+    // 2. Game wins — a team that has taken games ranks above one that has not
+    // 3. Aggregate (game diff) — 0 ranks above negative, so unplayed teams sit above swept teams
+    // 4. Name as final tie-breaker
     return Object.values(table).sort((a, b) =>
       b.points - a.points
-      || b.diff - a.diff
       || b.gameWins - a.gameWins
-      || b.matchWins - a.matchWins
+      || b.diff - a.diff
       || a.team.name.localeCompare(b.team.name));
   }, [matches, teams]);
 
@@ -236,7 +233,7 @@ export default function CloudCompetition({
               <strong>{row.points}</strong>
               <span className={row.diff > 0 ? 'aggUp' : row.diff < 0 ? 'aggDown' : ''}>{row.diff > 0 ? `+${row.diff}` : row.diff}</span>
             </div>)}
-            <div className="standingFoot">Sweep win 3 · close win 2 · close loss 1 · sweep loss 0 — computed live from {verifiedCount} verified result{verifiedCount === 1 ? '' : 's'}</div>
+            <div className="standingFoot">1 match win = 1 point · ties broken by aggregate, then game wins — computed live from {verifiedCount} verified result{verifiedCount === 1 ? '' : 's'}</div>
           </section>}
   </div>;
 }
