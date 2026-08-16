@@ -1,18 +1,22 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { User } from '@supabase/supabase-js';
 import officialTeams from './official-teams.json';
 import officialPlayers from './official-players.json';
 import { supabase, supabaseConfigured } from '../lib/supabase/client';
-import CloudDraftRoom from './draft-room';
-import CloudLineup from './lineup';
-import LeagueStandings from './standings';
-import AdminScoring from './admin-scoring';
-import AdminFixtures from './admin-fixtures';
-import { CloudLeaderboard, CloudPointHistory } from './cloud-scores';
-import CloudTransfers from './transfers';
-import CloudCompetition from './competition';
+import FeatureLoading from './feature-loading';
+
+const CloudDraftRoom = dynamic(() => import('./draft-room'), { ssr: false, loading: () => <FeatureLoading label="Loading live draft" /> });
+const CloudLineup = dynamic(() => import('./lineup'), { ssr: false, loading: () => <FeatureLoading label="Loading fantasy lineup" /> });
+const LeagueStandings = dynamic(() => import('./standings'), { ssr: false, loading: () => <FeatureLoading label="Loading standings" /> });
+const AdminScoring = dynamic(() => import('./admin-scoring'), { ssr: false, loading: () => <FeatureLoading label="Loading scoring tools" /> });
+const AdminFixtures = dynamic(() => import('./admin-fixtures'), { ssr: false, loading: () => <FeatureLoading label="Loading fixture management" /> });
+const CloudLeaderboard = dynamic(() => import('./cloud-scores').then(module => module.CloudLeaderboard), { ssr: false, loading: () => <FeatureLoading label="Loading leaderboard" /> });
+const CloudPointHistory = dynamic(() => import('./cloud-scores').then(module => module.CloudPointHistory), { ssr: false, loading: () => <FeatureLoading label="Loading point history" /> });
+const CloudTransfers = dynamic(() => import('./transfers'), { ssr: false, loading: () => <FeatureLoading label="Loading transfer market" /> });
+const CloudCompetition = dynamic(() => import('./competition'), { ssr: false, loading: () => <FeatureLoading label="Loading competition data" /> });
 
 type Region = 'MY' | 'ID' | 'PH';
 type View = 'dashboard' | 'predictions' | 'fantasy' | 'leagues' | 'leaderboard' | 'directory' | 'competition' | 'playoffs' | 'meta' | 'creators' | 'advisor' | 'profile' | 'prizes' | 'admin';
