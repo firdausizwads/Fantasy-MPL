@@ -2006,6 +2006,51 @@ export type Database = {
       beta_activity_counts: { Args: Record<PropertyKey, never>; Returns: Json }
       preview_beta_activity_reset: { Args: Record<PropertyKey, never>; Returns: Json }
       run_beta_activity_reset: { Args: { confirmation: string }; Returns: Json }
+      draft_intelligence_status: { Args: { target_region: string }; Returns: Json }
+      recommend_draft_actions: {
+        Args: {
+          target_region: string
+          target_action: string
+          ally_hero_names?: string[]
+          enemy_hero_names?: string[]
+          banned_hero_names?: string[]
+          max_results?: number
+        }
+        Returns: {
+          hero_name: string
+          score: number
+          evidence_level: string
+          sample_size: number
+          reason: string
+          pick_rate: number
+          ban_rate: number
+          win_rate: number
+          contest_rate: number
+        }[]
+      }
+      admin_upsert_draft_source: {
+        Args: {
+          source_name: string
+          source_provider_url: string
+          source_terms_url?: string
+          source_license_name?: string
+          source_attribution_text?: string
+          source_approval_status?: string
+          source_commercial_confirmed?: boolean
+          source_primary?: boolean
+          source_notes?: string
+        }
+        Returns: string
+      }
+      admin_draft_intelligence_config: { Args: Record<PropertyKey, never>; Returns: Json }
+      admin_import_hero_metrics: {
+        Args: { target_source: string; target_patch: string; target_region: string; metrics: Json }
+        Returns: Json
+      }
+      admin_activate_draft_model: {
+        Args: { target_model: string; target_patch: string; target_minimum_sample?: number }
+        Returns: undefined
+      }
       auto_pick_expired_turn: {
         Args: { target_draft: string }
         Returns: {

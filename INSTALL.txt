@@ -1,46 +1,43 @@
-FANTASY MPL — CONTROLLED CLOSED-BETA ACTIVITY RESET
+FANTASY MPL — DRAFT INTELLIGENCE FOUNDATION
 
-IMPORTANT
-- Running Migration 018 only installs guarded functions. It deletes nothing.
-- The reset itself is irreversible unless you have a database backup.
-- Accounts, profiles, avatars, memberships, fixtures, teams, players and
-  configuration are preserved.
+A. DATABASE FIRST
+1. Open Supabase Dashboard > SQL Editor.
+2. Run:
+   supabase/migrations/019_draft_intelligence_foundation.sql
+3. Expected:
+   status_ready: true
+   recommendations_ready: true
+   import_ready: true
 
-A. BEFORE RESET
-1. Download your account data from My Profile > Download My Data.
-2. Confirm your main account is still super_admin.
-3. If available on your Supabase plan, create/confirm a database backup.
+B. APPLICATION FILES
+1. Copy the CONTENTS of this folder into the repository root.
+2. Do not copy the outer fantasy-mpl-draft-intelligence-foundation folder.
+3. Allow Windows to replace matching files.
 
-B. INSTALL THE GUARDED RESET
-Run in Supabase SQL Editor:
-  supabase/migrations/018_controlled_beta_activity_reset.sql
+C. DEPLOY
+Commit message:
+  Add governed Live Draft intelligence foundation
 
-Expected:
-  preview_ready: true
-  reset_ready: true
+D. FIRST ADMIN CHECK
+1. Sign in with the super-admin account.
+2. Open Admin Console > Draft intelligence.
+3. Confirm:
+   PUBLIC MODEL: INACTIVE
+   APPROVED SOURCES: 0
+   VERIFIED GAMES: 0
+4. Open /live-draft and confirm the Model panel remains DATA GATED.
 
-C. SAFE PREVIEW — DELETES NOTHING
-Run:
-  select public.preview_beta_activity_reset();
+E. SOURCE SAFETY
+- Register candidate sources as PENDING first.
+- Do not select COMMERCIAL USE CONFIRMED or PRIMARY MODEL SOURCE until rights
+  and terms are documented.
+- Never put an API key in NEXT_PUBLIC_* variables.
+- Do not scrape normal website HTML.
 
-Review the will_delete_counts and will_preserve arrays.
+F. METRICS IMPORT
+CSV format:
+  hero,games,picks,bans,wins
 
-D. EXECUTE THE RESET
-Only after reviewing the preview, run exactly:
-  select public.run_beta_activity_reset('RESET FANTASY MPL BETA ACTIVITY');
-
-Expected:
-  reset_complete: true
-  after counts: all zero
-  preserved_accounts: greater than zero
-  preserved_profiles: greater than zero
-  preserved_fixtures: greater than zero
-  preserved_players: greater than zero
-
-E. APPLICATION FILES
-Copy the CONTENTS of this folder into the repository root.
-Do not copy the outer fantasy-mpl-controlled-beta-reset folder.
-The app change clears stale browser prediction selections when cloud rows were reset.
-
-F. COMMIT
-  Add guarded closed-beta activity reset
+Rates are calculated by PostgreSQL. Unknown heroes, negative values and impossible
+counts are rejected. Recommendations remain disabled until an approved primary
+source, active patch, active model and minimum regional sample all exist.

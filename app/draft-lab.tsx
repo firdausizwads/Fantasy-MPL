@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import officialTeams from './official-teams.json';
+import { supabase } from '../lib/supabase/client';
 
 type Region = 'MY' | 'ID' | 'PH';
 type Side = 'BLUE' | 'RED';
@@ -9,6 +10,8 @@ type ActionType = 'BAN' | 'PICK';
 type Role = 'ALL' | 'EXP' | 'JUNGLE' | 'MID' | 'GOLD' | 'ROAM';
 type DraftAction = { side: Side; type: ActionType; phase: 1 | 2 };
 type SavedDraft = { game: number; blueTeam: string; redTeam: string; actions: string[]; mode: 'companion' | 'sandbox' };
+type IntelligenceStatus = { ready:boolean; region:string; source_name:string|null; source_url:string|null; attribution:string|null; license:string|null; model_name:string|null; model_version:string|null; patch:string|null; minimum_sample:number|null; eligible_heroes:number; drafts_analyzed:number; last_verified:string|null; blocker:string|null };
+type Recommendation = { hero_name:string; score:number; evidence_level:string; sample_size:number; reason:string; pick_rate:number; ban_rate:number; win_rate:number; contest_rate:number };
 
 const REGION_NAME: Record<Region, string> = { MY: 'MPL MALAYSIA', ID: 'MPL INDONESIA', PH: 'MPL PHILIPPINES' };
 const REGION_LOGO: Record<Region, string> = { MY: '/leagues/mpl-my.png', ID: '/leagues/mpl-id.png', PH: '/leagues/mpl-ph.png' };
@@ -60,12 +63,13 @@ function DraftSlot({ hero, type, active, number, onClick }: { hero?: string; typ
   </button>;
 }
 
-function ModelPanel({ remaining, current }: { remaining: number; current?: DraftAction }) {
+function ModelPanel({ remaining, current, status, recommendations, loading }: { remaining: number; current?: DraftAction; status: IntelligenceStatus | null; recommendations: Recommendation[]; loading: boolean }) {
+  const ready=Boolean(status?.ready);
   return <aside className="draftModelPanel">
-    <div className="draftModelHead"><span><DraftIcon/></span><div><small>DRAFT INTELLIGENCE</small><h2>MODEL RECOMMENDATIONS</h2></div><i>DATA GATED</i></div>
-    <div className="modelUnavailable"><span>◈</span><h3>RECOMMENDATION DATA PENDING</h3><p>THE SIMULATOR IS LIVE, BUT HERO RECOMMENDATIONS WILL REMAIN DISABLED UNTIL CURRENT-PATCH PROFESSIONAL DRAFT DATA IS VERIFIED.</p></div>
-    <div className="modelContext"><div><small>CURRENT ACTION</small><b>{current ? `${current.side} · ${current.type}` : 'DRAFT COMPLETE'}</b></div><div><small>AVAILABLE HEROES</small><b>{remaining}</b></div><div><small>MODEL EVIDENCE</small><b>—</b></div><div><small>LAST VERIFIED</small><b>—</b></div></div>
-    <section className="modelMethod"><small>THE CONNECTED MODEL WILL CONSIDER</small>{['CURRENT PATCH PRIORITY','PRO PICK & BAN ORDER','ROLE AND FLEX COVERAGE','SYNERGY AND COUNTERS','REGIONAL TENDENCIES','TEAM HISTORY · WHEN SUFFICIENT'].map(item => <div key={item}><span>○</span><b>{item}</b></div>)}</section>
+    <div className="draftModelHead"><span><DraftIcon/></span><div><small>DRAFT INTELLIGENCE</small><h2>MODEL RECOMMENDATIONS</h2></div><i className={ready?'ready':''}>{ready?'VERIFIED MODEL':'DATA GATED'}</i></div>
+    {!ready?<div className="modelUnavailable"><span>◈</span><h3>RECOMMENDATION DATA PENDING</h3><p>{status?.blocker||'AN APPROVED SOURCE, ACTIVE MODEL AND CURRENT-PATCH PROFESSIONAL SAMPLE ARE REQUIRED.'}</p></div>:loading?<div className="modelUnavailable"><span>◷</span><h3>CALCULATING DRAFT OPTIONS</h3><p>CHECKING CURRENT-PATCH PROFESSIONAL EVIDENCE.</p></div>:recommendations.length?<div className="modelRecommendations">{recommendations.map((item,index)=><article key={item.hero_name}><span>{String(index+1).padStart(2,'0')}</span><div><small>{current?.side} · RECOMMENDED {current?.type}</small><h3>{item.hero_name}</h3><p>{item.reason}</p><footer><b>{item.evidence_level} EVIDENCE</b><em>{item.sample_size} GAMES</em></footer></div></article>)}</div>:<div className="modelUnavailable"><span>—</span><h3>NO ELIGIBLE RECOMMENDATION</h3><p>THE VERIFIED SAMPLE DOES NOT SUPPORT A CLAIM FOR THIS DRAFT STATE.</p></div>}
+    <div className="modelContext"><div><small>CURRENT ACTION</small><b>{current ? `${current.side} · ${current.type}` : 'DRAFT COMPLETE'}</b></div><div><small>AVAILABLE HEROES</small><b>{remaining}</b></div><div><small>MODEL VERSION</small><b>{status?.model_version||'—'}</b></div><div><small>PATCH</small><b>{status?.patch||'—'}</b></div></div>
+    {ready?<section className="modelEvidence"><small>VERIFIED DATA</small><div><b>{status?.source_name}</b><span>{status?.drafts_analyzed||0} DRAFTS · {status?.eligible_heroes||0} ELIGIBLE HEROES</span></div>{status?.attribution&&<p>{status.attribution}</p>}{status?.source_url&&<a href={status.source_url} target="_blank" rel="noreferrer">VIEW DATA SOURCE ↗</a>}</section>:<section className="modelMethod"><small>THE CONNECTED MODEL WILL CONSIDER</small>{['CURRENT PATCH PRIORITY','PRO PICK & BAN ORDER','ROLE AND FLEX COVERAGE','SYNERGY AND COUNTERS','REGIONAL TENDENCIES','TEAM HISTORY · WHEN SUFFICIENT'].map(item => <div key={item}><span>○</span><b>{item}</b></div>)}</section>}
     <p className="modelIntegrity"><b>DATA INTEGRITY FIRST.</b> NO HERO, CONFIDENCE VALUE OR STRATEGIC CLAIM IS GENERATED WITHOUT A TRACEABLE SOURCE.</p>
   </aside>;
 }
@@ -82,6 +86,9 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   const [search, setSearch] = useState('');
   const [role, setRole] = useState<Role>('ALL');
   const [mobileTab, setMobileTab] = useState<'draft' | 'heroes' | 'model'>('draft');
+  const [intelligence, setIntelligence] = useState<IntelligenceStatus | null>(null);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [modelLoading, setModelLoading] = useState(false);
   const current = DRAFT_SEQUENCE[actions.length];
   const used = useMemo(() => new Set(actions), [actions]);
 
@@ -104,6 +111,30 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
     const saved: SavedDraft = { game, blueTeam, redTeam, actions, mode };
     localStorage.setItem(storageKey, JSON.stringify(saved));
   }, [storageKey, game, blueTeam, redTeam, actions, mode]);
+
+  useEffect(() => {
+    let active=true;
+    async function loadStatus(){
+      if(!supabase){setIntelligence(null);return}
+      const {data}=await supabase.rpc('draft_intelligence_status',{target_region:region});
+      if(active)setIntelligence(data as unknown as IntelligenceStatus);
+    }
+    loadStatus();return()=>{active=false};
+  },[region]);
+
+  useEffect(() => {
+    let active=true;
+    async function recommend(){
+      if(!supabase||!intelligence?.ready||!current){setRecommendations([]);return}
+      const ally:string[]=[],enemy:string[]=[],banned:string[]=[];
+      actions.forEach((hero,index)=>{const step=DRAFT_SEQUENCE[index];if(step.type==='BAN')banned.push(hero);else if(step.side===current.side)ally.push(hero);else enemy.push(hero)});
+      setModelLoading(true);
+      const {data,error}=await supabase.rpc('recommend_draft_actions',{target_region:region,target_action:current.type,ally_hero_names:ally,enemy_hero_names:enemy,banned_hero_names:banned,max_results:3});
+      if(!active)return;
+      setRecommendations(error?[]:(data as Recommendation[])||[]);setModelLoading(false);
+    }
+    recommend();return()=>{active=false};
+  },[actions,current?.side,current?.type,intelligence?.ready,region]);
 
   function chooseHero(hero: string) {
     if (!current || used.has(hero)) return;
@@ -157,7 +188,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
         </div>
         <div className="draftSequence"><span style={{width:`${(actions.length / DRAFT_SEQUENCE.length) * 100}%`}}/><small>TOURNAMENT DRAFT FLOW · 10 BANS · 10 PICKS</small></div>
       </section>
-      <div className={mobileTab !== 'model' ? 'modelMobileHidden' : ''}><ModelPanel remaining={ALL_HEROES.length - used.size} current={current}/></div>
+      <div className={mobileTab !== 'model' ? 'modelMobileHidden' : ''}><ModelPanel remaining={ALL_HEROES.length - used.size} current={current} status={intelligence} recommendations={recommendations} loading={modelLoading}/></div>
     </div>
 
     {(pickerOpen || mobileTab === 'heroes') && current && <section className={`heroPicker ${mobileTab === 'heroes' ? 'mobilePicker' : ''}`}>
