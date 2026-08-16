@@ -37,7 +37,7 @@ export function CloudLeaderboard({
       if (!supabase) return;
       setLoading(true);
       const { data } = await supabase.rpc('regional_leaderboard', {
-        target_region: region, target_season: null, max_rows: 100
+        target_region: region, max_rows: 100
       });
       if (!mounted) return;
       setRows((data as BoardRow[]) || []);
@@ -97,7 +97,7 @@ export function CloudPointHistory({ region }: { region: Region }) {
       const { data: weekRows } = await supabase.from('competition_weeks')
         .select('id,week_number').eq('season_id', season.id).order('week_number');
       if (!mounted) return;
-      const options = (weekRows || []).map((w: any) => ({ id: w.id, number: w.week_number }));
+      const options = (weekRows || []).map((w) => ({ id: w.id, number: w.week_number }));
       setWeeks(options);
       setWeekId(prev => prev || options[0]?.id || '');
       setLoading(false);

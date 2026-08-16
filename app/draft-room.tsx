@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase/client';
+import type { Tables } from '../lib/supabase/database.types';
 
 type Region = 'MY' | 'ID' | 'PH';
 
@@ -146,22 +147,22 @@ export default function CloudDraftRoom({
           .in('role', ROLES)
       ]);
 
-      const userIds = (memberRes.data || []).map((m: any) => m.user_id);
+      const userIds = (memberRes.data || []).map((m) => m.user_id);
       const { data: profiles } = userIds.length
         ? await supabase.from('profiles').select('id,manager_name').in('id', userIds)
-        : { data: [] as any[] };
+        : { data: [] };
 
       if (!mounted) return;
 
       setPickSeconds(league.pick_seconds || 60);
       setDraft((draftRes.data as DraftRow) || null);
-      setMembers((memberRes.data || []).map((m: any) => ({
+      setMembers((memberRes.data || []).map((m) => ({
         user_id: m.user_id,
         draft_position: m.draft_position || 99,
         member_role: m.member_role,
-        name: (profiles || []).find((p: any) => p.id === m.user_id)?.manager_name || 'MANAGER'
+        name: (profiles || []).find((p) => p.id === m.user_id)?.manager_name || 'MANAGER'
       })));
-      setPool((rosterRes.data || []).map((r: any) => ({
+      setPool((rosterRes.data || []).map((r) => ({
         id: r.player_id,
         handle: r.players?.handle || 'PLAYER',
         role: r.role,
@@ -231,7 +232,7 @@ export default function CloudDraftRoom({
         { event: 'INSERT', schema: 'public', table: 'league_members', filter: `league_id=eq.${leagueId}` },
         async payload => {
           if (!supabase) return;
-          const row: any = payload.new;
+          const row = payload.new as Tables<'league_members'>;
           const { data: profile } = await supabase.from('profiles').select('manager_name').eq('id', row.user_id).maybeSingle();
           setMembers(prev => prev.some(m => m.user_id === row.user_id) ? prev : [...prev, {
             user_id: row.user_id,
@@ -255,7 +256,7 @@ export default function CloudDraftRoom({
       .on('postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'league_chat_reactions' },
         payload => {
-          const removed: any = payload.old;
+          const removed = payload.old as Tables<'league_chat_reactions'>;
           setReactions(prev => prev.filter(r => r.id !== removed.id));
         })
       .subscribe();
@@ -314,7 +315,7 @@ export default function CloudDraftRoom({
     setBusy(true);
     const { data, error } = await supabase.rpc('ensure_league_draft', {
       target_league: leagueId,
-      schedule_at: withSchedule ? new Date(withSchedule).toISOString() : null
+      ...(withSchedule ? { schedule_at: new Date(withSchedule).toISOString() } : {})
     });
     setBusy(false);
     if (error) { notify(error.message); return; }
@@ -327,7 +328,7 @@ export default function CloudDraftRoom({
     setBusy(true);
     let draftId = draft?.id;
     if (!draftId) {
-      const { data, error } = await supabase.rpc('ensure_league_draft', { target_league: leagueId, schedule_at: null });
+      const { data, error } = await supabase.rpc('ensure_league_draft', { target_league: leagueId });
       if (error) { notify(error.message); setBusy(false); return; }
       draftId = (data as DraftRow).id;
       setDraft(data as DraftRow);

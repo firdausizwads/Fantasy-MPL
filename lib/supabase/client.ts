@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './database.types';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -6,7 +7,7 @@ const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 export const supabaseConfigured = Boolean(url && publishableKey);
 
 export const supabase = supabaseConfigured
-  ? createClient(url!, publishableKey!, {
+  ? createClient<Database>(url!, publishableKey!, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,

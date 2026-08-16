@@ -52,14 +52,14 @@ export default function CloudTransfers({
 
       const { data: memberships } = await supabase.from('league_members')
         .select('league_id').eq('user_id', userId).eq('status', 'active');
-      const ids = (memberships || []).map((m: any) => m.league_id);
+      const ids = (memberships || []).map((m) => m.league_id);
       if (!ids.length) { if (mounted) { setLeagues([]); setLoading(false); } return; }
 
       const { data: leagueRows } = await supabase.from('fantasy_leagues')
         .select('id,name,season_id,transfer_limit,status')
         .in('id', ids).eq('season_id', season.id).eq('status', 'active');
       if (!mounted) return;
-      const options = (leagueRows || []).map((l: any) => ({
+      const options = (leagueRows || []).map((l) => ({
         id: l.id, name: l.name, seasonId: l.season_id,
         transferLimit: l.transfer_limit, status: l.status
       }));
@@ -87,8 +87,8 @@ export default function CloudTransfers({
       ]);
       if (!mounted) return;
       const ownership: Record<string, string> = {};
-      (ownershipRows || []).forEach((o: any) => { ownership[o.player_id] = o.user_id; });
-      setPool((rosterRows || []).map((r: any) => ({
+      (ownershipRows || []).forEach((o) => { ownership[o.player_id] = o.user_id; });
+      setPool((rosterRows || []).map((r) => ({
         id: r.player_id,
         handle: r.players?.handle || 'PLAYER',
         role: r.role,

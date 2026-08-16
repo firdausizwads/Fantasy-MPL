@@ -49,14 +49,14 @@ export default function AdminFixtures({ region, notify }: { region: Region; noti
         .eq('season_id', season.id).order('scheduled_at')
     ]);
 
-    const weekOptions = (weekRows || []).map((w: any) => ({
+    const weekOptions = (weekRows || []).map((w) => ({
       id: w.id, number: w.week_number, startsAt: w.starts_at, endsAt: w.ends_at,
       finalized: Boolean(w.finalized_at)
     }));
     setWeeks(weekOptions);
     setWeekId(prev => weekOptions.some((w: WeekRow) => w.id === prev) ? prev : weekOptions[weekOptions.length - 1]?.id || '');
-    setTeams((teamRows || []).map((t: any) => ({ id: t.id, code: t.code, name: t.name })));
-    setMatches((matchRows || []).map((m: any) => ({
+    setTeams((teamRows || []).map((t) => ({ id: t.id, code: t.code, name: t.name })));
+    setMatches((matchRows || []).map((m) => ({
       id: m.id, weekId: m.week_id, scheduledAt: m.scheduled_at, status: m.status,
       resultState: m.result_state, homeTeamId: m.home_team_id, awayTeamId: m.away_team_id
     })));
@@ -124,7 +124,7 @@ export default function AdminFixtures({ region, notify }: { region: Region; noti
   async function cancel(match: MatchRow) {
     if (!supabase) return;
     const { error } = await supabase.rpc('admin_update_match_schedule', {
-      target_match: match.id, new_time: null, new_status: 'cancelled'
+      target_match: match.id, new_status: 'cancelled'
     });
     if (error) { notify(error.message); return; }
     notify('Fixture cancelled.');

@@ -60,12 +60,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       ]);
 
       if (!mounted) return;
-      const weekOptions = (weekRows || []).map((w: any) => ({
+      const weekOptions = (weekRows || []).map((w) => ({
         id: w.id, number: w.week_number, finalized: Boolean(w.finalized_at)
       }));
       setWeeks(weekOptions);
       setWeekId(prev => prev || weekOptions[0]?.id || '');
-      setRoster((rosterRows || []).map((r: any) => ({
+      setRoster((rosterRows || []).map((r) => ({
         id: r.player_id, handle: r.players?.handle || 'PLAYER', role: r.role, teamId: r.team_id
       })));
       setLoading(false);
@@ -82,7 +82,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         .select('id,scheduled_at,status,result_state,home_team_id,away_team_id,home_score,away_score,home:teams!matches_home_team_id_fkey(code,name),away:teams!matches_away_team_id_fkey(code,name)')
         .eq('week_id', weekId).order('scheduled_at');
       if (!mounted) return;
-      setMatches((data || []).map((m: any) => ({
+      setMatches((data || []).map((m) => ({
         id: m.id,
         scheduledAt: m.scheduled_at,
         status: m.status,
@@ -115,7 +115,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     const { data } = await supabase.from('player_match_stats')
       .select('player_id,kills,assists').eq('match_id', match.id);
     const draft: Record<string, StatDraft> = {};
-    (data || []).forEach((s: any) => { draft[s.player_id] = { kills: String(s.kills), assists: String(s.assists) }; });
+    (data || []).forEach((s) => { draft[s.player_id] = { kills: String(s.kills), assists: String(s.assists) }; });
     setStats(draft);
   }
 

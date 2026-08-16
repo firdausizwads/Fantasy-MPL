@@ -93,7 +93,7 @@ export default function CloudLineup({
         .eq('user_id', userId)
         .is('released_at', null);
 
-      const leagueIds = Array.from(new Set((myOwnership || []).map((r: any) => r.league_id)));
+      const leagueIds = Array.from(new Set((myOwnership || []).map((r) => r.league_id)));
       if (!leagueIds.length) { if (mounted) { setLeagues([]); setLoading(false); } return; }
 
       const [{ data: leagueRows }, { data: weekRows }] = await Promise.all([
@@ -108,11 +108,11 @@ export default function CloudLineup({
       ]);
 
       if (!mounted) return;
-      const options = (leagueRows || []).map((l: any) => ({
+      const options = (leagueRows || []).map((l) => ({
         id: l.id, name: l.name, seasonId: l.season_id,
         format: l.format, lineupLocksAt: l.lineup_locks_at
       }));
-      const weekOptions = (weekRows || []).map((w: any) => ({
+      const weekOptions = (weekRows || []).map((w) => ({
         id: w.id, number: w.week_number, name: w.name,
         startsAt: w.starts_at, finalized: Boolean(w.finalized_at)
       }));
@@ -141,7 +141,7 @@ export default function CloudLineup({
         .eq('user_id', userId)
         .is('released_at', null);
 
-      const playerIds = (ownership || []).map((r: any) => r.player_id);
+      const playerIds = (ownership || []).map((r) => r.player_id);
 
       const { data: rosterRows } = playerIds.length
         ? await supabase.from('season_rosters')
@@ -149,7 +149,7 @@ export default function CloudLineup({
             .eq('season_id', league.seasonId)
             .eq('active', true)
             .in('player_id', playerIds)
-        : { data: [] as any[] };
+        : { data: [] };
 
       const { data: lineupRow } = await supabase
         .from('weekly_lineups')
@@ -161,10 +161,10 @@ export default function CloudLineup({
         ? await supabase.from('lineup_players')
             .select('id,player_id,slot_role')
             .eq('lineup_id', lineupRow.id)
-        : { data: [] as any[] };
+        : { data: [] };
 
       if (!mounted) return;
-      setOwned((rosterRows || []).map((r: any) => ({
+      setOwned((rosterRows || []).map((r) => ({
         id: r.player_id,
         handle: r.players?.handle || 'PLAYER',
         role: r.role,

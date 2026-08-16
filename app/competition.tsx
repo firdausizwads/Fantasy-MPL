@@ -71,15 +71,15 @@ export default function CloudCompetition({
       ]);
 
       if (!mounted) return;
-      const weekOptions = (weekRows || []).map((w: any) => ({ id: w.id, number: w.week_number }));
+      const weekOptions = (weekRows || []).map((w) => ({ id: w.id, number: w.week_number }));
       setWeeks(weekOptions);
       setWeekId(prev => prev || weekOptions[0]?.id || '');
       const teamMap: Record<string, TeamInfo> = {};
-      (teamRows || []).forEach((t: any) => {
+      (teamRows || []).forEach((t) => {
         teamMap[t.id] = { id: t.id, code: t.code, name: t.name, logo: t.logo_url };
       });
       setTeams(teamMap);
-      setMatches((matchRows || []).map((m: any) => ({
+      setMatches((matchRows || []).map((m) => ({
         id: m.id,
         weekId: m.week_id,
         scheduledAt: m.scheduled_at,

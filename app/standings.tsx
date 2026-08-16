@@ -34,13 +34,13 @@ export default function LeagueStandings({ region, userId, notify }: { region: Re
 
       const { data: memberships } = await supabase.from('league_members')
         .select('league_id').eq('user_id', userId).eq('status', 'active');
-      const ids = (memberships || []).map((m: any) => m.league_id);
+      const ids = (memberships || []).map((m) => m.league_id);
       if (!ids.length) { if (mounted) { setLeagues([]); setLoading(false); } return; }
 
       const { data: leagueRows } = await supabase.from('fantasy_leagues')
         .select('id,name').in('id', ids).eq('season_id', season.id);
       if (!mounted) return;
-      const options = (leagueRows || []).map((l: any) => ({ id: l.id, name: l.name }));
+      const options = (leagueRows || []).map((l) => ({ id: l.id, name: l.name }));
       setLeagues(options);
       setLeagueId(prev => prev || options[0]?.id || '');
       setLoading(false);
