@@ -25,27 +25,49 @@ test.describe('public experience', () => {
   });
 
   test('every open match requires winner and exact score', async ({ page }) => {
-    await page.goto('/');
-    await page.getByLabel('FULL NAME *').fill('Prediction Test Manager');
-    await page.getByLabel('MANAGER NAME *').fill('PredictionManager');
-    await page.getByLabel('EMAIL ADDRESS').fill('prediction@example.com');
-    await page.getByLabel('PASSWORD').fill('test-password');
-    await page.getByLabel('COUNTRY').selectOption('MY');
-    await page.getByRole('button', { name: /CREATE ACCOUNT →/ }).click();
-    await page.getByRole('button', { name: /MPL Malaysia/i }).click();
-    await page.getByRole('button', { name: /Make this week's picks/i }).click();
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4,
+        name: 'PredictionManager',
+        email: 'prediction@example.com',
+        country: 'MY',
+        fullName: 'Prediction Test Manager',
+        address: '',
+        bio: '',
+        dob: '',
+        avatar: '',
+        accountRole: 'user',
+        joined: ['MY'],
+        active: 'MY',
+        picks: {},
+        exactScores: {},
+        submittedAt: {},
+        captains: {},
+        rosters: {},
+        transfers: {}
+      }));
+    });
 
-    const submit = page.getByRole('button', { name: /SUBMIT PREDICTIONS/i });
+    await page.goto('/');
+    await expect(page.locator('.heroActions .primary')).toBeVisible();
+    await page.locator('.heroActions .primary').click();
+    await expect(page.locator('.fullMatch').first()).toBeVisible();
+
+    const submit = page.locator('.saveBar .primary');
     await expect(submit).toBeDisabled();
 
-    const matches = page.locator('.fullMatch');
-    for (let index = 0; index < await matches.count(); index++) {
+    const matches = page.locator('.fullMatch:not(.matchLocked)');
+    const matchCount = await matches.count();
+    expect(matchCount).toBeGreaterThan(0);
+
+    for (let index = 0; index < matchCount; index++) {
       const match = matches.nth(index);
       await match.locator('.winnerControls button').first().click();
+      await expect(match.locator('.mandatoryScore button').first()).toBeEnabled();
       await match.locator('.mandatoryScore button').first().click();
     }
 
-    await page.locator('.mvpCard').first().click();
+    await page.locator('.mvpCard:not(:disabled)').first().click();
     await expect(submit).toBeEnabled();
   });
 
