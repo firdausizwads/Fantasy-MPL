@@ -74,6 +74,26 @@ test.describe('public experience', () => {
     await expect(submit).toBeEnabled();
   });
 
+  test('active section survives a full page refresh', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4,
+        name: 'RefreshManager',
+        email: 'refresh@example.com',
+        country: 'MY',
+        fullName: 'Refresh Test Manager',
+        address: '', bio: '', dob: '', avatar: '', accountRole: 'user',
+        joined: ['MY'], active: 'MY', picks: {}, exactScores: {},
+        submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/#predictions');
+    await expect(page.getByRole('heading', { name: 'Prediction Hub' })).toBeVisible();
+    await page.reload();
+    await expect(page).toHaveURL(/#predictions$/);
+    await expect(page.getByRole('heading', { name: 'Prediction Hub' })).toBeVisible();
+  });
+
   test('policy pages and metadata routes are available', async ({ page, request }) => {
     for (const route of ['/privacy', '/terms', '/rules', '/community-guidelines']) {
       const response = await page.goto(route);

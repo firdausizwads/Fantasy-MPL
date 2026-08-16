@@ -96,6 +96,7 @@ export default function CloudDraftRoom({
   const [chatInput, setChatInput] = useState('');
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
+  const [mobileTab, setMobileTab] = useState<'players'|'roster'|'chat'>('players');
   const [scheduleAt, setScheduleAt] = useState('');
   const [remaining, setRemaining] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
@@ -414,11 +415,14 @@ export default function CloudDraftRoom({
       </div>)}
     </div>
 
+    {!waiting && <><div className="draftMobileStatus"><span>{myTurn?'YOUR TURN':`${onClock?.name||'MANAGER'} PICKING`}</span><strong>{remaining===null?'—':`0:${String(Math.max(remaining,0)).padStart(2,'0')}`}</strong><small>PICK {Math.min(nextPickNumber,totalPicks)} / {totalPicks}</small></div><nav className="draftMobileTabs"><button className={mobileTab==='players'?'active':''} onClick={()=>setMobileTab('players')}>PLAYERS</button><button className={mobileTab==='roster'?'active':''} onClick={()=>setMobileTab('roster')}>MY ROSTER · {myPicks.length}</button><button className={mobileTab==='chat'?'active':''} onClick={()=>setMobileTab('chat')}>CHAT</button></nav></>}
+
     {waiting
       ? <div className="draftWaiting">
           <span>⧗</span>
           <h2>{members.length} manager{members.length === 1 ? '' : 's'} in the room</h2>
           <p>{members.length < 2 ? 'At least two active managers are required before the draft can begin.' : 'Everyone sees this room update live. The commissioner controls the start.'}</p>
+          <div className="draftRoomFacts"><div><small>MANAGERS</small><strong>{members.length}</strong><span>IN ROOM</span></div><div><small>FORMAT</small><strong>SNAKE</strong><span>REVERSES EACH ROUND</span></div><div><small>PICK TIMER</small><strong>{pickSeconds}s</strong><span>PER SELECTION</span></div><div><small>ROSTER</small><strong>5</strong><span>UNIQUE ROLES</span></div></div>
           {isCommissioner
             ? <div className="draftCommissioner">
                 <label>SCHEDULE (OPTIONAL)
@@ -430,7 +434,7 @@ export default function CloudDraftRoom({
             : <p className="draftWaitNote">Waiting for the commissioner to start the draft…</p>}
         </div>
       : <div className="draftBody">
-          <section>
+          <section className={`draftPlayerPanel ${mobileTab==='players'?'mobile-active':''}` }>
             <div className="draftTools">
               <div><h2>Available players</h2><p>Season 18 verified pool · one role and one professional team per manager</p></div>
               <div className="draftFilterTools">
@@ -452,7 +456,7 @@ export default function CloudDraftRoom({
             </div>
           </section>
 
-          <aside className="draftSide">
+          <aside className={`draftSide ${mobileTab!=='players'?'mobile-active':''}` }>
             <div className="clock">
               <small>PICK #{Math.min(nextPickNumber, totalPicks)} OF {totalPicks}</small>
               <strong>{draftDone ? '✓' : remaining === null ? '—' : `0:${String(Math.max(remaining, 0)).padStart(2, '0')}`}</strong>
@@ -460,6 +464,7 @@ export default function CloudDraftRoom({
               {!draftDone && remaining !== null && <div className="timerBar"><i style={{ width: `${Math.max(0, Math.min(100, (remaining / pickSeconds) * 100))}%` }} /></div>}
             </div>
 
+            <div className={`draftRosterPanel ${mobileTab==='roster'?'mobile-active':''}`}>
             <h3>Your roster</h3>
             {myPicks.length === 0
               ? <p className="noPicks">Your drafted players will appear here.</p>
@@ -473,7 +478,9 @@ export default function CloudDraftRoom({
               const player = playerById[p.player_id];
               return <div className="recentPick" key={p.id}><span>#{p.pick_number}</span><p><b>{player?.handle || 'PLAYER'}</b><small>{memberName(p.user_id)}{p.auto_picked ? ' · AUTO' : ''}</small></p></div>;
             })}
+            </div>
 
+            <div className={`draftChatPanel ${mobileTab==='chat'?'mobile-active':''}`}>
             <CloudDraftChat
               messages={messages}
               reactions={reactions}
@@ -485,6 +492,7 @@ export default function CloudDraftRoom({
               toggleReaction={toggleReaction}
               endRef={chatEndRef}
             />
+            </div>
           </aside>
         </div>}
 
