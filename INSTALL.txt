@@ -1,21 +1,22 @@
-FANTASY MPL — PRODUCTION AUDIT HOTFIX
+FANTASY MPL — DRAFT INTELLIGENCE ADMIN REDESIGN
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-production-audit-hotfix folder.
-3. Replace app/draft-lab.css.
-4. Commit message:
-   Fix public Live Draft header contrast
+2. Do not copy the outer fantasy-mpl-draft-intelligence-redesign folder.
+3. Replace the matching files.
+4. Optional cleanup: delete app/ordered-draft-import.css. It is no longer imported.
+5. Commit message:
+   Redesign Draft Intelligence admin workspace
 
 No Supabase migration is required.
 
-Verified after the production audit:
-- all public routes return HTTP 200
-- security headers are present
-- desktop Live Draft interaction works
-- mobile Live Draft interaction works
-- region switching works
-- no browser console errors
-- no uncaught page errors
-- no failed network responses
-- npm audit reports zero vulnerabilities
-- TypeScript and production build pass
+New workspace tabs:
+- Overview
+- Sources
+- Patch & Data
+- Draft Import
+- Model
+
+Typography:
+- Sora for headings, key values and controls
+- Plus Jakarta Sans for body copy, labels and form content
+- Larger labels, inputs, help text and status messages
