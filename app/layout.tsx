@@ -8,6 +8,7 @@ import './prediction-windows.css';
 import './draft-lab.css';
 import './draft-tool-redesign.css';
 import './draft-mobile-finish.css';
+import './draft-side-branding.css';
 import './draft-intelligence.css';
 import './regional-operations.css';
 import './profile-reliability.css';
