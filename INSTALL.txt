@@ -1,19 +1,23 @@
-FANTASY MPL — GENERIC CURRENT-PATCH DRAFT TOOL
+FANTASY MPL — LIVE DRAFT UI REBUILD
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-generic-draft-tool folder.
+2. Do not copy the outer fantasy-mpl-live-draft-ui-rebuild folder.
 3. Replace matching files.
 4. No Supabase migration is required.
 5. Commit message:
-   Redesign Live Draft Lab as a generic patch tool
+   Rebuild Live Draft hero picker and guidance UI
 
-VERIFY
-- /live-draft no longer shows MPL teams or game number.
-- BLUE and RED are generic sides.
-- The user can choose either side to act first.
-- Changing first side resets an existing draft only after confirmation.
-- Opening bans follow 1–2–2–1.
-- First picks follow 1–2–2–1.
-- Second bans and final picks follow 1–2–1.
-- Analysis contains Priority Ban, Potential Opposing Pick and Best Counter Pick.
-- Before a source is approved, all analysis remains DATA GATED.
+VERIFY ON MOBILE
+- Opening a ban/pick slot does not focus the search field automatically.
+- The keyboard stays closed until the user taps Search.
+- Search uses 16px text and does not trigger browser zoom.
+- The current action and guidance status appear before the hero grid.
+- Hero cards use two readable columns.
+- The turn bar no longer overlaps the side header while scrolling.
+
+VERIFY ON DESKTOP
+- Hero picker uses a six-column catalog and a dedicated guidance rail.
+- Guidance is visible while choosing a hero.
+- Priority Ban, Potential Pick and Counter Pick become clickable when verified data is available.
+- Public header has dark high-contrast styling.
+- Hero banner uses the compact Fantasy MPL Draft Intelligence identity card.
