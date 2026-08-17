@@ -136,6 +136,9 @@ const ROSTERS: Record<Region,{name:string;role:string;team:string;country:string
 
 const initialSession: Session = {dataVersion:4,name:'',email:'',country:'',fullName:'',address:'',bio:'',dob:'',avatar:'',accountRole:'user',joined:[],picks:{},exactScores:{},submittedAt:{},captains:{},rosters:{},transfers:{}};
 function withTimeout<T>(request:PromiseLike<T>,milliseconds=12000,message='Request timed out'):Promise<T>{return Promise.race([Promise.resolve(request),new Promise<T>((_,reject)=>window.setTimeout(()=>reject(new Error(message)),milliseconds))])}
+async function retryTransient<T>(operation:()=>Promise<T>,attempts=2):Promise<T>{let lastError:unknown;for(let attempt=0;attempt<attempts;attempt+=1){try{return await operation()}catch(error){lastError=error;if(attempt<attempts-1)await new Promise(resolve=>window.setTimeout(resolve,700))}}throw lastError}
+function profileDataUrlToBlob(dataUrl:string):Blob{const [header,payload]=dataUrl.split(',');if(!header||!payload)throw new Error('Profile photo data is invalid. Please choose the image again.');const mime=header.match(/^data:([^;]+);base64$/)?.[1]||'image/jpeg';const binary=window.atob(payload);const bytes=new Uint8Array(binary.length);for(let index=0;index<binary.length;index+=1)bytes[index]=binary.charCodeAt(index);return new Blob([bytes],{type:mime})}
+function startupErrorMessage(error:unknown){const message=error instanceof Error?error.message:String(error);return /load failed|fetch/i.test(message)?'The network request failed twice. Check your connection and try again.':message||'Unable to prepare your account.'}
 
 export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   const [ready,setReady]=useState(false);
@@ -161,7 +164,7 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
     async function hydrate(user:User|null){
       if(mounted)setStartupError('');
       if(!user){if(mounted){setCloudUserId('');setSession(initialSession);setReady(true)}return}
-      const {data:bootstrap,error:bootstrapError}=await withTimeout(supabase!.rpc('my_account_bootstrap'),12000,'Account data took too long to load.');
+      const {data:bootstrap,error:bootstrapError}=await retryTransient(async()=>{const result=await withTimeout(supabase!.rpc('my_account_bootstrap'),7000,'Account data took too long to load.');if(result.error&&/load failed|fetch/i.test(result.error.message))throw result.error;return result},2);
       if(bootstrapError)throw new Error(bootstrapError.message);
       const account=bootstrap as unknown as {profile:{manager_name:string;country_code:string;avatar_url:string|null;bio:string|null;account_role:string}|null;private_profile:{full_name:string;address:string|null;date_of_birth:string|null}|null;memberships:string[]};
       const profile=account.profile,privateProfile=account.private_profile,memberships=account.memberships||[];
@@ -173,8 +176,8 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
       setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:initialRegion&&joined.includes(initialRegion)?initialRegion:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
       setReady(true);
     }
-    withTimeout(supabase.auth.getSession(),10000,'Secure session took too long to load.').then(({data,error})=>{if(error)throw error;return hydrate(data.session?.user||null)}).catch(error=>{if(mounted){setStartupError(error instanceof Error?error.message:'Unable to prepare your account.');setReady(true)}});
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((event,authSession)=>{if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;setTimeout(()=>{hydrate(authSession?.user||null).catch(error=>{if(mounted){setStartupError(error instanceof Error?error.message:'Unable to refresh your account.');setReady(true)}})},0)});
+    retryTransient(()=>withTimeout(supabase!.auth.getSession(),6000,'Secure session took too long to load.'),2).then(({data,error})=>{if(error)throw error;return hydrate(data.session?.user||null)}).catch(error=>{if(mounted){setStartupError(startupErrorMessage(error));setReady(true)}});
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((event,authSession)=>{if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;setTimeout(()=>{hydrate(authSession?.user||null).catch(error=>{if(mounted){setStartupError(startupErrorMessage(error));setReady(true)}})},0)});
     return()=>{mounted=false;subscription.unsubscribe()};
   },[]);
   useEffect(()=>{ if(ready && session.email && !supabaseConfigured) localStorage.setItem('fmpl_session',JSON.stringify(session)); },[session,ready]);
@@ -201,13 +204,13 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
     try{
       let avatarUrl=profile.avatar??session.avatar;
       if(avatarUrl?.startsWith('data:')){
-        const blob=await fetch(avatarUrl).then(response=>response.blob());
+        const blob=profileDataUrlToBlob(avatarUrl);
         const path=`${cloudUserId}/profile.jpg`;
-        const {error:uploadError}=await withTimeout(supabase.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'}),15000,'Profile photo upload timed out.');
+        const {error:uploadError}=await retryTransient(async()=>{const result=await withTimeout(supabase!.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'}),10000,'Profile photo upload timed out.');if(result.error&&/load failed|fetch/i.test(result.error.message))throw result.error;return result},2);
         if(uploadError){notify(uploadError.message);return false}
         avatarUrl=supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl+`?v=${Date.now()}`;
       }
-      const {data,error}=await withTimeout(supabase.rpc('update_my_profile',{
+      const {data,error}=await retryTransient(async()=>{const result=await withTimeout(supabase!.rpc('update_my_profile',{
         new_manager_name:profile.name??session.name,
         new_country_code:profile.country??session.country,
         new_bio:profile.bio??session.bio,
@@ -215,13 +218,13 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
         new_full_name:profile.fullName??session.fullName,
         new_address:profile.address??session.address,
         new_date_of_birth:(profile.dob??session.dob)||null
-      }),15000,'Profile save timed out.');
+      }),10000,'Profile save timed out.');if(result.error&&/load failed|fetch/i.test(result.error.message))throw result.error;return result},2);
       if(error){notify(error.message);return false}
       const result=data as {saved?:boolean};if(!result?.saved){notify('Supabase did not confirm the profile update.');return false}
       if(profile.avatar===''&&session.avatar){const {error:removeError}=await supabase.storage.from('avatars').remove([`${cloudUserId}/profile.jpg`]);if(removeError)notify(`Profile saved, but old photo cleanup failed: ${removeError.message}`)}
       setSession(s=>({...s,...profile,avatar:avatarUrl||''}));
       return true;
-    }catch(error){notify(error instanceof Error?error.message:'Unable to save profile.');return false}
+    }catch(error){const message=error instanceof Error?error.message:String(error);notify(/load failed|fetch/i.test(message)?'Network request failed twice while saving. Check your connection and try again.':message||'Unable to save profile.');return false}
   }
   function savePick(key:string,value:string){ setSession(s=>({...s,picks:{...s.picks,[key]:value}})); }
   function saveScore(key:string,value:string){setSession(s=>({...s,exactScores:{...s.exactScores,[key]:value}}))}

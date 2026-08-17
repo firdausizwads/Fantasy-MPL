@@ -1,32 +1,18 @@
-FANTASY MPL — PROFILE PERSISTENCE AND STARTUP RECOVERY
+FANTASY MPL — PROFILE NETWORK HOTFIX
 
-A. DATABASE FIRST
-1. Open Supabase Dashboard > SQL Editor.
-2. Run:
-   supabase/migrations/023_atomic_profile_updates.sql
-3. Expected:
+1. Copy the CONTENTS of this folder into the repository root.
+2. Do not copy the outer fantasy-mpl-profile-network-hotfix folder.
+3. Replace app/page.tsx.
+4. No new Supabase migration is required if Migration 023 already returned:
    atomic_profile_save_ready: true
    account_bootstrap_ready: true
+5. Commit message:
+   Fix mobile avatar upload and transient account loading
 
-B. APPLICATION FILES
-1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-profile-persistence-recovery folder.
-3. Replace matching files.
-
-C. COMMIT
-  Fix profile persistence and account startup recovery
-
-D. VERIFY AFTER DEPLOYMENT
-Use a normal non-admin account:
-1. Change manager name and bio, then save.
-2. Wait for: Profile updated and confirmed by Supabase.
-3. Refresh and confirm the values remain.
-4. Upload a small JPG/PNG/WebP, save, refresh and confirm it remains.
-5. Sign out and sign back in, then confirm the same profile data remains.
-
-BEHAVIOR CHANGES
-- Profile success appears only after Supabase confirms the atomic update.
-- Upload/save operations time out with a real error instead of false success.
-- Account startup uses one bootstrap RPC instead of three profile requests.
-- Duplicate initial auth hydration is removed.
-- A failed/slow startup shows a retry screen after 12 seconds instead of an endless Preparing the arena screen.
+FIXES
+- Converts canvas data URLs directly to binary instead of fetch(data:...), avoiding mobile/Safari Load failed errors.
+- Retries one transient avatar upload failure.
+- Retries one transient atomic profile-save failure.
+- Retries session and account bootstrap once before showing recovery.
+- Ignores duplicate INITIAL_SESSION/TOKEN_REFRESHED hydration events.
+- Shows a clearer network error only after both attempts fail.
