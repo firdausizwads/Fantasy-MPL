@@ -6,6 +6,7 @@ import './globals.css';
 import './dashboard-real.css';
 import './prediction-windows.css';
 import './draft-lab.css';
+import './draft-tool-redesign.css';
 import './draft-intelligence.css';
 import './regional-operations.css';
 import './profile-reliability.css';

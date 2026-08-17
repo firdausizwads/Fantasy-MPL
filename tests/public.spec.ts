@@ -131,7 +131,7 @@ test.describe('public experience', () => {
 
   test('public Live Draft Lab records a legal draft action without login', async ({ page }) => {
     await page.goto('/live-draft');
-    await expect(page.getByRole('heading', { name: /Follow the draft/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Build the draft/i })).toBeVisible();
     await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/api/draft-model')))).toBeTruthy();
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
     await page.getByRole('button', { name: /ATLAS.*ROAM/i }).click();

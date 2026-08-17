@@ -1,18 +1,19 @@
-FANTASY MPL — PROFILE NETWORK HOTFIX
+FANTASY MPL — GENERIC CURRENT-PATCH DRAFT TOOL
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-profile-network-hotfix folder.
-3. Replace app/page.tsx.
-4. No new Supabase migration is required if Migration 023 already returned:
-   atomic_profile_save_ready: true
-   account_bootstrap_ready: true
+2. Do not copy the outer fantasy-mpl-generic-draft-tool folder.
+3. Replace matching files.
+4. No Supabase migration is required.
 5. Commit message:
-   Fix mobile avatar upload and transient account loading
+   Redesign Live Draft Lab as a generic patch tool
 
-FIXES
-- Converts canvas data URLs directly to binary instead of fetch(data:...), avoiding mobile/Safari Load failed errors.
-- Retries one transient avatar upload failure.
-- Retries one transient atomic profile-save failure.
-- Retries session and account bootstrap once before showing recovery.
-- Ignores duplicate INITIAL_SESSION/TOKEN_REFRESHED hydration events.
-- Shows a clearer network error only after both attempts fail.
+VERIFY
+- /live-draft no longer shows MPL teams or game number.
+- BLUE and RED are generic sides.
+- The user can choose either side to act first.
+- Changing first side resets an existing draft only after confirmation.
+- Opening bans follow 1–2–2–1.
+- First picks follow 1–2–2–1.
+- Second bans and final picks follow 1–2–1.
+- Analysis contains Priority Ban, Potential Opposing Pick and Best Counter Pick.
+- Before a source is approved, all analysis remains DATA GATED.
