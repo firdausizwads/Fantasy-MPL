@@ -1,34 +1,34 @@
-FANTASY MPL — REGIONAL SCALING PHASE 2
+FANTASY MPL — OBSERVABILITY AND SAFE LOAD TESTING
 
-A. DATABASE FIRST
-1. Open Supabase Dashboard > SQL Editor.
-2. Run:
-   supabase/migrations/022_regional_operations_and_leaderboard_snapshots.sql
-3. Expected:
-   feature_flags_ready: true
-   snapshots_ready: true
-   refresh_ready: true
-
-B. APPLICATION FILES
+A. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-regional-scaling-phase2 folder.
-3. Replace matching files.
+2. Do not copy the outer fantasy-mpl-observability-load-test folder.
+3. Replace package.json and matching files.
+4. No npm dependency or Supabase migration is required.
 
-C. COMMIT
-  Add regional operations and leaderboard snapshots
+B. COMMIT
+  Add production health checks and safe regional load tests
 
-D. VERIFY
-1. Sign in as super-admin.
-2. Open Admin Console > Regional operations.
-3. Confirm all five regional features show OPEN.
-4. Confirm the screen identifies only the currently active region.
-5. Click REFRESH OVERALL. With no score data, 0 rows is correct.
+C. VERIFY AFTER DEPLOYMENT
+Open:
+  https://fantasy-mpl-phi.vercel.app/api/health
+Expected:
+  status: ok
+  database: reachable
+  MY, ID and PH: status ok
 
-E. IMPORTANT BEHAVIOR
-- A paused feature affects only MY, ID or PH — never all three.
-- Database prediction/MVP write protection is immediate.
-- Public pause banners are CDN-cached for up to 15 seconds.
-- Same prediction row cannot be resubmitted more than once every 3 seconds.
-- Batch submissions across different matches remain valid.
-- Scoring now rebuilds overall and weekly leaderboard snapshots automatically.
-- Public leaderboards read snapshots instead of aggregating the full ledger.
+D. GITHUB SMOKE
+GitHub > Actions > Production smoke > Run workflow
+The same smoke check also runs every 6 hours.
+
+E. LOAD TEST — PREVIEW ONLY
+1. Create or use a Vercel Preview deployment.
+2. Install k6 on Windows:
+   winget install k6.k6
+3. Reopen PowerShell.
+4. In the repository folder:
+   $env:BASE_URL="https://YOUR-PREVIEW-DEPLOYMENT.vercel.app"
+   npm run load:regional
+
+The script blocks the production URL unless an explicit override is provided.
+Do not override that protection during closed beta.
