@@ -92,6 +92,23 @@ test.describe('public experience', () => {
     await expect(submit).toBeEnabled();
   });
 
+  test('profile save waits for confirmation and survives refresh', async ({ page, isMobile }) => {
+    test.skip(Boolean(isMobile), 'Desktop persistence flow is sufficient for local fallback coverage.');
+    await page.addInitScript(() => { if (!localStorage.getItem('fmpl_session')) localStorage.setItem('fmpl_session', JSON.stringify({
+      dataVersion:4,name:'ProfileManager',email:'profile@example.com',country:'MY',fullName:'Profile Test Manager',
+      address:'',bio:'',dob:'',avatar:'',accountRole:'user',joined:['MY'],active:'MY',picks:{},exactScores:{},
+      submittedAt:{},captains:{},rosters:{},transfers:{}
+    })); });
+    await page.goto('/my#profile');
+    await page.getByLabel('MANAGER NAME').fill('SavedManager');
+    await page.getByLabel(/BIO · OPTIONAL/i).fill('Verified local persistence test.');
+    await page.getByRole('button', { name: 'SAVE PROFILE CHANGES' }).click();
+    await expect(page.getByText(/Profile updated and confirmed/i)).toBeVisible();
+    await page.reload();
+    await expect(page.getByLabel('MANAGER NAME')).toHaveValue('SavedManager');
+    await expect(page.getByLabel(/BIO · OPTIONAL/i)).toHaveValue('Verified local persistence test.');
+  });
+
   test('active section survives a full page refresh', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('fmpl_session', JSON.stringify({

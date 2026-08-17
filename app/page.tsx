@@ -135,9 +135,11 @@ const ROSTERS: Record<Region,{name:string;role:string;team:string;country:string
 };
 
 const initialSession: Session = {dataVersion:4,name:'',email:'',country:'',fullName:'',address:'',bio:'',dob:'',avatar:'',accountRole:'user',joined:[],picks:{},exactScores:{},submittedAt:{},captains:{},rosters:{},transfers:{}};
+function withTimeout<T>(request:PromiseLike<T>,milliseconds=12000,message='Request timed out'):Promise<T>{return Promise.race([Promise.resolve(request),new Promise<T>((_,reject)=>window.setTimeout(()=>reject(new Error(message)),milliseconds))])}
 
 export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   const [ready,setReady]=useState(false);
+  const [startupError,setStartupError]=useState('');
   const [session,setSession]=useState<Session>(initialSession);
   const [view,setView]=useState<View>('dashboard');
   const [regionModal,setRegionModal]=useState(false);
@@ -157,22 +159,22 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
     }
     let mounted=true;
     async function hydrate(user:User|null){
+      if(mounted)setStartupError('');
       if(!user){if(mounted){setCloudUserId('');setSession(initialSession);setReady(true)}return}
-      const [{data:profile},{data:privateProfile},{data:memberships}]=await Promise.all([
-        supabase!.from('profiles').select('manager_name,country_code,avatar_url,bio,account_role').eq('id',user.id).maybeSingle(),
-        supabase!.from('profile_private').select('full_name,address,date_of_birth').eq('user_id',user.id).maybeSingle(),
-        supabase!.from('region_memberships').select('region_code').eq('user_id',user.id).order('joined_at')
-      ]);
+      const {data:bootstrap,error:bootstrapError}=await withTimeout(supabase!.rpc('my_account_bootstrap'),12000,'Account data took too long to load.');
+      if(bootstrapError)throw new Error(bootstrapError.message);
+      const account=bootstrap as unknown as {profile:{manager_name:string;country_code:string;avatar_url:string|null;bio:string|null;account_role:string}|null;private_profile:{full_name:string;address:string|null;date_of_birth:string|null}|null;memberships:string[]};
+      const profile=account.profile,privateProfile=account.private_profile,memberships=account.memberships||[];
       if(!mounted)return;
-      const joined=((memberships||[]).map((item)=>item.region_code).filter((code:string)=>['MY','ID','PH'].includes(code))) as Region[];
+      const joined=memberships.filter((code:string)=>['MY','ID','PH'].includes(code)) as Region[];
       let storedRegion:Region|undefined;try{const raw=localStorage.getItem('fmpl_active_region');if(raw&&joined.includes(raw as Region))storedRegion=raw as Region}catch{}
       setCloudUserId(user.id);
       const accountRole:Session['accountRole']=['admin','super_admin','creator'].includes(profile?.account_role||'')?(profile!.account_role as Session['accountRole']):'user';
       setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:initialRegion&&joined.includes(initialRegion)?initialRegion:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
       setReady(true);
     }
-    supabase.auth.getSession().then(({data})=>hydrate(data.session?.user||null));
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,authSession)=>{setTimeout(()=>hydrate(authSession?.user||null),0)});
+    withTimeout(supabase.auth.getSession(),10000,'Secure session took too long to load.').then(({data,error})=>{if(error)throw error;return hydrate(data.session?.user||null)}).catch(error=>{if(mounted){setStartupError(error instanceof Error?error.message:'Unable to prepare your account.');setReady(true)}});
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((event,authSession)=>{if(event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED')return;setTimeout(()=>{hydrate(authSession?.user||null).catch(error=>{if(mounted){setStartupError(error instanceof Error?error.message:'Unable to refresh your account.');setReady(true)}})},0)});
     return()=>{mounted=false;subscription.unsubscribe()};
   },[]);
   useEffect(()=>{ if(ready && session.email && !supabaseConfigured) localStorage.setItem('fmpl_session',JSON.stringify(session)); },[session,ready]);
@@ -181,7 +183,8 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   const isAdmin=session.accountRole==='admin'||session.accountRole==='super_admin';
   useEffect(()=>{if(view==='admin'&&!isAdmin)setView('dashboard')},[view,isAdmin]);
 
-  if(!ready) return <div className="loading"><Logo/><span>Preparing the arena…</span></div>;
+  if(!ready) return <div className="loading"><Logo/><span>Preparing the arena…</span><small>Securely loading your account and regional data.</small></div>;
+  if(startupError) return <div className="startupRecovery"><Logo/><span>ACCOUNT CONNECTION ISSUE</span><h1>We could not prepare the arena.</h1><p>{startupError}</p><button onClick={()=>window.location.reload()}>TRY AGAIN</button><small>Your account data was not changed.</small></div>;
   if(!session.email) return <Auth onComplete={(fullName,name,email,country)=>setSession({...initialSession,fullName,name,email,country})}/>;
   if(!session.country) return <CountrySetup name={session.name} onComplete={country=>setSession(s=>({...s,country}))}/>;
   if(!session.active) return <RegionGate joined={session.joined} onChoose={(r)=>joinRegion(r)} />;
@@ -193,21 +196,32 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
     setRegionModal(false);setView('dashboard');notify(`${REGIONS[region].name} selected`);
   }
   async function signOut(){if(supabase)await supabase.auth.signOut();localStorage.removeItem('fmpl_session');setCloudUserId('');setSession(initialSession);setView('dashboard');}
-  async function saveProfile(profile:Partial<Session>){
-    if(!supabase||!cloudUserId){setSession(s=>({...s,...profile}));return}
-    let avatarUrl=profile.avatar??session.avatar;
-    if(avatarUrl?.startsWith('data:')){
-      const blob=await fetch(avatarUrl).then(response=>response.blob());
-      const path=`${cloudUserId}/profile.jpg`;
-      const {error:uploadError}=await supabase.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'});
-      if(uploadError){notify(uploadError.message);return}
-      avatarUrl=supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl+`?v=${Date.now()}`;
-    }
-    const {error:publicError}=await supabase.from('profiles').update({manager_name:profile.name??session.name,country_code:profile.country??session.country,bio:profile.bio??session.bio,avatar_url:avatarUrl||null}).eq('id',cloudUserId);
-    if(publicError){notify(publicError.message);return}
-    const {error:privateError}=await supabase.from('profile_private').update({full_name:profile.fullName??session.fullName,address:profile.address||null,date_of_birth:profile.dob||null}).eq('user_id',cloudUserId);
-    if(privateError){notify(privateError.message);return}
-    setSession(s=>({...s,...profile,avatar:avatarUrl||''}));
+  async function saveProfile(profile:Partial<Session>):Promise<boolean>{
+    if(!supabase||!cloudUserId){setSession(s=>({...s,...profile}));return true}
+    try{
+      let avatarUrl=profile.avatar??session.avatar;
+      if(avatarUrl?.startsWith('data:')){
+        const blob=await fetch(avatarUrl).then(response=>response.blob());
+        const path=`${cloudUserId}/profile.jpg`;
+        const {error:uploadError}=await withTimeout(supabase.storage.from('avatars').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'}),15000,'Profile photo upload timed out.');
+        if(uploadError){notify(uploadError.message);return false}
+        avatarUrl=supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl+`?v=${Date.now()}`;
+      }
+      const {data,error}=await withTimeout(supabase.rpc('update_my_profile',{
+        new_manager_name:profile.name??session.name,
+        new_country_code:profile.country??session.country,
+        new_bio:profile.bio??session.bio,
+        new_avatar_url:avatarUrl||'',
+        new_full_name:profile.fullName??session.fullName,
+        new_address:profile.address??session.address,
+        new_date_of_birth:(profile.dob??session.dob)||null
+      }),15000,'Profile save timed out.');
+      if(error){notify(error.message);return false}
+      const result=data as {saved?:boolean};if(!result?.saved){notify('Supabase did not confirm the profile update.');return false}
+      if(profile.avatar===''&&session.avatar){const {error:removeError}=await supabase.storage.from('avatars').remove([`${cloudUserId}/profile.jpg`]);if(removeError)notify(`Profile saved, but old photo cleanup failed: ${removeError.message}`)}
+      setSession(s=>({...s,...profile,avatar:avatarUrl||''}));
+      return true;
+    }catch(error){notify(error instanceof Error?error.message:'Unable to save profile.');return false}
   }
   function savePick(key:string,value:string){ setSession(s=>({...s,picks:{...s.picks,[key]:value}})); }
   function saveScore(key:string,value:string){setSession(s=>({...s,exactScores:{...s.exactScores,[key]:value}}))}

@@ -2003,6 +2003,19 @@ export type Database = {
       export_my_data: { Args: Record<PropertyKey, never>; Returns: Json }
       delete_my_account: { Args: { confirmation_name: string }; Returns: undefined }
       my_dashboard_summary: { Args: { target_region: string }; Returns: Json }
+      my_account_bootstrap: { Args: Record<PropertyKey, never>; Returns: Json }
+      update_my_profile: {
+        Args: {
+          new_manager_name: string
+          new_country_code: string
+          new_bio: string
+          new_avatar_url: string
+          new_full_name: string
+          new_address: string
+          new_date_of_birth: string | null
+        }
+        Returns: Json
+      }
       beta_activity_counts: { Args: Record<PropertyKey, never>; Returns: Json }
       preview_beta_activity_reset: { Args: Record<PropertyKey, never>; Returns: Json }
       run_beta_activity_reset: { Args: { confirmation: string }; Returns: Json }

@@ -1,34 +1,32 @@
-FANTASY MPL — OBSERVABILITY AND SAFE LOAD TESTING
+FANTASY MPL — PROFILE PERSISTENCE AND STARTUP RECOVERY
 
-A. APPLICATION FILES
+A. DATABASE FIRST
+1. Open Supabase Dashboard > SQL Editor.
+2. Run:
+   supabase/migrations/023_atomic_profile_updates.sql
+3. Expected:
+   atomic_profile_save_ready: true
+   account_bootstrap_ready: true
+
+B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-observability-load-test folder.
-3. Replace package.json and matching files.
-4. No npm dependency or Supabase migration is required.
+2. Do not copy the outer fantasy-mpl-profile-persistence-recovery folder.
+3. Replace matching files.
 
-B. COMMIT
-  Add production health checks and safe regional load tests
+C. COMMIT
+  Fix profile persistence and account startup recovery
 
-C. VERIFY AFTER DEPLOYMENT
-Open:
-  https://fantasy-mpl-phi.vercel.app/api/health
-Expected:
-  status: ok
-  database: reachable
-  MY, ID and PH: status ok
+D. VERIFY AFTER DEPLOYMENT
+Use a normal non-admin account:
+1. Change manager name and bio, then save.
+2. Wait for: Profile updated and confirmed by Supabase.
+3. Refresh and confirm the values remain.
+4. Upload a small JPG/PNG/WebP, save, refresh and confirm it remains.
+5. Sign out and sign back in, then confirm the same profile data remains.
 
-D. GITHUB SMOKE
-GitHub > Actions > Production smoke > Run workflow
-The same smoke check also runs every 6 hours.
-
-E. LOAD TEST — PREVIEW ONLY
-1. Create or use a Vercel Preview deployment.
-2. Install k6 on Windows:
-   winget install k6.k6
-3. Reopen PowerShell.
-4. In the repository folder:
-   $env:BASE_URL="https://YOUR-PREVIEW-DEPLOYMENT.vercel.app"
-   npm run load:regional
-
-The script blocks the production URL unless an explicit override is provided.
-Do not override that protection during closed beta.
+BEHAVIOR CHANGES
+- Profile success appears only after Supabase confirms the atomic update.
+- Upload/save operations time out with a real error instead of false success.
+- Account startup uses one bootstrap RPC instead of three profile requests.
+- Duplicate initial auth hydration is removed.
+- A failed/slow startup shows a retry screen after 12 seconds instead of an endless Preparing the arena screen.

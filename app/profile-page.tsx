@@ -39,7 +39,7 @@ function ProfileGlyph() {
 
 export default function ProfilePage({ session, save, notify, PageBanner }: {
   session: ProfileSession;
-  save: (profile: Partial<ProfileSession>) => void;
+  save: (profile: Partial<ProfileSession>) => Promise<boolean>;
   notify: (message: string) => void;
   PageBanner: ComponentType<PageBannerProps>;
 }) {
@@ -75,11 +75,13 @@ export default function ProfilePage({ session, save, notify, PageBanner }: {
     reader.readAsDataURL(file);
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (fullName.trim().length < 3) { notify('Full name is required.'); return; }
-    save({ fullName: fullName.trim(), name: name.trim() || session.name, country, address: address.trim(), bio: bio.trim(), dob, avatar });
-    notify('Profile updated successfully.');
+    setBusy(true);
+    const saved = await save({ fullName: fullName.trim(), name: name.trim() || session.name, country, address: address.trim(), bio: bio.trim(), dob, avatar });
+    setBusy(false);
+    if (saved) notify('Profile updated and confirmed by Supabase.');
   }
 
   async function exportData() {
@@ -131,7 +133,7 @@ export default function ProfilePage({ session, save, notify, PageBanner }: {
     <PageBanner tag="MANAGER ACCOUNT" title="My Profile" copy="Manage your public identity and optional personal information." side={<LocalFlag code={country}/>} sideLabel={selectedCountry.name.toUpperCase()}/>
     <div className="profileLayout">
       <aside className="profileIdentity"><div className="avatarEditor"><div>{avatar?<img src={avatar} alt="Profile preview"/>:<span>{name.slice(0,2).toUpperCase()}</span>}</div><label><ProfileGlyph/> UPLOAD PHOTO<input type="file" accept="image/png,image/jpeg,image/webp" onChange={event=>upload(event.target.files?.[0])}/></label>{avatar&&<button onClick={()=>setAvatar('')}>REMOVE PHOTO</button>}</div><h2>{name}</h2><p><LocalFlag code={country}/> {selectedCountry.name}</p><span>FANTASY MPL MANAGER</span><div className="profilePublicNote"><b>PUBLIC</b><p>YOUR MANAGER NAME, PHOTO, COUNTRY AND BIO MAY APPEAR ON LEADERBOARDS.</p></div></aside>
-      <form className="profileForm" onSubmit={submit}><div className="profileFormHead"><div><h2>PROFILE INFORMATION</h2><p>ONLY YOUR FULL NAME IS REQUIRED. ALL OTHER PERSONAL DETAILS ARE OPTIONAL.</p></div><span>* REQUIRED</span></div><div className="profileFields"><label>FULL NAME *<input value={fullName} onChange={event=>setFullName(event.target.value)} placeholder="YOUR FULL NAME"/></label><label>MANAGER NAME<input value={name} onChange={event=>setName(event.target.value)} placeholder="PUBLIC DISPLAY NAME"/></label><label>COUNTRY<select value={country} onChange={event=>setCountry(event.target.value)}>{COUNTRIES.map(item=><option key={item.code} value={item.code}>{item.name.toUpperCase()}</option>)}</select></label><label>DATE OF BIRTH · OPTIONAL<input type="date" value={dob} onChange={event=>setDob(event.target.value)}/></label><label className="fullField">ADDRESS · OPTIONAL<input value={address} onChange={event=>setAddress(event.target.value)} placeholder="CITY, STATE OR FULL ADDRESS"/></label><label className="fullField">BIO · OPTIONAL<textarea maxLength={180} value={bio} onChange={event=>setBio(event.target.value)} placeholder="TELL THE COMMUNITY ABOUT YOURSELF, YOUR FAVORITE TEAM OR YOUR FANTASY STYLE."/><small>{bio.length} / 180</small></label></div><div className="privacyNotice"><span>◈</span><p><b>PRIVACY CONTROL</b><br/>ADDRESS AND DATE OF BIRTH WILL NEVER BE SHOWN ON PUBLIC LEADERBOARDS.</p></div><button className="primary" type="submit">SAVE PROFILE CHANGES</button></form>
+      <form className="profileForm" onSubmit={submit}><div className="profileFormHead"><div><h2>PROFILE INFORMATION</h2><p>ONLY YOUR FULL NAME IS REQUIRED. ALL OTHER PERSONAL DETAILS ARE OPTIONAL.</p></div><span>* REQUIRED</span></div><div className="profileFields"><label>FULL NAME *<input value={fullName} onChange={event=>setFullName(event.target.value)} placeholder="YOUR FULL NAME"/></label><label>MANAGER NAME<input value={name} onChange={event=>setName(event.target.value)} placeholder="PUBLIC DISPLAY NAME"/></label><label>COUNTRY<select value={country} onChange={event=>setCountry(event.target.value)}>{COUNTRIES.map(item=><option key={item.code} value={item.code}>{item.name.toUpperCase()}</option>)}</select></label><label>DATE OF BIRTH · OPTIONAL<input type="date" value={dob} onChange={event=>setDob(event.target.value)}/></label><label className="fullField">ADDRESS · OPTIONAL<input value={address} onChange={event=>setAddress(event.target.value)} placeholder="CITY, STATE OR FULL ADDRESS"/></label><label className="fullField">BIO · OPTIONAL<textarea maxLength={180} value={bio} onChange={event=>setBio(event.target.value)} placeholder="TELL THE COMMUNITY ABOUT YOURSELF, YOUR FAVORITE TEAM OR YOUR FANTASY STYLE."/><small>{bio.length} / 180</small></label></div><div className="privacyNotice"><span>◈</span><p><b>PRIVACY CONTROL</b><br/>ADDRESS AND DATE OF BIRTH WILL NEVER BE SHOWN ON PUBLIC LEADERBOARDS.</p></div><button className="primary" type="submit" disabled={busy}>{busy?'SAVING TO CLOUD…':'SAVE PROFILE CHANGES'}</button></form>
     </div>
 
     <section className="accountSafety"><div><span>ACCOUNT & PRIVACY</span><h2>CONTROL YOUR FANTASY MPL DATA.</h2><p>DOWNLOAD A COPY OF YOUR ACCOUNT, OR permanently delete it after password confirmation.</p></div><div className="accountSafetyActions"><button className="secondary" disabled={busy} onClick={exportData}>DOWNLOAD MY DATA</button><button className="dangerButton" disabled={busy} onClick={()=>setDeleteOpen(!deleteOpen)}>DELETE MY ACCOUNT</button></div>{deleteOpen&&<div className="deleteAccountPanel"><h3>PERMANENT ACCOUNT DELETION</h3><p>THIS REMOVES YOUR PROFILE, PREDICTIONS, LINEUPS, MEMBERSHIPS, AVATAR AND ACCOUNT ACCESS. LEAGUES YOU COMMISSION WILL TRANSFER TO THE OLDEST ACTIVE MANAGER WHEN POSSIBLE.</p><label>TYPE YOUR MANAGER NAME<input value={deleteName} onChange={event=>setDeleteName(event.target.value)} placeholder={session.name}/></label><label>CURRENT PASSWORD<input type="password" value={deletePassword} onChange={event=>setDeletePassword(event.target.value)} autoComplete="current-password"/></label><div><button className="secondary" onClick={()=>setDeleteOpen(false)}>CANCEL</button><button className="dangerButton" disabled={busy||!deleteName||!deletePassword} onClick={deleteAccount}>{busy?'PLEASE WAIT…':'PERMANENTLY DELETE ACCOUNT'}</button></div></div>}</section>
