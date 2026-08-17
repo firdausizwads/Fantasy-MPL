@@ -1,37 +1,34 @@
-FANTASY MPL — REGIONAL SCALING PHASE 1
+FANTASY MPL — REGIONAL SCALING PHASE 2
 
 A. DATABASE FIRST
 1. Open Supabase Dashboard > SQL Editor.
 2. Run:
-   supabase/migrations/021_regional_lanes_and_model_bundle.sql
+   supabase/migrations/022_regional_operations_and_leaderboard_snapshots.sql
 3. Expected:
-   model_bundle_ready: true
+   feature_flags_ready: true
+   snapshots_ready: true
+   refresh_ready: true
 
 B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-regional-scaling-phase1 folder.
+2. Do not copy the outer fantasy-mpl-regional-scaling-phase2 folder.
 3. Replace matching files.
 
 C. COMMIT
-  Add regional traffic lanes and CDN draft model
+  Add regional operations and leaderboard snapshots
 
-D. VERIFY AFTER DEPLOYMENT
-Public routes:
-  /my
-  /id
-  /ph
-  /live-draft
-  /api/draft-model?region=MY
-  /api/draft-model?region=ID
-  /api/draft-model?region=PH
+D. VERIFY
+1. Sign in as super-admin.
+2. Open Admin Console > Regional operations.
+3. Confirm all five regional features show OPEN.
+4. Confirm the screen identifies only the currently active region.
+5. Click REFRESH OVERALL. With no score data, 0 rows is correct.
 
-The model endpoint should return HTTP 200. Before approved data exists it should
-return status.ready=false and empty metrics/relationships.
-
-E. SCALING BEHAVIOR
-- Signed-in regional navigation uses /my, /id or /ph.
-- The model bundle is cached at the CDN for 5 minutes.
-- Stale model data may be served for up to 1 hour during revalidation.
-- Live Draft Lab downloads one compact model bundle per region.
-- Hero recommendations are calculated locally in the browser.
-- Hero clicks no longer execute one Supabase recommendation RPC per user.
+E. IMPORTANT BEHAVIOR
+- A paused feature affects only MY, ID or PH — never all three.
+- Database prediction/MVP write protection is immediate.
+- Public pause banners are CDN-cached for up to 15 seconds.
+- Same prediction row cannot be resubmitted more than once every 3 seconds.
+- Batch submissions across different matches remain valid.
+- Scoring now rebuilds overall and weekly leaderboard snapshots automatically.
+- Public leaderboards read snapshots instead of aggregating the full ledger.

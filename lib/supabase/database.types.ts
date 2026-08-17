@@ -2008,6 +2008,24 @@ export type Database = {
       run_beta_activity_reset: { Args: { confirmation: string }; Returns: Json }
       draft_intelligence_status: { Args: { target_region: string }; Returns: Json }
       draft_model_bundle: { Args: { target_region: string }; Returns: Json }
+      regional_feature_status: { Args: { target_region: string }; Returns: Json }
+      admin_set_regional_feature: { Args: { target_region: string; target_feature: string; target_enabled: boolean; target_message?: string }; Returns: undefined }
+      admin_refresh_leaderboard_snapshots: { Args: { target_region: string; target_week?: string }; Returns: Json }
+      admin_regional_operations_status: { Args: { target_region: string }; Returns: Json }
+      regional_leaderboard_snapshot: {
+        Args: { target_region: string; target_season?: string; target_week?: string; max_rows?: number }
+        Returns: {
+          user_id: string
+          manager_name: string
+          country_code: string
+          avatar_url: string
+          total_points: number
+          prediction_points: number
+          fantasy_points: number
+          rank_position: number
+          generated_at: string
+        }[]
+      }
       recommend_draft_actions: {
         Args: {
           target_region: string

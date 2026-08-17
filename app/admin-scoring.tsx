@@ -166,9 +166,17 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       supabase.rpc('score_week_fantasy', { target_week: weekId }),
       supabase.rpc('score_week_predictions', { target_week: weekId })
     ]);
+    if (fantasyRes.error) { notify(fantasyRes.error.message); setBusy(false); return; }
+    if (predictionRes.error) { notify(predictionRes.error.message); setBusy(false); return; }
+    const [overallSnapshot, weekSnapshot] = await Promise.all([
+      supabase.rpc('admin_refresh_leaderboard_snapshots', { target_region: region }),
+      supabase.rpc('admin_refresh_leaderboard_snapshots', { target_region: region, target_week: weekId })
+    ]);
     setBusy(false);
-    if (fantasyRes.error) { notify(fantasyRes.error.message); return; }
-    if (predictionRes.error) { notify(predictionRes.error.message); return; }
+    if (overallSnapshot.error || weekSnapshot.error) {
+      notify(`Scoring completed, but leaderboard refresh failed: ${overallSnapshot.error?.message || weekSnapshot.error?.message}`);
+      return;
+    }
     const f = Array.isArray(fantasyRes.data) ? fantasyRes.data[0] : fantasyRes.data;
     const p = Array.isArray(predictionRes.data) ? predictionRes.data[0] : predictionRes.data;
     setLastRun({

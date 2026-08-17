@@ -92,6 +92,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   const [modelBundle, setModelBundle] = useState<ModelBundle | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [modelLoading, setModelLoading] = useState(false);
+  const [servicePause,setServicePause]=useState<string|null>(null);
   const current = DRAFT_SEQUENCE[actions.length];
   const used = useMemo(() => new Set(actions), [actions]);
 
@@ -118,11 +119,12 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   useEffect(() => {
     const controller=new AbortController();
     async function loadBundle(){
-      setModelLoading(true);setRecommendations([]);
+      setModelLoading(true);setRecommendations([]);setServicePause(null);
       try{
-        const response=await fetch(`/api/draft-model?region=${region}`,{signal:controller.signal});
-        const bundle=await response.json() as ModelBundle;
+        const [modelResponse,statusResponse]=await Promise.all([fetch(`/api/draft-model?region=${region}`,{signal:controller.signal}),fetch(`/api/region-status?region=${region}`,{signal:controller.signal})]);
+        const [bundle,status]=await Promise.all([modelResponse.json() as Promise<ModelBundle>,statusResponse.json() as Promise<{features?:Record<string,{enabled:boolean;message?:string|null}>}>]);
         if(controller.signal.aborted)return;
+        const draftFlag=status.features?.draft_lab;setServicePause(draftFlag?.enabled===false?(draftFlag.message||'Live Draft Lab is temporarily paused for this region.'):null);
         setModelBundle(bundle);setIntelligence(bundle.status);
       }catch(error){
         if(controller.signal.aborted)return;
@@ -180,6 +182,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   const filtered = ALL_HEROES.filter(hero => !used.has(hero) && (role === 'ALL' || HEROES[role].includes(hero)) && hero.includes(search.trim().toUpperCase()));
   const team = (code: string) => teams.find(item => item.code === code) || teams[0];
 
+  if(servicePause)return <div className="page liveDraftLab"><section className="regionalPause"><span>REGIONAL SERVICE CONTROL</span><img src={REGION_LOGO[region]} alt=""/><h1>Live Draft Lab is temporarily paused.</h1><p>{servicePause}</p><button onClick={()=>window.location.reload()}>CHECK STATUS AGAIN</button></section></div>;
   return <div className="page liveDraftLab">
     <section className="draftLabHero"><div><span>INTERACTIVE BROADCAST COMPANION · {REGION_NAME[region]}</span><h1>FOLLOW THE DRAFT.<br/><em>READ THE NEXT MOVE.</em></h1><p>MIRROR EACH PICK AND BAN FROM THE OFFICIAL BROADCAST. THE DRAFT ENGINE TRACKS AVAILABILITY WHILE VERIFIED MODEL INTELLIGENCE IS PREPARED.</p><div><button className={mode === 'companion' ? 'active' : ''} onClick={() => setMode('companion')}>LIVE COMPANION</button><button className={mode === 'sandbox' ? 'active' : ''} onClick={() => setMode('sandbox')}>SANDBOX</button></div></div><div className="draftLabMark"><img src={REGION_LOGO[region]} alt={`${REGION_NAME[region]} logo`}/><span>UNOFFICIAL COMPANION</span></div></section>
 

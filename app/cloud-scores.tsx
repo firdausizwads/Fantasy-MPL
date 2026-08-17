@@ -75,7 +75,7 @@ export function CloudDashboard({
         return;
       }
       const nextSummary = rawSummary as unknown as DashboardSummary;
-      const leaderboardRequest = supabase.rpc('regional_leaderboard', { target_region: region, target_season: nextSummary.season_id || undefined, max_rows: 5 });
+      const leaderboardRequest = supabase.rpc('regional_leaderboard_snapshot', { target_region: region, target_season: nextSummary.season_id || undefined, max_rows: 5 });
       const matchRequest = nextSummary.week_id
         ? supabase.from('matches').select('id,scheduled_at,status,home_team_id,away_team_id,home_team:teams!matches_home_team_id_fkey(code,name,logo_url),away_team:teams!matches_away_team_id_fkey(code,name,logo_url)').eq('week_id', nextSummary.week_id).neq('status', 'cancelled').order('scheduled_at').limit(4)
         : Promise.resolve({ data: [], error: null });
@@ -188,7 +188,7 @@ export function CloudLeaderboard({
       const { data: season } = await supabase.from('seasons').select('id')
         .eq('region_code', region).in('status', ['published', 'active', 'completed'])
         .order('season_number', { ascending: false }).limit(1).maybeSingle();
-      const { data } = await supabase.rpc('regional_leaderboard', {
+      const { data } = await supabase.rpc('regional_leaderboard_snapshot', {
         target_region: region, target_season: season?.id, max_rows: 100
       });
       if (!mounted) return;
