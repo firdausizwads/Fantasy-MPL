@@ -135,7 +135,7 @@ const ROSTERS: Record<Region,{name:string;role:string;team:string;country:string
 
 const initialSession: Session = {dataVersion:4,name:'',email:'',country:'',fullName:'',address:'',bio:'',dob:'',avatar:'',accountRole:'user',joined:[],picks:{},exactScores:{},submittedAt:{},captains:{},rosters:{},transfers:{}};
 
-export default function App(){
+export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   const [ready,setReady]=useState(false);
   const [session,setSession]=useState<Session>(initialSession);
   const [view,setView]=useState<View>('dashboard');
@@ -144,11 +144,11 @@ export default function App(){
   const [mobileOpen,setMobileOpen]=useState(false);
   const [cloudUserId,setCloudUserId]=useState('');
   useEffect(()=>{const applyHash=()=>{const candidate=window.location.hash.replace('#','') as View;if(VIEW_IDS.includes(candidate))setView(candidate)};applyHash();window.addEventListener('hashchange',applyHash);return()=>window.removeEventListener('hashchange',applyHash)},[]);
-  useEffect(()=>{if(!ready||!session.email||!session.active)return;const next=`#${view}`;if(window.location.hash!==next)window.history.replaceState(null,'',next);try{localStorage.setItem('fmpl_active_view',view)}catch{}},[view,ready,session.email,session.active]);
+  useEffect(()=>{if(!ready||!session.email||!session.active)return;const next=`/${session.active.toLowerCase()}#${view}`;if(`${window.location.pathname}${window.location.hash}`!==next)window.history.replaceState(null,'',next);try{localStorage.setItem('fmpl_active_view',view)}catch{}},[view,ready,session.email,session.active]);
 
   useEffect(()=>{
     if(!supabase){
-      try { const raw=localStorage.getItem('fmpl_session'); if(raw){const saved=JSON.parse(raw);setSession({...initialSession,...saved,dataVersion:4,country:saved.country||'',fullName:saved.fullName||saved.name||'',address:saved.address||'',bio:saved.bio||'',dob:saved.dob||'',avatar:saved.avatar||'',picks:saved.dataVersion>=2?saved.picks||{}:{},exactScores:saved.dataVersion>=2?saved.exactScores||{}:{},submittedAt:saved.dataVersion>=2?saved.submittedAt||{}:{},captains:saved.dataVersion>=2?saved.captains||{}:{},rosters:saved.dataVersion>=3?saved.rosters||{}:{},transfers:saved.dataVersion>=3?saved.transfers||{}:{}})} } catch {}
+      try { const raw=localStorage.getItem('fmpl_session'); if(raw){const saved=JSON.parse(raw);setSession({...initialSession,...saved,dataVersion:4,country:saved.country||'',fullName:saved.fullName||saved.name||'',address:saved.address||'',bio:saved.bio||'',dob:saved.dob||'',avatar:saved.avatar||'',picks:saved.dataVersion>=2?saved.picks||{}:{},exactScores:saved.dataVersion>=2?saved.exactScores||{}:{},submittedAt:saved.dataVersion>=2?saved.submittedAt||{}:{},captains:saved.dataVersion>=2?saved.captains||{}:{},rosters:saved.dataVersion>=3?saved.rosters||{}:{},transfers:saved.dataVersion>=3?saved.transfers||{}:{},active:initialRegion&&saved.joined?.includes(initialRegion)?initialRegion:saved.active})} } catch {}
       setReady(true);
       return;
     }
@@ -165,7 +165,7 @@ export default function App(){
       let storedRegion:Region|undefined;try{const raw=localStorage.getItem('fmpl_active_region');if(raw&&joined.includes(raw as Region))storedRegion=raw as Region}catch{}
       setCloudUserId(user.id);
       const accountRole:Session['accountRole']=['admin','super_admin','creator'].includes(profile?.account_role||'')?(profile!.account_role as Session['accountRole']):'user';
-      setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
+      setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:initialRegion&&joined.includes(initialRegion)?initialRegion:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
       setReady(true);
     }
     supabase.auth.getSession().then(({data})=>hydrate(data.session?.user||null));
@@ -185,7 +185,7 @@ export default function App(){
 
   async function joinRegion(region:Region){
     if(supabase&&cloudUserId){const {error}=await supabase.from('region_memberships').insert({user_id:cloudUserId,region_code:region});if(error&&error.code!=='23505'){notify(error.message);return}}
-    try{localStorage.setItem('fmpl_active_region',region)}catch{}
+    try{localStorage.setItem('fmpl_active_region',region);window.history.replaceState(null,'',`/${region.toLowerCase()}#dashboard`)}catch{}
     setSession(s=>({...s,active:region,joined:s.joined.includes(region)?s.joined:[...s.joined,region]}));
     setRegionModal(false);setView('dashboard');notify(`${REGIONS[region].name} selected`);
   }
@@ -237,6 +237,8 @@ export default function App(){
     <div className={`toast ${toast?'show':''}`}>{toast}</div>
   </div>;
 }
+
+export default function App(){return <FantasyMplApp/>}
 
 function Logo(){return <div className="logo"><img className="brandLogo" src="/brand/fantasy-mpl-emblem.png" alt="Fantasy MPL emblem"/><span><b>Fantasy MPL</b><small>FANTASY · PREDICTIONS · COMMUNITY</small></span></div>}
 function VerifiedBadge({label='Verified'}:{label?:string}){return <span className="verifiedBadge" title={label} aria-label={label}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.1 1.7 2.7-.2 1.1 2.5 2.5 1.1-.2 2.7L22 12l-1.7 2.1.2 2.7-2.5 1.1-1.1 2.5-2.7-.2L12 22l-2.1-1.7-2.7.2-1.1-2.5-2.5-1.1.2-2.7L2 12l1.7-2.1-.2-2.7L6 6.1l1.1-2.5 2.7.2Z" fill="currentColor"/><path d="m7.4 12.2 2.8 2.7 6.3-6.1" fill="none" stroke="white" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>}

@@ -28,6 +28,20 @@ test.describe('public experience', () => {
     await expect(page.getByText(/NO VERIFIED DATA/i)).toBeVisible();
   });
 
+  test('regional entry lanes and cached model endpoint are available', async ({ page, request }) => {
+    for (const route of ['/my', '/id', '/ph']) {
+      const response = await request.get(route);
+      expect(response.status()).toBe(200);
+    }
+    await page.goto('/my');
+    await expect(page.getByRole('heading', { name: /Build your roster/i })).toBeVisible();
+    const model = await request.get('/api/draft-model?region=MY');
+    expect(model.status()).toBe(200);
+    const payload = await model.json();
+    expect(payload.status.region).toBe('MY');
+    expect(Array.isArray(payload.metrics)).toBeTruthy();
+  });
+
   test('every open match requires winner and exact score', async ({ page, isMobile }) => {
     test.skip(Boolean(isMobile), 'Desktop flow is automated; mobile scoring remains covered by manual beta QA.');
     // Mandatory BO score validation is also enforced server-side by
@@ -91,16 +105,17 @@ test.describe('public experience', () => {
         submittedAt: {}, captains: {}, rosters: {}, transfers: {}
       }));
     });
-    await page.goto('/#predictions');
+    await page.goto('/my#predictions');
     await expect(page.getByRole('heading', { name: 'Prediction Hub' })).toBeVisible();
     await page.reload();
-    await expect(page).toHaveURL(/#predictions$/);
+    await expect(page).toHaveURL(/\/my#predictions$/);
     await expect(page.getByRole('heading', { name: 'Prediction Hub' })).toBeVisible();
   });
 
   test('public Live Draft Lab records a legal draft action without login', async ({ page }) => {
     await page.goto('/live-draft');
     await expect(page.getByRole('heading', { name: /Follow the draft/i })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/api/draft-model')))).toBeTruthy();
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
     await page.getByRole('button', { name: /ATLAS.*ROAM/i }).click();
     await expect(page.getByRole('button', { name: /BAN slot 1: ATLAS/i })).toBeVisible();

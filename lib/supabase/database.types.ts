@@ -2007,6 +2007,7 @@ export type Database = {
       preview_beta_activity_reset: { Args: Record<PropertyKey, never>; Returns: Json }
       run_beta_activity_reset: { Args: { confirmation: string }; Returns: Json }
       draft_intelligence_status: { Args: { target_region: string }; Returns: Json }
+      draft_model_bundle: { Args: { target_region: string }; Returns: Json }
       recommend_draft_actions: {
         Args: {
           target_region: string

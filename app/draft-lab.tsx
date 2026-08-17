@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import officialTeams from './official-teams.json';
-import { supabase } from '../lib/supabase/client';
 
 type Region = 'MY' | 'ID' | 'PH';
 type Side = 'BLUE' | 'RED';
@@ -12,6 +11,9 @@ type DraftAction = { side: Side; type: ActionType; phase: 1 | 2 };
 type SavedDraft = { game: number; blueTeam: string; redTeam: string; actions: string[]; mode: 'companion' | 'sandbox' };
 type IntelligenceStatus = { ready:boolean; region:string; source_name:string|null; source_url:string|null; attribution:string|null; license:string|null; model_name:string|null; model_version:string|null; patch:string|null; minimum_sample:number|null; eligible_heroes:number; drafts_analyzed:number; last_verified:string|null; blocker:string|null };
 type Recommendation = { hero_name:string; score:number; evidence_level:string; sample_size:number; reason:string; pick_rate:number; ban_rate:number; win_rate:number; contest_rate:number };
+type ModelMetric = { hero:string; games:number; picks:number; bans:number; pick_rate:number; ban_rate:number; win_rate:number; contest_rate:number; roles:string[] };
+type ModelRelationship = { hero:string; related_hero:string; type:'SYNERGY'|'COUNTER'|'DENIAL'; sample_size:number; impact_score:number };
+type ModelBundle = { status:IntelligenceStatus; weights:Record<string,number>; metrics:ModelMetric[]; relationships:ModelRelationship[]; generated_at:string };
 
 const REGION_NAME: Record<Region, string> = { MY: 'MPL MALAYSIA', ID: 'MPL INDONESIA', PH: 'MPL PHILIPPINES' };
 const REGION_LOGO: Record<Region, string> = { MY: '/leagues/mpl-my.png', ID: '/leagues/mpl-id.png', PH: '/leagues/mpl-ph.png' };
@@ -87,6 +89,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   const [role, setRole] = useState<Role>('ALL');
   const [mobileTab, setMobileTab] = useState<'draft' | 'heroes' | 'model'>('draft');
   const [intelligence, setIntelligence] = useState<IntelligenceStatus | null>(null);
+  const [modelBundle, setModelBundle] = useState<ModelBundle | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [modelLoading, setModelLoading] = useState(false);
   const current = DRAFT_SEQUENCE[actions.length];
@@ -113,28 +116,38 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   }, [storageKey, game, blueTeam, redTeam, actions, mode]);
 
   useEffect(() => {
-    let active=true;
-    async function loadStatus(){
-      if(!supabase){setIntelligence(null);return}
-      const {data}=await supabase.rpc('draft_intelligence_status',{target_region:region});
-      if(active)setIntelligence(data as unknown as IntelligenceStatus);
+    const controller=new AbortController();
+    async function loadBundle(){
+      setModelLoading(true);setRecommendations([]);
+      try{
+        const response=await fetch(`/api/draft-model?region=${region}`,{signal:controller.signal});
+        const bundle=await response.json() as ModelBundle;
+        if(controller.signal.aborted)return;
+        setModelBundle(bundle);setIntelligence(bundle.status);
+      }catch(error){
+        if(controller.signal.aborted)return;
+        setModelBundle(null);setIntelligence({ready:false,region,source_name:null,source_url:null,attribution:null,license:null,model_name:null,model_version:null,patch:null,minimum_sample:null,eligible_heroes:0,drafts_analyzed:0,last_verified:null,blocker:error instanceof Error?'MODEL BUNDLE TEMPORARILY UNAVAILABLE':'MODEL DATA UNAVAILABLE'});
+      }finally{if(!controller.signal.aborted)setModelLoading(false)}
     }
-    loadStatus();return()=>{active=false};
+    loadBundle();return()=>controller.abort();
   },[region]);
 
   useEffect(() => {
-    let active=true;
-    async function recommend(){
-      if(!supabase||!intelligence?.ready||!current){setRecommendations([]);return}
-      const ally:string[]=[],enemy:string[]=[],banned:string[]=[];
-      actions.forEach((hero,index)=>{const step=DRAFT_SEQUENCE[index];if(step.type==='BAN')banned.push(hero);else if(step.side===current.side)ally.push(hero);else enemy.push(hero)});
-      setModelLoading(true);
-      const {data,error}=await supabase.rpc('recommend_draft_actions',{target_region:region,target_action:current.type,ally_hero_names:ally,enemy_hero_names:enemy,banned_hero_names:banned,max_results:3});
-      if(!active)return;
-      setRecommendations(error?[]:(data as Recommendation[])||[]);setModelLoading(false);
-    }
-    recommend();return()=>{active=false};
-  },[actions,current?.side,current?.type,intelligence?.ready,region]);
+    if(!modelBundle?.status.ready||!current){setRecommendations([]);return}
+    const ally:string[]=[],enemy:string[]=[],banned:string[]=[];
+    actions.forEach((hero,index)=>{const step=DRAFT_SEQUENCE[index];if(step.type==='BAN')banned.push(hero);else if(step.side===current.side)ally.push(hero);else enemy.push(hero)});
+    const excluded=new Set([...ally,...enemy,...banned].map(hero=>hero.toUpperCase()));
+    const weight=(name:string,fallback:number)=>Number(modelBundle.weights[name]??fallback);
+    const ranked=modelBundle.metrics.filter(metric=>!excluded.has(metric.hero.toUpperCase())).map(metric=>{
+      const synergy=modelBundle.relationships.filter(item=>item.hero===metric.hero&&item.type==='SYNERGY'&&ally.includes(item.related_hero)).reduce((sum,item)=>sum+Number(item.impact_score),0);
+      const counter=modelBundle.relationships.filter(item=>item.hero===metric.hero&&['COUNTER','DENIAL'].includes(item.type)&&enemy.includes(item.related_hero)).reduce((sum,item)=>sum+Number(item.impact_score),0);
+      const score=current.type==='BAN'?metric.ban_rate*weight('ban_rate',.6)+metric.contest_rate*weight('contest_rate',.4):metric.pick_rate*weight('pick_rate',.35)+metric.win_rate*weight('win_rate',.25)+metric.contest_rate*weight('pick_contest',.15)+synergy*100*weight('synergy',.15)+counter*100*weight('counter',.1);
+      const evidence=metric.games>=50?'STRONG':metric.games>=25?'MODERATE':'LIMITED';
+      const reason=current.type==='BAN'?`Current-patch priority · ${metric.bans} bans across ${metric.games} games`:`Current-patch evidence · ${metric.picks} picks, ${metric.win_rate.toFixed(1)}% win rate across ${metric.games} games`;
+      return{hero_name:metric.hero,score,evidence_level:evidence,sample_size:metric.games,reason,pick_rate:metric.pick_rate,ban_rate:metric.ban_rate,win_rate:metric.win_rate,contest_rate:metric.contest_rate};
+    }).sort((a,b)=>b.score-a.score||a.hero_name.localeCompare(b.hero_name)).slice(0,3);
+    setRecommendations(ranked);
+  },[actions,current?.side,current?.type,modelBundle]);
 
   function chooseHero(hero: string) {
     if (!current || used.has(hero)) return;

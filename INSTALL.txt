@@ -1,22 +1,37 @@
-FANTASY MPL — DRAFT INTELLIGENCE ADMIN REDESIGN
+FANTASY MPL — REGIONAL SCALING PHASE 1
 
+A. DATABASE FIRST
+1. Open Supabase Dashboard > SQL Editor.
+2. Run:
+   supabase/migrations/021_regional_lanes_and_model_bundle.sql
+3. Expected:
+   model_bundle_ready: true
+
+B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-draft-intelligence-redesign folder.
-3. Replace the matching files.
-4. Optional cleanup: delete app/ordered-draft-import.css. It is no longer imported.
-5. Commit message:
-   Redesign Draft Intelligence admin workspace
+2. Do not copy the outer fantasy-mpl-regional-scaling-phase1 folder.
+3. Replace matching files.
 
-No Supabase migration is required.
+C. COMMIT
+  Add regional traffic lanes and CDN draft model
 
-New workspace tabs:
-- Overview
-- Sources
-- Patch & Data
-- Draft Import
-- Model
+D. VERIFY AFTER DEPLOYMENT
+Public routes:
+  /my
+  /id
+  /ph
+  /live-draft
+  /api/draft-model?region=MY
+  /api/draft-model?region=ID
+  /api/draft-model?region=PH
 
-Typography:
-- Sora for headings, key values and controls
-- Plus Jakarta Sans for body copy, labels and form content
-- Larger labels, inputs, help text and status messages
+The model endpoint should return HTTP 200. Before approved data exists it should
+return status.ready=false and empty metrics/relationships.
+
+E. SCALING BEHAVIOR
+- Signed-in regional navigation uses /my, /id or /ph.
+- The model bundle is cached at the CDN for 5 minutes.
+- Stale model data may be served for up to 1 hour during revalidation.
+- Live Draft Lab downloads one compact model bundle per region.
+- Hero recommendations are calculated locally in the browser.
+- Hero clicks no longer execute one Supabase recommendation RPC per user.
