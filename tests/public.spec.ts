@@ -139,6 +139,15 @@ test.describe('public experience', () => {
     await expect(page.locator('.draftTurn > span')).toHaveText('RED SIDE');
   });
 
+  test('completed generic draft reveals an evidence-gated report', async ({ page, isMobile }) => {
+    test.skip(Boolean(isMobile), 'Desktop report validates the shared completed-draft component.');
+    await page.addInitScript(() => localStorage.setItem('fmpl_draft_tool', JSON.stringify({ firstSide:'BLUE', mode:'companion', actions:['AAMON','AKAI','ALDOUS','ALICE','ALUCARD','ANGELA','ARGUS','ARLOTT','ATLAS','AULUS','AURORA','BADANG','BALMOND','BANE','BARATS','BAXIA','BEATRIX','BELERICK','BENEDETTA','BRODY'] })));
+    await page.goto('/live-draft');
+    await expect(page.getByRole('heading', { name: 'Draft Report' })).toBeVisible();
+    await expect(page.getByText(/MODEL LIMITATION/i)).toBeVisible();
+    await expect(page.locator('.draftTimeline span')).toHaveCount(20);
+  });
+
   test('policy pages and metadata routes are available', async ({ page, request }) => {
     for (const route of ['/privacy', '/terms', '/rules', '/community-guidelines']) {
       const response = await page.goto(route);

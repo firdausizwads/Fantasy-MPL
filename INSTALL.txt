@@ -1,23 +1,33 @@
-FANTASY MPL — LIVE DRAFT UI REBUILD
+FANTASY MPL — LIVE DRAFT SHOWCASE & REPORT
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-live-draft-ui-rebuild folder.
+2. Do not copy the outer fantasy-mpl-live-draft-showcase-report folder.
 3. Replace matching files.
 4. No Supabase migration is required.
 5. Commit message:
-   Rebuild Live Draft hero picker and guidance UI
+   Add regional Draft Lab identity, animations and completed report
 
-VERIFY ON MOBILE
-- Opening a ban/pick slot does not focus the search field automatically.
-- The keyboard stays closed until the user taps Search.
-- Search uses 16px text and does not trigger browser zoom.
-- The current action and guidance status appear before the hero grid.
-- Hero cards use two readable columns.
-- The turn bar no longer overlaps the side header while scrolling.
+VERIFY MOBILE
+- Hero picker scrolls from Aamon through Zilong.
+- Search remains 16px and does not auto-focus or zoom.
+- Guidance is visible above the hero grid.
+- Two-column hero cards remain readable.
 
-VERIFY ON DESKTOP
-- Hero picker uses a six-column catalog and a dedicated guidance rail.
-- Guidance is visible while choosing a hero.
-- Priority Ban, Potential Pick and Counter Pick become clickable when verified data is available.
-- Public header has dark high-contrast styling.
-- Hero banner uses the compact Fantasy MPL Draft Intelligence identity card.
+VERIFY REGIONAL IDENTITY
+- Public selector changes Malaysia, Indonesia and Philippines.
+- Blue and Red headers use the selected regional MPL logo.
+- No professional team selection returns.
+
+VERIFY COMPLETED DRAFT
+- After 20 actions, Draft Report appears.
+- Without verified model data, both estimates show —.
+- With verified data, Blue and Red experimental draft-win estimates sum to 100%.
+- Report includes average hero win rate, role options, ban pressure, five picks and the complete 20-action timeline.
+
+MOTION
+- Ambient hero animation
+- Active-side highlight
+- Hero slot lock animation
+- Animated result bars
+- Draft Report reveal
+- Mobile brand-card float

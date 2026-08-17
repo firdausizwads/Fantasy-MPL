@@ -15,6 +15,8 @@ type ModelMetric = { hero:string; games:number; picks:number; bans:number; pick_
 type ModelRelationship = { hero:string; related_hero:string; type:'SYNERGY'|'COUNTER'|'DENIAL'; sample_size:number; impact_score:number };
 type ModelBundle = { status:IntelligenceStatus; weights:Record<string,number>; metrics:ModelMetric[]; relationships:ModelRelationship[]; generated_at:string };
 
+const REGION_INFO:Record<Region,{name:string;logo:string}>={MY:{name:'MPL MALAYSIA',logo:'/leagues/mpl-my.png'},ID:{name:'MPL INDONESIA',logo:'/leagues/mpl-id.png'},PH:{name:'MPL PHILIPPINES',logo:'/leagues/mpl-ph.png'}};
+
 const HEROES: Record<Exclude<Role, 'ALL'>, string[]> = {
   EXP: ['ALDOUS','ALICE','ARGUS','ARLOTT','BADANG','BALMOND','BANE','BENEDETTA','CHOU','CICI','DYRROTH','EDITH','ESMERALDA','FREYA','GATOTKACA','GUINEVERE','HILDA','JAWHEAD','KHALEED','LAPU-LAPU','LEOMORD','LUKAS','MARCEL','MASHA','MINSITTHAR','PAQUITO','PHOVEUS','RUBY','SILVANNA','SORA','SUN','SUYOU','TERIZLA','THAMUZ','URANUS','X.BORG','YIN','YU ZHONG','ZILONG'],
   JUNGLE: ['AAMON','AKAI','ALUCARD','AULUS','BALMOND','BARATS','BAXIA','BENEDETTA','FANNY','FREDRINN','GUSION','HANZO','HARLEY','HAYABUSA','HELCURT','JOY','JULIAN','KARINA','LANCELOT','LING','MARTIS','NOLAN','PAQUITO','ROGER','SABER','SELENA','SORA','SUYOU','YI SUN-SHIN','YIN'],
@@ -69,9 +71,12 @@ function ModelPanel({ remaining, current, status, groups, loading }: { remaining
   </aside>;
 }
 
+function DraftReport({region,actions,sequence,bundle,status}:{region:Region;actions:string[];sequence:DraftAction[];bundle:ModelBundle|null;status:IntelligenceStatus|null}){const entries=actions.map((hero,index)=>({hero,...sequence[index]}));const sideData=(side:Side)=>{const picks=entries.filter(item=>item.side===side&&item.type==='PICK');const bans=entries.filter(item=>item.side===side&&item.type==='BAN');const metrics=picks.map(item=>bundle?.metrics.find(metric=>metric.hero===item.hero)).filter((item):item is ModelMetric=>Boolean(item));const banMetrics=bans.map(item=>bundle?.metrics.find(metric=>metric.hero===item.hero)).filter((item):item is ModelMetric=>Boolean(item));const roles=new Set(metrics.flatMap(metric=>metric.roles||[]));const average=metrics.length===5?metrics.reduce((sum,item)=>sum+Number(item.win_rate),0)/5:null;const synergy=metrics.length===5?bundle?.relationships.filter(rel=>rel.type==='SYNERGY'&&picks.some(item=>item.hero===rel.hero)&&picks.some(item=>item.hero===rel.related_hero)).reduce((sum,item)=>sum+Math.max(0,Number(item.impact_score)),0)||0:0;return{picks,bans,average,rating:average==null?null:average+synergy*1.5,roles:metrics.length===5?roles.size:null,banPressure:banMetrics.length?banMetrics.reduce((sum,item)=>sum+Number(item.ban_rate),0)/banMetrics.length:null}};const blue=sideData('BLUE'),red=sideData('RED');const estimable=Boolean(status?.ready&&blue.rating!=null&&red.rating!=null);const total=estimable?Number(blue.rating)+Number(red.rating):0;const blueShare=estimable?Math.max(20,Math.min(80,Number(blue.rating)/total*100)):null;const redShare=blueShare==null?null:100-blueShare;return <section className="draftReport"><header><div><span>20 / 20 ACTIONS COMPLETE</span><h2>Draft Report</h2><p>Composition summary and evidence-backed draft edge.</p></div><strong>COMPLETE</strong></header><div className="draftEstimate"><article className="blue"><div><img src={REGION_INFO[region].logo} alt=""/><span><small>BLUE SIDE</small><b>{blueShare==null?'—':`${blueShare.toFixed(1)}%`}</b></span></div><div className="estimateBar"><i style={{width:`${blueShare??50}%`}}/></div><p>{blueShare==null?'VERIFIED MODEL DATA REQUIRED':'EXPERIMENTAL DRAFT WIN ESTIMATE'}</p></article><div className="estimateCenter"><span>VS</span><small>PATCH {status?.patch||'—'}</small></div><article className="red"><div><span><small>RED SIDE</small><b>{redShare==null?'—':`${redShare.toFixed(1)}%`}</b></span><img src={REGION_INFO[region].logo} alt=""/></div><div className="estimateBar"><i style={{width:`${redShare??50}%`}}/></div><p>{redShare==null?'VERIFIED MODEL DATA REQUIRED':'EXPERIMENTAL DRAFT WIN ESTIMATE'}</p></article></div><div className="draftStatGrid">{([['BLUE',blue],['RED',red]] as const).map(([side,data])=><article className={side.toLowerCase()} key={side}><h3>{side} DRAFT PROFILE</h3><div><span><small>AVG HERO WIN RATE</small><b>{data.average==null?'—':`${data.average.toFixed(1)}%`}</b></span><span><small>ROLE OPTIONS</small><b>{data.roles==null?'—':`${data.roles} / 5`}</b></span><span><small>BAN PRESSURE</small><b>{data.banPressure==null?'—':`${data.banPressure.toFixed(1)}%`}</b></span></div><footer>{data.picks.map(item=><i key={item.hero}>{item.hero}</i>)}</footer></article>)}</div><div className="draftTimeline"><h3>COMPLETE ACTION TIMELINE</h3><div>{entries.map((item,index)=><span className={`${item.side.toLowerCase()} ${item.type.toLowerCase()}`} key={`${item.hero}-${index}`}><small>{index+1} · {item.side} {item.type}</small><b>{item.hero}</b></span>)}</div></div><p className="estimateDisclaimer"><b>MODEL LIMITATION:</b> The estimate measures draft composition evidence only. It does not include player skill, execution, objectives or in-game decisions and is not a guaranteed match outcome.</p></section>}
+
 export default function DraftLab({ region, notify }: { region: Region; notify?: (message: string) => void }) {
   const storageKey = 'fmpl_draft_tool';
   const [firstSide,setFirstSide]=useState<Side>('BLUE');
+  const [draftReady,setDraftReady]=useState(false);
   const [mode, setMode] = useState<'companion' | 'sandbox'>('companion');
   const [actions, setActions] = useState<string[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -94,12 +99,14 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
       setActions(Array.isArray(saved?.actions)?saved.actions.slice(0,20):[]);
       setMode(saved?.mode||'companion');setPickerOpen(false);setMobileTab('draft');
     } catch { setFirstSide('BLUE');setActions([]);setMode('companion'); }
+    finally { setDraftReady(true); }
   }, [storageKey]);
 
   useEffect(() => {
+    if(!draftReady)return;
     const saved: SavedDraft = { firstSide, actions, mode };
     localStorage.setItem(storageKey, JSON.stringify(saved));
-  }, [storageKey, firstSide, actions, mode]);
+  }, [storageKey, firstSide, actions, mode, draftReady]);
 
   useEffect(() => {
     const controller=new AbortController();
@@ -182,8 +189,8 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
       <section className={`draftBoard ${mobileTab !== 'draft' ? 'mobileHidden' : ''}`}>
         <div className="draftTurn"><span className={current?.side === 'RED' ? 'red' : ''}>{current ? `${current.side} SIDE` : 'COMPLETE'}</span><div><small>{current ? `PHASE ${current.phase} · ${current.type}` : 'DRAFT COMPLETE'}</small><h2>{current ? `SELECT ${current.side} SIDE’S NEXT ${current.type}` : 'ALL PICKS AND BANS RECORDED'}</h2></div><strong>{actions.length} / {sequence.length}</strong></div>
         <div className="draftSides">
-          {(['BLUE','RED'] as Side[]).map(side => <article className={`draftSide ${side.toLowerCase()}`} key={side}>
-            <header className="genericSideHead"><span>{side==='BLUE'?'B':'R'}</span><div><small>{side} SIDE</small><h2>{side===firstSide?'FIRST-ACTION SIDE':'RESPONSE SIDE'}</h2></div></header>
+          {(['BLUE','RED'] as Side[]).map(side => <article className={`draftSide ${side.toLowerCase()} ${current?.side===side?'turnActive':''}`} key={side}>
+            <header className="genericSideHead"><span className="sideRegionMark"><img src={REGION_INFO[region].logo} alt=""/><i>{side==='BLUE'?'B':'R'}</i></span><div><small>{REGION_INFO[region].name} · {side} SIDE</small><h2>{side===firstSide?'FIRST-ACTION SIDE':'RESPONSE SIDE'}</h2></div></header>
             <div className="draftBanRow"><small>BANS</small><div>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'BAN',position); return <DraftSlot key={position} type="BAN" number={position + 1} hero={actions[index]} active={index === actions.length} onClick={() => index === actions.length && setPickerOpen(true)}/>; })}</div></div>
             <div className="draftPickColumn"><small>LINEUP</small>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'PICK',position); return <DraftSlot key={position} type="PICK" number={position + 1} hero={actions[index]} active={index === actions.length} onClick={() => index === actions.length && setPickerOpen(true)}/>; })}</div>
           </article>)}
@@ -192,6 +199,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
       </section>
       <div className={mobileTab !== 'model' ? 'modelMobileHidden' : ''}><ModelPanel remaining={ALL_HEROES.length - used.size} current={current} status={intelligence} groups={groups} loading={modelLoading}/></div>
     </div>
+    {actions.length===sequence.length&&<DraftReport region={region} actions={actions} sequence={sequence} bundle={modelBundle} status={intelligence}/>} 
 
     {(pickerOpen || mobileTab === 'heroes') && current && <section className={`heroPicker guidedHeroPicker ${mobileTab === 'heroes' ? 'mobilePicker' : ''}`}>
       <div className="heroPickerHead"><div><span className={current.side === 'RED' ? 'red' : ''}>{current.side} SIDE · {current.type}</span><h2>SELECT THE HERO TO {current.type}</h2><p>Search manually or apply verified guidance without leaving this screen.</p></div><button onClick={() => { setPickerOpen(false); setMobileTab('draft'); }} aria-label="Close hero selector">×</button></div>

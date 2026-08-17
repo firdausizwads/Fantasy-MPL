@@ -26,6 +26,19 @@ test.describe('mobile navigation', () => {
     await expect(drawer.getByRole('button', { name: /Admin Console/i })).toHaveCount(0);
   });
 
+  test('mobile hero picker scrolls through the complete catalog without auto zoom', async ({ page }) => {
+    await page.goto('/live-draft');
+    await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
+    const picker = page.locator('.guidedHeroPicker');
+    await expect(picker).toBeVisible();
+    await expect(page.locator('.heroPickerTools input')).not.toBeFocused();
+    await expect(page.locator('.heroPickerTools input')).toHaveCSS('font-size', '16px');
+    const dimensions = await picker.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
+    expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight);
+    await picker.evaluate(element => { element.scrollTop = element.scrollHeight; });
+    await expect(page.getByRole('button', { name: /ZILONG.*EXP/i })).toBeVisible();
+  });
+
   test('mobile navigation opens Live Draft Lab and hides deferred leagues', async ({ page }) => {
     await enterLocalDashboard(page);
     await page.getByRole('button', { name: 'Open navigation' }).click();
