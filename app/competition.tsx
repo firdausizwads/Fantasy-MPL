@@ -73,7 +73,11 @@ export default function CloudCompetition({
       if (!mounted) return;
       const weekOptions = (weekRows || []).map((w) => ({ id: w.id, number: w.week_number }));
       setWeeks(weekOptions);
-      setWeekId(prev => prev || weekOptions[0]?.id || '');
+      const now=Date.now();
+      const upcoming=(matchRows||[]).find(match=>match.status!=='cancelled'&&new Date(match.scheduled_at).getTime()>=now);
+      const latestWithMatches=(matchRows||[]).filter(match=>match.status!=='cancelled').at(-1);
+      const automaticWeekId=upcoming?.week_id||latestWithMatches?.week_id||weekOptions[0]?.id||'';
+      setWeekId(prev=>weekOptions.some(option=>option.id===prev)?prev:automaticWeekId);
       const teamMap: Record<string, TeamInfo> = {};
       (teamRows || []).forEach((t) => {
         teamMap[t.id] = { id: t.id, code: t.code, name: t.name, logo: t.logo_url };
@@ -164,7 +168,7 @@ export default function CloudCompetition({
     <PageBanner
       tag={`${info.name.toUpperCase()} · SEASON 18`}
       title="Schedule & Standings"
-      copy={`Live from the verified results database · times shown in your local timezone (${info.timezone} region).`}
+      copy={`Current regional schedule and official standings · times shown in your local timezone (${info.timezone} region).`}
       side={`WEEK ${week?.number ?? '—'}`}
       sideLabel="REGULAR SEASON" />
 
@@ -179,7 +183,7 @@ export default function CloudCompetition({
             <div>
               {weeks.map(w => <button key={w.id} className={w.id === weekId ? 'active' : ''} onClick={() => setWeekId(w.id)}>WEEK {w.number}</button>)}
             </div>
-            <span>● LIVE RESULTS · UPDATED BY VERIFIED ADMIN ENTRY</span>
+            <span>● CURRENT REGIONAL SCHEDULE & RESULTS</span>
           </div>
           {dayGroups.length === 0
             ? <p className="adminEmptyNote">No fixtures recorded for this week yet.</p>
@@ -217,7 +221,7 @@ export default function CloudCompetition({
                   </div>
                 </section>)}
               </div>}
-          <div className="scheduleSource"><span>✓</span><p><b>Live data:</b> this schedule reads directly from the verified results database. Scores appear the moment an administrator saves them.</p></div>
+          <div className="scheduleSource"><span>✓</span><p><b>Current schedule:</b> fixtures update from the regional competition feed. Final scores appear after administrator verification.</p></div>
         </>
       : verifiedCount === 0
         ? <section className="standingsPending">

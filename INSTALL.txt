@@ -1,19 +1,20 @@
-FANTASY MPL — MISSING LIVE ADMIN FILES BUILD REPAIR
-
-The latest commit imports three files that were not copied into the repository.
+FANTASY MPL — PUBLIC COPY & CURRENT WEEK UI UPDATE
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-missing-live-admin-files folder.
-3. Confirm these files appear:
-   app/admin-live-overview.tsx
-   app/admin-weekly-mvp-live.tsx
-   app/live-admin.css
-4. No existing file needs to be deleted.
-5. No Supabase migration is required.
-6. Commit:
-   Add missing live admin overview and MVP modules
-7. Push main and wait for GitHub Quality Checks and Vercel.
+2. Do not copy the outer fantasy-mpl-public-copy-current-week-ui folder.
+3. Replace matching files.
+4. No Supabase migration is required.
+5. Commit:
+   Simplify public status copy and open schedule on current week
+6. Push main and wait for GitHub Quality Checks and Vercel.
 
-Verified against exact GitHub commit 3d6c61e:
-- npm run typecheck: passed
-- npm run build: passed
+CHANGES
+- Prediction banner no longer displays "Prediction Status" or "Saved".
+- Prediction banner displays only the seven-day access rule.
+- Fantasy banner no longer displays "Lineup Status" or "Submitted".
+- Fantasy banner displays only the lock date and time.
+- Schedule & Standings opens the week containing the earliest upcoming non-cancelled match.
+- If no future match exists, it falls back to the latest week containing fixtures.
+- Region switching cannot preserve an invalid week ID from another region.
+- Schedule public copy no longer mentions database/admin implementation details.
+- Meta Lab removes "Live Cloud Submission" and "Saved to your account" wording.
