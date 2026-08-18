@@ -172,9 +172,11 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
       if(!mounted)return;
       const joined=memberships.filter((code:string)=>['MY','ID','PH'].includes(code)) as Region[];
       let storedRegion:Region|undefined;try{const raw=localStorage.getItem('fmpl_active_region');if(raw&&joined.includes(raw as Region))storedRegion=raw as Region}catch{}
+      const pathCandidate=window.location.pathname.split('/')[1]?.toUpperCase() as Region|undefined;
+      const pathRegion=pathCandidate&&joined.includes(pathCandidate)?pathCandidate:undefined;
       setCloudUserId(user.id);
       const accountRole:Session['accountRole']=['admin','super_admin','creator'].includes(profile?.account_role||'')?(profile!.account_role as Session['accountRole']):'user';
-      setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:initialRegion&&joined.includes(initialRegion)?initialRegion:prev.active&&joined.includes(prev.active)?prev.active:storedRegion||joined[0]}));
+      setSession(prev=>({...initialSession,email:user.email||'',name:profile?.manager_name||user.user_metadata?.manager_name||'Manager',country:profile?.country_code||user.user_metadata?.country_code||'OTHER',fullName:privateProfile?.full_name||user.user_metadata?.full_name||'New Manager',address:privateProfile?.address||'',bio:profile?.bio||'',dob:privateProfile?.date_of_birth||'',avatar:profile?.avatar_url||'',accountRole,joined,active:prev.active&&joined.includes(prev.active)?prev.active:pathRegion||storedRegion||(initialRegion&&joined.includes(initialRegion)?initialRegion:undefined)||joined[0]}));
       setReady(true);
     }
     retryTransient(()=>withTimeout(supabase!.auth.getSession(),6000,'Secure session took too long to load.'),2).then(({data,error})=>{if(error)throw error;return hydrate(data.session?.user||null)}).catch(error=>{if(mounted){setStartupError(startupErrorMessage(error));setReady(true)}});

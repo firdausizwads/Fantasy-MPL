@@ -1,46 +1,26 @@
-FANTASY MPL — PANDASCORE FIXTURE SYNCHRONIZATION
+FANTASY MPL — FIXTURE SYNC DIAGNOSTICS & REGION PERSISTENCE HOTFIX
 
-PREREQUISITES ALREADY COMPLETED
-- PANDASCORE_API_TOKEN saved in Vercel Production
-- PANDASCORE_SYNC_SECRET saved in Vercel Production
-- CRON_SECRET saved in Vercel Production
-
-A. DATABASE FIRST
-1. Open Supabase Dashboard > SQL Editor.
-2. Run:
-   supabase/migrations/024_pandascore_fixture_sync.sql
-3. Expected:
-   ingestion_ready: true
-   apply_ready: true
-   review_ready: true
-
-B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-pandascore-fixture-sync folder.
+2. Do not copy the outer fantasy-mpl-fixture-sync-region-hotfix folder.
 3. Replace matching files.
-4. Commit:
-   Add PandaScore fixture synchronization and review queue
-5. Push main and wait for Vercel Production to become Ready.
+4. No Supabase migration is required; Migration 024 remains valid.
+5. Commit:
+   Fix regional tab persistence and PandaScore sync diagnostics
+6. Push main and wait for Vercel Production to become Ready.
 
-C. INITIALIZE AND SYNC
-1. Sign in as super-admin.
-2. Open Admin Console > Fixture sync.
-3. Select SYNC NOW.
-   The server securely stores only a SHA-256 hash of PANDASCORE_SYNC_SECRET in Supabase.
-4. Review team mappings. Unknown acronyms are never guessed.
-5. Map every unresolved PandaScore team to a verified regional team.
-6. Review staged fixtures, dates, week numbers, statuses and scores.
-7. Select APPLY READY only after the mappings are correct.
-8. Repeat for MY, ID and PH.
+REGION FIX
+- Current in-memory region now has first priority during auth refresh.
+- Current /my, /id or /ph pathname is used before the original mounted route.
+- Returning to a background tab no longer resets ID/PH to MY.
 
-D. RESULT SAFETY
-- Finished scores enter matches as unverified.
-- Open Admin Console > Matches & results.
-- Verify the series score before running scoring.
-- Canceled records without a scheduled time are skipped.
-- Existing matching fixtures are linked within a 12-hour time tolerance instead of duplicated.
+SYNC DIAGNOSTICS
+- SYNC NOW now displays a persistent success or error panel.
+- Success shows fetched, staged and unresolved counts.
+- Errors show HTTP status and the exact safe server/database message.
+- Missing environment variable names are identified without exposing values.
 
-E. AUTOMATION
-- Vercel cron runs daily at 02:15 UTC.
-- Each run makes three PandaScore list requests: MY, ID and PH.
-- Manual SYNC NOW remains available after reschedules or match completion.
+AFTER DEPLOYMENT
+1. Open Admin Console > Fixture sync.
+2. Click SYNC NOW once.
+3. If successful, review mappings.
+4. If failed, send the persistent error text shown on screen; never send secrets.
