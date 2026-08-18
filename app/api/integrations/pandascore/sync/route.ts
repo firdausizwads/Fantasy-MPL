@@ -35,8 +35,8 @@ async function runSync(triggeredBy:string|null){
 export async function POST(request:NextRequest){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,syncSecret=process.env.PANDASCORE_SYNC_SECRET;
  const auth=request.headers.get('authorization')||'';const jwt=auth.startsWith('Bearer ')?auth.slice(7):'';
- if(!url||!key||!syncSecret)return NextResponse.json({error:'Fixture sync server configuration is incomplete'},{status:503});
  if(!jwt)return NextResponse.json({error:'Unauthorized'},{status:401});
+ if(!url||!key||!syncSecret)return NextResponse.json({error:'Fixture sync server configuration is incomplete'},{status:503});
  const adminClient=createClient<Database>(url,key,{global:{headers:{Authorization:`Bearer ${jwt}`}},auth:{persistSession:false,autoRefreshToken:false}});const{data:userData,error:userError}=await adminClient.auth.getUser(jwt);if(userError||!userData.user)return NextResponse.json({error:'Unauthorized'},{status:401});
  const{data:profile}=await adminClient.from('profiles').select('account_role').eq('id',userData.user.id).maybeSingle();if(!['admin','super_admin'].includes(profile?.account_role||''))return NextResponse.json({error:'Administrator required'},{status:403});
  const{error:configError}=await adminClient.rpc('configure_pandascore_sync_secret',{raw_secret:syncSecret});if(configError)return NextResponse.json({error:configError.message},{status:500});
