@@ -66,7 +66,14 @@ test.describe('public experience', () => {
     await expect(seedOne).toHaveValue(alternate!);
     await expect(page.getByRole('button', { name: 'SAVE CUSTOM BRACKET' })).toBeVisible();
     await expect(page.getByRole('button', { name: /LOCK OFFICIAL PREDICTION/i })).toHaveCount(0);
-    await expect(page.locator('.bracketScroll + .seedingAfterBracket')).toHaveCount(1);
+    const seedSummary = page.locator('.bracketScroll + .seedingSummary');
+    await expect(seedSummary).toHaveCount(1);
+    await expect(seedSummary.locator('.seedingSummaryGrid article')).toHaveCount(6);
+    const summaryWidth = await seedSummary.evaluate(element => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth
+    }));
+    expect(summaryWidth.scrollWidth).toBeLessThanOrEqual(summaryWidth.clientWidth + 1);
 
     await page.getByRole('button', { name: /OFFICIAL PREDICTOR/i }).click();
     await expect(page.getByRole('heading', { name: /Official Predictor Opens Soon/i })).toBeVisible();

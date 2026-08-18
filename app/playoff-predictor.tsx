@@ -783,8 +783,8 @@ export default function PlayoffPredictor({
           </BracketColumn>
         </div>
       </div>
-      <section className="playoffPreview seedingAfterBracket">
-        <header>
+      <section className="seedingSummary">
+        <div className="seedingSummaryHead">
           <div>
             <span>
               {mode === "custom" ? "YOUR SIX-SEED PREVIEW" : "OFFICIAL SEEDING"}
@@ -800,8 +800,8 @@ export default function PlayoffPredictor({
               ? "This is your personal sandbox seeding. It stays editable and does not affect the official competition."
               : "Official seeds become the fixed entry order for the prediction challenge."}
           </p>
-        </header>
-        <div className="seedingPreviewGrid">
+        </div>
+        <div className="seedingSummaryGrid">
           {bracketTeams.map((team, index) => (
             <article key={team.code}>
               <span>{index + 1}</span>
@@ -813,7 +813,7 @@ export default function PlayoffPredictor({
             </article>
           ))}
         </div>
-        <div className="bracketShare">
+        <div className="seedingSummaryActions">
           <div>
             <b>SHARE YOUR BRACKET</b>
             <small>EXPORT A CLEAN 1920 × 1080 PNG CARD.</small>
