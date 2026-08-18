@@ -16,6 +16,7 @@ import './pandascore-sync.css';
 import './live-admin.css';
 import './regional-fantasy.css';
 import './live-meta.css';
+import './mobile-polish-playoffs.css';
 
 const jakarta = localFont({
   src: './fonts/PlusJakartaSans-Variable.ttf',

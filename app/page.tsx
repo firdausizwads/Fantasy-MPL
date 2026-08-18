@@ -258,7 +258,7 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
       {view==='creators' && <CreatorHub region={region} notify={notify} roster={ROSTERS[region]} teamIndex={TEAM_INDEX}/>} 
       {view==='draftlab' && !pausedFeature && <DraftLab region={region} notify={notify}/>} 
       {view==='meta' && <MetaLab region={region} notify={notify}/>} 
-      {view==='playoffs' && <PlayoffPredictor region={region} notify={notify} teams={officialTeams[region].slice(0,6)} teamIndex={TEAM_INDEX} PageBanner={PageBanner}/>} 
+      {view==='playoffs' && <PlayoffPredictor region={region} notify={notify} teams={officialTeams[region]} teamIndex={TEAM_INDEX} PageBanner={PageBanner}/>} 
       {view==='profile' && <ProfilePage session={session} save={saveProfile} notify={notify} PageBanner={PageBanner}/>} 
       {view==='prizes' && <PrizesPage region={region}/>} 
       {view==='admin' && isAdmin && <AdminConsole region={region} notify={notify}/>} 

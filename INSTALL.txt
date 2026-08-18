@@ -1,20 +1,28 @@
-FANTASY MPL — PUBLIC COPY & CURRENT WEEK UI UPDATE
+FANTASY MPL — MOBILE POLISH & CUSTOM PLAYOFF BRACKET
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-public-copy-current-week-ui folder.
+2. Do not copy the outer fantasy-mpl-mobile-polish-custom-playoffs folder.
 3. Replace matching files.
 4. No Supabase migration is required.
 5. Commit:
-   Simplify public status copy and open schedule on current week
+   Polish mobile Draft and standings and add custom playoff bracket
 6. Push main and wait for GitHub Quality Checks and Vercel.
 
-CHANGES
-- Prediction banner no longer displays "Prediction Status" or "Saved".
-- Prediction banner displays only the seven-day access rule.
-- Fantasy banner no longer displays "Lineup Status" or "Submitted".
-- Fantasy banner displays only the lock date and time.
-- Schedule & Standings opens the week containing the earliest upcoming non-cancelled match.
-- If no future match exists, it falls back to the latest week containing fixtures.
-- Region switching cannot preserve an invalid week ID from another region.
-- Schedule public copy no longer mentions database/admin implementation details.
-- Meta Lab removes "Live Cloud Submission" and "Saved to your account" wording.
+LIVE DRAFT MOBILE
+- Sandbox removed.
+- Beta Test / Guidance Pending label added.
+- Fantasy MPL Draft Intelligence card is no longer absolutely floating; it becomes an organized full-width mobile card.
+
+SCHEDULE MOBILE
+- Week buttons scroll horizontally.
+- Fixtures render as two-team mobile cards with time, status, logos and score.
+
+STANDINGS MOBILE
+- Every row shows Match W-L, Game W-L, Match Points and Aggregate.
+- Desktop standings remain unchanged.
+
+PLAYOFFS
+- Custom Bracket is available at all times.
+- Users can choose and swap six regional seeds.
+- Official Predictor unlocks exactly seven days before the earliest imported non-cancelled BO5/BO7 match.
+- If no playoff date exists, Official Predictor remains locked and Custom Bracket remains available.
