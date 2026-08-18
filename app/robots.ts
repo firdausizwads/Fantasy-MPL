@@ -1,11 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '../lib/site';
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: '*', allow: '/', disallow: ['/admin', '/api/'] }
     ],
-    sitemap: 'https://fantasy-mpl-phi.vercel.app/sitemap.xml',
-    host: 'https://fantasy-mpl-phi.vercel.app'
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL
   };
 }

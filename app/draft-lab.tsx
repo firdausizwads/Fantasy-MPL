@@ -15,7 +15,7 @@ type ModelMetric = { hero:string; games:number; picks:number; bans:number; pick_
 type ModelRelationship = { hero:string; related_hero:string; type:'SYNERGY'|'COUNTER'|'DENIAL'; sample_size:number; impact_score:number };
 type ModelBundle = { status:IntelligenceStatus; weights:Record<string,number>; metrics:ModelMetric[]; relationships:ModelRelationship[]; generated_at:string };
 
-const REGION_INFO:Record<Region,{name:string;logo:string}>={MY:{name:'MPL MALAYSIA',logo:'/leagues/mpl-my.png'},ID:{name:'MPL INDONESIA',logo:'/leagues/mpl-id.png'},PH:{name:'MPL PHILIPPINES',logo:'/leagues/mpl-ph.png'}};
+const REGION_INFO:Record<Region,{name:string;logo:string}>={MY:{name:'MPL MALAYSIA',logo:'/leagues/display/mpl-my.webp'},ID:{name:'MPL INDONESIA',logo:'/leagues/display/mpl-id.webp'},PH:{name:'MPL PHILIPPINES',logo:'/leagues/display/mpl-ph.webp'}};
 
 const HEROES: Record<Exclude<Role, 'ALL'>, string[]> = {
   EXP: ['ALDOUS','ALICE','ARGUS','ARLOTT','BADANG','BALMOND','BANE','BENEDETTA','CHOU','CICI','DYRROTH','EDITH','ESMERALDA','FREYA','GATOTKACA','GUINEVERE','HILDA','JAWHEAD','KHALEED','LAPU-LAPU','LEOMORD','LUKAS','MARCEL','MASHA','MINSITTHAR','PAQUITO','PHOVEUS','RUBY','SILVANNA','SORA','SUN','SUYOU','TERIZLA','THAMUZ','URANUS','X.BORG','YIN','YU ZHONG','ZILONG'],
@@ -97,7 +97,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
       const saved = JSON.parse(localStorage.getItem(storageKey) || 'null') as SavedDraft | null;
       setFirstSide(saved?.firstSide==='RED'?'RED':'BLUE');
       setActions(Array.isArray(saved?.actions)?saved.actions.slice(0,20):[]);
-      setMode(saved?.mode||'companion');setPickerOpen(false);setMobileTab('draft');
+      setMode(saved?.mode||'companion');
     } catch { setFirstSide('BLUE');setActions([]);setMode('companion'); }
     finally { setDraftReady(true); }
   }, [storageKey]);
@@ -175,15 +175,15 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
 
   const filtered = ALL_HEROES.filter(hero => !used.has(hero) && (role === 'ALL' || HEROES[role].includes(hero)) && hero.includes(search.trim().toUpperCase()));
 
-  if(servicePause)return <div className="page liveDraftLab"><section className="regionalPause"><span>REGIONAL SERVICE CONTROL</span><img src="/brand/fantasy-mpl-emblem.png" alt=""/><h1>Live Draft Lab is temporarily paused.</h1><p>{servicePause}</p><button onClick={()=>window.location.reload()}>CHECK STATUS AGAIN</button></section></div>;
+  if(servicePause)return <div className="page liveDraftLab"><section className="regionalPause"><span>REGIONAL SERVICE CONTROL</span><img src="/brand/fantasy-mpl-emblem-display.webp" alt=""/><h1>Live Draft Lab is temporarily paused.</h1><p>{servicePause}</p><button onClick={()=>window.location.reload()}>CHECK STATUS AGAIN</button></section></div>;
   return <div className="page liveDraftLab">
-    <section className="draftLabHero genericDraftHero"><div><span>CURRENT-PATCH MLBB DRAFT TOOL</span><h1>BUILD THE DRAFT.<br/><em>READ THE NEXT MOVE.</em></h1><p>CHOOSE WHICH SIDE ACTS FIRST, RECORD EACH BAN AND PICK, THEN REVIEW PRIORITY BANS, POTENTIAL OPPOSING PICKS AND COUNTER OPTIONS.</p><div className="draftHeroActions"><button className="active">LIVE COMPANION</button><span className="draftBetaPill">BETA TEST · GUIDANCE PENDING</span></div></div><div className="toolBrandCard"><img src="/brand/fantasy-mpl-emblem.png" alt=""/><div><small>FANTASY MPL</small><b>DRAFT INTELLIGENCE</b><span>CURRENT PATCH TOOL</span></div></div></section>
+    <section className="draftLabHero genericDraftHero"><div><span>CURRENT-PATCH MLBB DRAFT TOOL</span><h1>BUILD THE DRAFT.<br/><em>READ THE NEXT MOVE.</em></h1><p>CHOOSE WHICH SIDE ACTS FIRST, RECORD EACH BAN AND PICK, THEN REVIEW PRIORITY BANS, POTENTIAL OPPOSING PICKS AND COUNTER OPTIONS.</p><div className="draftHeroActions"><button className="active">LIVE COMPANION</button><span className="draftBetaPill">BETA TEST · GUIDANCE PENDING</span></div></div><div className="toolBrandCard"><img src="/brand/fantasy-mpl-emblem-display.webp" alt=""/><div><small>FANTASY MPL</small><b>DRAFT INTELLIGENCE</b><span>CURRENT PATCH TOOL</span></div></div></section>
 
     <div className="draftIntegrity"><span>PUBLIC BETA</span><p>GENERIC PATCH TOOL · NO TEAM TENDENCIES · NO BROADCAST PROCESSING · RECOMMENDATIONS REQUIRE VERIFIED MATCHUP DATA.</p><a href="/live-draft">PUBLIC TOOL ↗</a></div>
 
-    <section className="draftToolSetup"><div><small>WHICH SIDE ACTS FIRST?</small><p>Match the first-ban side shown in your preview or lobby.</p></div><div className="firstSideChoices"><button className={firstSide==='BLUE'?'active blue':''} onClick={()=>changeFirstSide('BLUE')}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>BLUE SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button><button className={firstSide==='RED'?'active red':''} onClick={()=>changeFirstSide('RED')}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>RED SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button></div><div className="draftSetupActions"><button onClick={undo} disabled={!actions.length}>↶ UNDO</button><button onClick={reset} disabled={!actions.length}>RESET</button></div></section>
+    <section className="draftToolSetup"><div><small>WHICH SIDE ACTS FIRST?</small><p>Match the first-ban side shown in your preview or lobby.</p></div><div className="firstSideChoices"><button className={firstSide==='BLUE'?'active blue':''} onClick={()=>changeFirstSide('BLUE')} disabled={!draftReady}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>BLUE SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button><button className={firstSide==='RED'?'active red':''} onClick={()=>changeFirstSide('RED')} disabled={!draftReady}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>RED SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button></div><div className="draftSetupActions"><button onClick={undo} disabled={!actions.length}>↶ UNDO</button><button onClick={reset} disabled={!actions.length}>RESET</button></div></section>
 
-    <nav className="draftMobileTabs"><button className={mobileTab === 'draft' ? 'active' : ''} onClick={() => setMobileTab('draft')}>DRAFT</button><button className={mobileTab === 'heroes' ? 'active' : ''} onClick={() => { setMobileTab('heroes'); setPickerOpen(true); }}>HEROES</button><button className={mobileTab === 'model' ? 'active' : ''} onClick={() => setMobileTab('model')}>MODEL</button></nav>
+    <nav className="draftMobileTabs"><button className={mobileTab === 'draft' ? 'active' : ''} onClick={() => setMobileTab('draft')} disabled={!draftReady}>DRAFT</button><button className={mobileTab === 'heroes' ? 'active' : ''} onClick={() => { setMobileTab('heroes'); setPickerOpen(true); }} disabled={!draftReady}>HEROES</button><button className={mobileTab === 'model' ? 'active' : ''} onClick={() => setMobileTab('model')} disabled={!draftReady}>MODEL</button></nav>
 
     <div className="draftWorkspace">
       <section className={`draftBoard ${mobileTab !== 'draft' ? 'mobileHidden' : ''}`}>
@@ -192,8 +192,8 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
           {(['BLUE','RED'] as Side[]).map(side => <article className={`draftSide brandedDraftSide ${side.toLowerCase()} ${current?.side===side?'turnActive':''}`} key={side}>
             <img className="sideColumnWatermark" src={REGION_INFO[region].logo} alt="" aria-hidden="true"/>
             <header className="genericSideHead brandedSideHead"><span className="sideRegionMark"><img src={REGION_INFO[region].logo} alt=""/></span><div><small>{REGION_INFO[region].name}</small><h2>{side} SIDE · {side===firstSide?'FIRST ACTION':'RESPONSE'}</h2></div></header>
-            <div className="draftBanRow"><small>BANS</small><div>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'BAN',position); return <DraftSlot key={position} type="BAN" number={position + 1} hero={actions[index]} active={index === actions.length} onClick={() => index === actions.length && setPickerOpen(true)}/>; })}</div></div>
-            <div className="draftPickColumn"><small>LINEUP</small>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'PICK',position); return <DraftSlot key={position} type="PICK" number={position + 1} hero={actions[index]} active={index === actions.length} onClick={() => index === actions.length && setPickerOpen(true)}/>; })}</div>
+            <div className="draftBanRow"><small>BANS</small><div>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'BAN',position); return <DraftSlot key={position} type="BAN" number={position + 1} hero={actions[index]} active={draftReady && index === actions.length} onClick={() => draftReady && index === actions.length && setPickerOpen(true)}/>; })}</div></div>
+            <div className="draftPickColumn"><small>LINEUP</small>{Array.from({length:5}, (_, position) => { const index = actionIndex(side,'PICK',position); return <DraftSlot key={position} type="PICK" number={position + 1} hero={actions[index]} active={draftReady && index === actions.length} onClick={() => draftReady && index === actions.length && setPickerOpen(true)}/>; })}</div>
           </article>)}
         </div>
         <div className="draftSequence"><span style={{width:`${(actions.length / sequence.length) * 100}%`}}/><small>GENERIC SNAKE FLOW · OPENING 1–2–2–1 · 10 BANS · 10 PICKS</small></div>

@@ -17,9 +17,10 @@ import './live-admin.css';
 import './regional-fantasy.css';
 import './live-meta.css';
 import './mobile-polish-playoffs.css';
+import { SITE_URL } from '../lib/site';
 
 const jakarta = localFont({
-  src: './fonts/PlusJakartaSans-Variable.ttf',
+  src: './fonts/PlusJakartaSans-Variable-Latin.woff2',
   variable: '--font-body',
   display: 'swap',
   weight: '200 800',
@@ -27,16 +28,19 @@ const jakarta = localFont({
 });
 
 const sora = localFont({
-  src: './fonts/Sora-Variable.ttf',
+  src: './fonts/Sora-Variable-Latin.woff2',
   variable: '--font-display',
   display: 'swap',
   weight: '100 800',
   style: 'normal'
 });
 
+const vercelObservabilityEnabled = process.env.VERCEL === '1';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://fantasy-mpl-phi.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   applicationName: 'Fantasy MPL',
+  alternates: { canonical: '/' },
   title: {
     default: 'Fantasy MPL — Regional Fantasy Esports',
     template: '%s · Fantasy MPL'
@@ -69,8 +73,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${jakarta.variable} ${sora.variable}`}>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        {vercelObservabilityEnabled && <Analytics />}
+        {vercelObservabilityEnabled && <SpeedInsights />}
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 type Region='MY'|'ID'|'PH';
-const REGION_INFO:Record<Region,{name:string;logo:string}>={MY:{name:'MPL Malaysia',logo:'/leagues/mpl-my.png'},ID:{name:'MPL Indonesia',logo:'/leagues/mpl-id.png'},PH:{name:'MPL Philippines',logo:'/leagues/mpl-ph.png'}};
+const REGION_INFO:Record<Region,{name:string;logo:string}>={MY:{name:'MPL Malaysia',logo:'/leagues/display/mpl-my.webp'},ID:{name:'MPL Indonesia',logo:'/leagues/display/mpl-id.webp'},PH:{name:'MPL Philippines',logo:'/leagues/display/mpl-ph.webp'}};
 function LeagueMark({region,showName=false}:{region:Region;showName?:boolean}){return <span className={`leagueMark leagueMark${region}`}><i><img src={REGION_INFO[region].logo} alt={`${REGION_INFO[region].name} logo`}/></i>{showName&&<b>{REGION_INFO[region].name}</b>}</span>}
 function VerifiedBadge({label='Verified'}:{label?:string}){return <span className="verifiedBadge" title={label} aria-label={label}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.1 1.7 2.7-.2 1.1 2.5 2.5 1.1-.2 2.7L22 12l-1.7 2.1.2 2.7-2.5 1.1-1.1 2.5-2.7-.2L12 22l-2.1-1.7-2.7.2-1.1-2.5-2.5-1.1.2-2.7L2 12l1.7-2.1-.2-2.7L6 6.1l1.1-2.5 2.7.2Z" fill="currentColor"/><path d="m7.4 12.2 2.8 2.7 6.3-6.1" fill="none" stroke="white" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"/></svg></span>}
 export type CreatorRosterPlayer={name:string;role:string;team:string;photo?:string};

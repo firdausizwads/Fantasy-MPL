@@ -7,6 +7,7 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: /Build your roster/i })).toBeVisible();
     await expect(page.getByRole('button', { name: 'CREATE ACCOUNT', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'SIGN IN', exact: true })).toBeVisible();
+    await expect(page.getByLabel(/AGE AND GUARDIAN CONFIRMATION/i)).toBeVisible();
     await expect(page.getByText('SEASON 18 TEAM SHOWCASE')).toBeVisible();
   });
 
@@ -17,6 +18,7 @@ test.describe('public experience', () => {
     await page.getByLabel('EMAIL ADDRESS').fill('test@example.com');
     await page.getByLabel('PASSWORD').fill('test-password');
     await page.getByLabel('COUNTRY').selectOption('MY');
+    await page.getByLabel(/AGE AND GUARDIAN CONFIRMATION/i).check();
     await page.getByRole('button', { name: /CREATE ACCOUNT →/ }).click();
 
     await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible();
@@ -155,10 +157,13 @@ test.describe('public experience', () => {
       await expect(page.locator('h1')).toBeVisible();
     }
 
-    for (const route of ['/robots.txt', '/sitemap.xml', '/manifest.webmanifest', '/icon.png']) {
+    for (const route of ['/robots.txt', '/sitemap.xml', '/manifest.webmanifest', '/icon.png', '/favicon.ico']) {
       const response = await request.get(route);
       expect(response.status()).toBe(200);
     }
+
+    await page.goto('/');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /^https:\/\//);
   });
 
   test('PandaScore synchronization endpoint rejects unauthenticated callers', async ({ request }) => {

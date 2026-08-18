@@ -1,65 +1,107 @@
-# Publish Fantasy MPL with GitHub and Vercel
+# Fantasy MPL deployment guide
 
-## Before you begin
+This project deploys from GitHub to Vercel and uses Supabase for Auth, PostgreSQL, Storage and Realtime.
 
-You need:
+## 1. Work safely with GitHub Desktop
 
-- your GitHub account;
-- your Vercel account;
-- the extracted contents of `fantasy-mpl-vercel.zip`.
+1. Open **GitHub Desktop**.
+2. Select the `Fantasy-MPL` repository.
+3. Select **Fetch origin**, then **Pull origin** if offered.
+4. Select **Current branch → New branch**.
+5. Name the branch, for example `production-hardening`.
+6. Copy the changed project files into the repository folder.
+7. Review the changed-file list in GitHub Desktop.
+8. Commit with a clear message, such as `Harden production and improve mobile performance`.
+9. Select **Push origin**.
+10. On GitHub, open a pull request into `main` and wait for **Quality checks** to pass.
 
-Do not upload the ZIP as one compressed file to GitHub. Extract it first, then upload the files and folders inside it.
+Do not commit `.env`, `.env.local`, Supabase secret keys, database passwords, PandaScore tokens or GitHub tokens.
 
-## 1. Create the GitHub repository
+## 2. Configure Vercel environment variables
 
-1. Sign in to GitHub.
-2. Open **https://github.com/new**.
-3. Repository name: `fantasy-mpl`.
-4. Choose **Private** while the product is under development.
-5. Do not add a README, `.gitignore`, or license because they already exist in the project package.
-6. Select **Create repository**.
+Open **Vercel → fantasy-mpl → Settings → Environment Variables**. Add the variables to Production and Preview as appropriate:
 
-## 2. Upload the project
+| Variable | Visibility | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Public | Canonical production URL, without a trailing slash |
+| `NEXT_PUBLIC_PRIVACY_EMAIL` | Public | Email shown in the Privacy Policy for user requests |
+| `NEXT_PUBLIC_SUPABASE_URL` | Public | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public | Supabase publishable browser key |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret, server only** | Server-side fixture ingestion |
+| `PANDASCORE_API_TOKEN` | **Secret, server only** | PandaScore API access |
+| `PANDASCORE_SYNC_SECRET` | **Secret, server only** | Protects the database ingestion RPC; at least 32 random characters |
+| `CRON_SECRET` | **Secret, server only** | Protects scheduled synchronization requests |
 
-On the empty repository page:
+Never prefix a secret with `NEXT_PUBLIC_`. Never paste a secret or service-role key into frontend code, GitHub, screenshots or chat.
 
-1. Select **uploading an existing file**.
-2. Extract `fantasy-mpl-vercel.zip` on your computer.
-3. Open the extracted folder.
-4. Drag all files and folders inside it into GitHub’s upload area. Include `app`, `public`, `package.json`, `package-lock.json`, and the other root files.
-5. Wait for every file to finish uploading.
-6. Enter commit message: `Initial Fantasy MPL frontend`.
-7. Select **Commit changes**.
+Generate independent secrets locally, for example:
 
-If GitHub’s browser uploader has trouble with folders, install GitHub Desktop, choose **Add an Existing Repository from your hard drive**, select the extracted folder, publish it as `fantasy-mpl`, and keep it private.
+```bash
+openssl rand -hex 32
+```
 
-## 3. Deploy through Vercel
+After changing Vercel environment variables, redeploy the latest deployment so the build receives the updated values.
 
-1. Sign in at **https://vercel.com**.
-2. Select **Add New → Project**.
-3. Connect GitHub if Vercel asks for permission.
-4. Find and import the `fantasy-mpl` repository.
-5. Keep the detected framework as **Next.js**.
-6. Leave Root Directory as `./`.
-7. Do not add environment variables for this frontend-only release.
-8. Select **Deploy**.
-9. Wait for Vercel to finish building.
-10. Select **Visit** to open your new public URL.
+## 3. Apply Supabase migrations
 
-The URL will look similar to:
+Migrations live in `supabase/migrations` and must be applied in numerical order.
 
-`https://fantasy-mpl-xxxxx.vercel.app`
+For an existing project already on migration 028:
 
-## 4. Send back the public URL
+1. Add `SUPABASE_SERVICE_ROLE_KEY` to Vercel first.
+2. Deploy the updated application code and verify `/api/health`.
+3. Open **Supabase → SQL Editor → New query**.
+4. Paste and run `supabase/migrations/029_server_only_fixture_ingestion.sql`.
+5. Confirm the final query returns `true` for all three checks.
+6. Paste and run `supabase/migrations/030_age_and_terms_acceptance.sql`.
+7. Confirm its final three checks return `true`.
+8. Create a test account and verify the age/guardian checkbox is required.
+9. From an administrator account, run PandaScore synchronization once and review the staging queue.
 
-Once deployment succeeds, send the Vercel URL back in our conversation. We can then test the public build and continue improvements together.
+This order avoids interrupting fixture sync and signups: the updated Vercel code starts sending server credentials and acceptance metadata before the database permissions and acceptance trigger are tightened.
 
-## What this deployment does not include yet
+For a new Supabase project, apply every numbered migration from `001` through `030` in order. Test migrations in a separate project before production whenever possible.
 
-- secure real-user authentication;
-- shared multi-user data;
-- permanent cloud predictions;
-- database-backed drafts;
-- server-side scoring and deadlines.
+## 4. Verify the deployment
 
-These will be added after creating a Supabase project.
+After the Vercel deployment is ready, run locally:
+
+```bash
+npm ci
+npm run typecheck
+npm run build
+npm run test:e2e
+npm run test:production
+```
+
+Then check:
+
+- `https://YOUR_DOMAIN/api/health` reports `status: ok`;
+- registration and email confirmation work;
+- sign-in survives a refresh;
+- MY, ID and PH regional routes load;
+- a regular account cannot see or call administrator tools;
+- an administrator can run PandaScore sync after migration 029;
+- `/robots.txt`, `/sitemap.xml`, `/manifest.webmanifest` and `/favicon.ico` return 200.
+
+## 5. Add a custom domain
+
+1. Open **Vercel → fantasy-mpl → Settings → Domains**.
+2. Add the domain you own and follow Vercel's DNS instructions.
+3. Set `NEXT_PUBLIC_SITE_URL` to `https://your-domain.example`.
+4. Redeploy Production.
+5. Confirm the canonical link, sitemap and robots file use the custom domain.
+6. Add the custom URL to **Supabase → Authentication → URL Configuration** as the Site URL and an allowed redirect URL.
+
+Keep the existing `vercel.app` domain as a redirect or deployment fallback.
+
+## 6. Rollback
+
+If a deployment fails:
+
+1. Open **Vercel → Deployments**.
+2. Select the previous healthy deployment.
+3. Choose **Promote to Production**.
+4. In GitHub Desktop, revert the faulty commit rather than deleting history.
+
+Database migrations should be fixed with a new forward migration. Do not edit an already-applied production migration in place.

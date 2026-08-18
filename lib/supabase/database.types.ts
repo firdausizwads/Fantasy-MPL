@@ -1236,25 +1236,34 @@ export type Database = {
       profile_private: {
         Row: {
           address: string | null
+          age_or_guardian_confirmed: boolean
           created_at: string
           date_of_birth: string | null
           full_name: string
+          terms_accepted_at: string | null
+          terms_version: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           address?: string | null
+          age_or_guardian_confirmed?: boolean
           created_at?: string
           date_of_birth?: string | null
           full_name: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           address?: string | null
+          age_or_guardian_confirmed?: boolean
           created_at?: string
           date_of_birth?: string | null
           full_name?: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1870,6 +1879,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_current_terms: {
+        Args: { accepted_version: string; age_or_guardian: boolean }
+        Returns: undefined
+      }
       admin_create_match: {
         Args: {
           away_team: string

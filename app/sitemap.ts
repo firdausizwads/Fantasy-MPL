@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { SITE_URL } from '../lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://fantasy-mpl-phi.vercel.app';
+  const base = SITE_URL;
   return [
     { url: base, changeFrequency: 'daily', priority: 1 },
     { url: `${base}/my`, changeFrequency: 'daily', priority: 0.8 },

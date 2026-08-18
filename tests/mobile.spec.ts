@@ -7,6 +7,7 @@ async function enterLocalDashboard(page: import('@playwright/test').Page) {
   await page.getByLabel('EMAIL ADDRESS').fill('mobile@example.com');
   await page.getByLabel('PASSWORD').fill('test-password');
   await page.getByLabel('COUNTRY').selectOption('PH');
+  await page.getByLabel(/AGE AND GUARDIAN CONFIRMATION/i).check();
   await page.getByRole('button', { name: /CREATE ACCOUNT →/ }).click();
   await page.getByRole('button', { name: /MPL Philippines/i }).click();
   await expect(page.getByText(/WELCOME BACK, MOBILEMANAGER/i)).toBeVisible();

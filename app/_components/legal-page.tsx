@@ -8,13 +8,13 @@ export default function LegalPage({ title, intro, sections }: { title: string; i
     <main className={styles.page}>
       <header className={styles.header}>
         <Link href="/" className={styles.brand}>
-          <img src="/brand/fantasy-mpl-emblem.png" alt="Fantasy MPL" />
+          <img src="/brand/fantasy-mpl-emblem-display.webp" alt="Fantasy MPL" />
           <span><b>FANTASY MPL</b><small>POLICY CENTER</small></span>
         </Link>
         <Link href="/" className={styles.back}>← RETURN TO FANTASY MPL</Link>
       </header>
       <article className={styles.document}>
-        <span className={styles.eyebrow}>FANTASY MPL · LAST UPDATED 16 AUGUST 2026</span>
+        <span className={styles.eyebrow}>FANTASY MPL · LAST UPDATED 18 AUGUST 2026</span>
         <h1>{title}</h1>
         <p className={styles.intro}>{intro}</p>
         {sections.map(section => (

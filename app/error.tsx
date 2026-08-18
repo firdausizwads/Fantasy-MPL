@@ -10,7 +10,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
 
   return (
     <main className="recoveryPage">
-      <img src="/brand/fantasy-mpl-emblem.png" alt="Fantasy MPL" />
+      <img src="/brand/fantasy-mpl-emblem-display.webp" alt="Fantasy MPL" />
       <span>CONNECTION INTERRUPTED</span>
       <h1>THIS FEATURE COULDN’T LOAD.</h1>
       <p>Your account data is safe. Retry the feature, or return to the dashboard if the problem continues.</p>
