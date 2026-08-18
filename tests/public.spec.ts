@@ -161,6 +161,11 @@ test.describe('public experience', () => {
     }
   });
 
+  test('PandaScore synchronization endpoint rejects unauthenticated callers', async ({ request }) => {
+    expect((await request.get('/api/integrations/pandascore/sync')).status()).toBe(401);
+    expect((await request.post('/api/integrations/pandascore/sync')).status()).toBe(401);
+  });
+
   test('security headers are attached to application pages', async ({ request }) => {
     const response = await request.get('/');
     expect(response.headers()['content-security-policy']).toContain("default-src 'self'");

@@ -724,6 +724,8 @@ export type Database = {
           best_of: number
           created_at: string
           finalized_at: string | null
+          external_provider: string | null
+          external_match_id: number | null
           home_score: number | null
           home_team_id: string
           id: string
@@ -743,6 +745,8 @@ export type Database = {
           best_of?: number
           created_at?: string
           finalized_at?: string | null
+          external_provider?: string | null
+          external_match_id?: number | null
           home_score?: number | null
           home_team_id: string
           id?: string
@@ -762,6 +766,8 @@ export type Database = {
           best_of?: number
           created_at?: string
           finalized_at?: string | null
+          external_provider?: string | null
+          external_match_id?: number | null
           home_score?: number | null
           home_team_id?: string
           id?: string
@@ -2004,6 +2010,11 @@ export type Database = {
       delete_my_account: { Args: { confirmation_name: string }; Returns: undefined }
       my_dashboard_summary: { Args: { target_region: string }; Returns: Json }
       my_account_bootstrap: { Args: Record<PropertyKey, never>; Returns: Json }
+      configure_pandascore_sync_secret: { Args: { raw_secret: string }; Returns: undefined }
+      ingest_pandascore_fixture_batch: { Args: { raw_secret: string; matches: Json }; Returns: Json }
+      admin_map_pandascore_team: { Args: { external_id: number; target_team: string }; Returns: undefined }
+      admin_apply_pandascore_fixtures: { Args: { target_region: string }; Returns: Json }
+      admin_pandascore_sync_status: { Args: { target_region: string }; Returns: Json }
       update_my_profile: {
         Args: {
           new_manager_name: string

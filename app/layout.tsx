@@ -12,6 +12,7 @@ import './draft-side-branding.css';
 import './draft-intelligence.css';
 import './regional-operations.css';
 import './profile-reliability.css';
+import './pandascore-sync.css';
 
 const jakarta = localFont({
   src: './fonts/PlusJakartaSans-Variable.ttf',
