@@ -69,6 +69,18 @@ export type Database = {
         }
         Relationships: []
       }
+      regional_fantasy_lineups: {
+        Row: { id:string; user_id:string; week_id:string; captain_player_id:string|null; status:string; submitted_at:string|null; locked_at:string|null; created_at:string; updated_at:string }
+        Insert: { id?:string; user_id:string; week_id:string; captain_player_id?:string|null; status?:string; submitted_at?:string|null; locked_at?:string|null; created_at?:string; updated_at?:string }
+        Update: { id?:string; user_id?:string; week_id?:string; captain_player_id?:string|null; status?:string; submitted_at?:string|null; locked_at?:string|null; created_at?:string; updated_at?:string }
+        Relationships: []
+      }
+      regional_fantasy_lineup_players: {
+        Row: { id:string; lineup_id:string; player_id:string; team_id:string; slot_role:string; created_at:string }
+        Insert: { id?:string; lineup_id:string; player_id:string; team_id:string; slot_role:string; created_at?:string }
+        Update: { id?:string; lineup_id?:string; player_id?:string; team_id?:string; slot_role?:string; created_at?:string }
+        Relationships: []
+      }
       competition_weeks: {
         Row: {
           created_at: string
@@ -2017,6 +2029,12 @@ export type Database = {
       admin_pandascore_sync_status: { Args: { target_region: string }; Returns: Json }
       admin_live_overview: { Args: { target_region: string }; Returns: Json }
       admin_publish_weekly_mvp: { Args: { target_week: string; target_player: string; target_source_url: string }; Returns: undefined }
+      current_regional_fantasy_week: { Args: { target_region:string }; Returns:string }
+      save_regional_fantasy_lineup: { Args: { target_week:string; target_captain:string; selections:Json }; Returns:string }
+      score_week_regional_fantasy: { Args: { target_week:string }; Returns: { lineups_scored:number; transactions_created:number }[] }
+      save_my_meta_prediction: { Args: { target_region:string; payload:Json; submit?:boolean }; Returns:Json }
+      admin_publish_meta_result: { Args: { target_week:string; payload:Json; target_source_url:string }; Returns:undefined }
+      score_week_meta: { Args: { target_week:string }; Returns:{ predictions_scored:number; transactions_created:number }[] }
       update_my_profile: {
         Args: {
           new_manager_name: string

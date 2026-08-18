@@ -124,7 +124,7 @@ export function CloudDashboard({
 
     <div className="dashboardGrid realDashboardGrid">
       <section className="panel realUpcomingPanel">
-        <div className="panelHead"><div><h2>Upcoming predictions</h2><p>{summary.week_number ? `Week ${summary.week_number} · verified cloud fixtures` : 'Competition schedule pending'}</p></div><button className="textBtn" onClick={onPredictions}>VIEW ALL</button></div>
+        <div className="panelHead"><div><h2>Upcoming predictions</h2><p>{summary.week_number ? `Week ${summary.week_number} · upcoming regional matches` : 'Competition schedule pending'}</p></div><button className="textBtn" onClick={onPredictions}>VIEW ALL</button></div>
         {matches.length === 0
           ? <div className="realEmptyState"><span>◷</span><h3>NO UPCOMING FIXTURES</h3><p>VERIFIED MATCHES WILL APPEAR HERE AFTER THE REGIONAL SCHEDULE IS PUBLISHED.</p></div>
           : matches.map(match => {

@@ -162,12 +162,16 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       });
       if (mvpError) { notify(mvpError.message); setBusy(false); return; }
     }
-    const [fantasyRes, predictionRes] = await Promise.all([
+    const [fantasyRes, regionalFantasyRes, predictionRes, metaRes] = await Promise.all([
       supabase.rpc('score_week_fantasy', { target_week: weekId }),
-      supabase.rpc('score_week_predictions', { target_week: weekId })
+      supabase.rpc('score_week_regional_fantasy', { target_week: weekId }),
+      supabase.rpc('score_week_predictions', { target_week: weekId }),
+      supabase.rpc('score_week_meta', { target_week: weekId })
     ]);
     if (fantasyRes.error) { notify(fantasyRes.error.message); setBusy(false); return; }
+    if (regionalFantasyRes.error) { notify(regionalFantasyRes.error.message); setBusy(false); return; }
     if (predictionRes.error) { notify(predictionRes.error.message); setBusy(false); return; }
+    if (metaRes.error) { notify(metaRes.error.message); setBusy(false); return; }
     const [overallSnapshot, weekSnapshot] = await Promise.all([
       supabase.rpc('admin_refresh_leaderboard_snapshots', { target_region: region }),
       supabase.rpc('admin_refresh_leaderboard_snapshots', { target_region: region, target_week: weekId })
@@ -178,12 +182,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       return;
     }
     const f = Array.isArray(fantasyRes.data) ? fantasyRes.data[0] : fantasyRes.data;
+    const rf = Array.isArray(regionalFantasyRes.data) ? regionalFantasyRes.data[0] : regionalFantasyRes.data;
     const p = Array.isArray(predictionRes.data) ? predictionRes.data[0] : predictionRes.data;
-    setLastRun({
-      lineups: f?.lineups_scored ?? 0,
-      transactions: (f?.transactions_created ?? 0) + (p?.transactions_created ?? 0)
-    });
-    notify(`Scoring complete — ${f?.lineups_scored ?? 0} lineups, ${p?.predictions_scored ?? 0} predictions, ${(f?.transactions_created ?? 0) + (p?.transactions_created ?? 0)} transactions.`);
+    const mt = Array.isArray(metaRes.data) ? metaRes.data[0] : metaRes.data;
+    const lineupTotal=(f?.lineups_scored??0)+(rf?.lineups_scored??0);const transactionTotal=(f?.transactions_created??0)+(rf?.transactions_created??0)+(p?.transactions_created??0)+(mt?.transactions_created??0);
+    setLastRun({lineups:lineupTotal,transactions:transactionTotal});
+    notify(`Scoring complete — ${lineupTotal} lineups, ${p?.predictions_scored ?? 0} predictions, ${transactionTotal} transactions.`);
   }
 
   if (loading) return <section className="panel adminCloudPanel"><div className="cloudLoading">LOADING VERIFIED COMPETITION DATA…</div></section>;
