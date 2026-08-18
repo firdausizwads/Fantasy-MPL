@@ -1,5 +1,5 @@
 const base=(process.env.BASE_URL||'https://fantasy-mpl-phi.vercel.app').replace(/\/$/,'');
-const routes=['/','/my','/id','/ph','/live-draft','/privacy','/terms','/rules','/community-guidelines','/robots.txt','/sitemap.xml','/manifest.webmanifest','/api/region-status?region=MY','/api/region-status?region=ID','/api/region-status?region=PH','/api/draft-model?region=MY','/api/draft-model?region=ID','/api/draft-model?region=PH','/api/health'];
+const routes=['/','/my','/id','/ph','/live-draft','/privacy','/terms','/rules','/community-guidelines','/robots.txt','/sitemap.xml','/manifest.webmanifest','/api/region-status?region=MY','/api/region-status?region=ID','/api/region-status?region=PH','/api/draft-model?region=MY','/api/draft-model?region=ID','/api/draft-model?region=PH','/api/playoff-access?region=MY','/api/playoff-access?region=ID','/api/playoff-access?region=PH','/api/health'];
 let failed=false;
 for(const route of routes){
  const started=Date.now();

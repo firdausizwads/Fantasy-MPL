@@ -44,6 +44,40 @@ test.describe('public experience', () => {
     expect(Array.isArray(payload.metrics)).toBeTruthy();
   });
 
+  test('custom playoffs stay editable and official predictor exposes its countdown', async ({ page, request }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4,
+        name: 'BracketManager',
+        email: 'bracket@example.com',
+        country: 'MY',
+        fullName: 'Bracket Test Manager',
+        address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'user', joined: ['MY'], active: 'MY',
+        picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/my#playoffs');
+    await expect(page.getByRole('heading', { name: /Road to the Grand Final/i })).toBeVisible();
+    await expect(page.locator('.seedPickerCard')).toHaveCount(6);
+    const seedOne = page.getByLabel('Seed 1');
+    const alternate = await seedOne.locator('option').last().getAttribute('value');
+    await seedOne.selectOption(alternate!);
+    await expect(seedOne).toHaveValue(alternate!);
+    await expect(page.getByRole('button', { name: 'SAVE CUSTOM BRACKET' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /LOCK OFFICIAL PREDICTION/i })).toHaveCount(0);
+    await expect(page.locator('.bracketScroll + .seedingAfterBracket')).toHaveCount(1);
+
+    await page.getByRole('button', { name: /OFFICIAL PREDICTOR/i }).click();
+    await expect(page.getByRole('heading', { name: /Official Predictor Opens Soon/i })).toBeVisible();
+    await expect(page.locator('.playoffCountdown')).toBeVisible();
+    await expect(page.getByRole('button', { name: /BUILD A CUSTOM BRACKET NOW/i })).toBeVisible();
+
+    const access = await request.get('/api/playoff-access?region=MY');
+    expect(access.status()).toBe(200);
+    expect((await access.json()).server_now).toBeTruthy();
+  });
+
   test('every open match requires winner and exact score', async ({ page, isMobile }) => {
     test.skip(Boolean(isMobile), 'Desktop flow is automated; mobile scoring remains covered by manual beta QA.');
     // Mandatory BO score validation is also enforced server-side by

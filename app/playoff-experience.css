@@ -1,0 +1,72 @@
+/* Playoff predictor access, custom seeding studio and post-bracket preview */
+.playoffV2 .playoffModeTabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0 12px;padding:7px;border:1px solid #d5dee8;border-radius:14px;background:linear-gradient(180deg,#fff,#f5f8fb);box-shadow:0 8px 24px rgba(20,39,64,.06)}
+.playoffV2 .playoffModeTabs button{min-width:0;min-height:72px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:11px;padding:11px 13px;border:1px solid transparent;border-radius:10px;background:transparent;color:#5e6f84;text-align:left;transition:border-color .18s ease,background .18s ease,transform .18s ease,box-shadow .18s ease}
+.playoffV2 .playoffModeTabs button:hover{border-color:#c8d5e2;background:#fff;transform:translateY(-1px)}
+.playoffV2 .playoffModeTabs button.active{border-color:#1d3755;background:linear-gradient(135deg,#0d2036,#173653);color:#fff;box-shadow:0 9px 20px rgba(15,35,56,.17)}
+.playoffV2 .modeTabIcon{width:42px;height:42px;display:grid;place-items:center;border:1px solid #d4dee8;border-radius:9px;background:#fff;color:var(--region);font-size:17px}
+.playoffV2 .playoffModeTabs button.active .modeTabIcon{border-color:rgba(255,255,255,.15);background:rgba(var(--region-rgb),.18);color:#fff}
+.playoffV2 .playoffModeTabs button>span:nth-child(2){min-width:0}
+.playoffV2 .playoffModeTabs b,.playoffV2 .playoffModeTabs small{display:block}
+.playoffV2 .playoffModeTabs b{font-size:10px;letter-spacing:.25px}
+.playoffV2 .playoffModeTabs small{margin-top:4px;color:inherit;font-size:7px;line-height:1.35;opacity:.68}
+.playoffV2 .modeStatus{padding:7px 8px;border-radius:6px;font-size:7px;font-style:normal;font-weight:900;white-space:nowrap}
+.playoffV2 .modeStatus.open{background:#e7f8f2;color:#087962}
+.playoffV2 .modeStatus.locked{background:#fff3d7;color:#956500}
+.playoffV2 .playoffModeTabs button.active .modeStatus{background:rgba(255,255,255,.1);color:#fff}
+
+.seedStudio{margin:12px 0 15px!important;padding:0!important;overflow:hidden;border:1px solid #d3dde8!important;border-radius:14px!important;background:#f7f9fc!important;box-shadow:0 12px 30px rgba(20,39,64,.07)}
+.seedStudio>header{min-height:112px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px;padding:22px 24px!important;border:0!important;background:radial-gradient(circle at 88% 10%,rgba(var(--region-rgb),.34),transparent 32%),linear-gradient(120deg,#0a1b30,#143451)!important;color:#fff!important}
+.seedStudio>header>div{max-width:700px}
+.seedStudio>header span{color:#79d9d1!important;font-size:8px!important;font-weight:900;letter-spacing:1px}
+.seedStudio>header h2{margin:6px 0 5px!important;color:#fff;font-size:23px!important;letter-spacing:-.5px}
+.seedStudio>header p{max-width:660px;margin:0!important;color:#aebdcd!important;font-size:10px!important;line-height:1.55}
+.seedStudio>header aside{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+.seedStudio>header aside>span{padding:9px 11px;border:1px solid rgba(255,255,255,.13);border-radius:8px;background:rgba(255,255,255,.06);color:#b8c7d5!important;font-size:7px!important;white-space:nowrap}
+.seedStudio>header aside>span b{color:#fff;font-size:13px}
+.seedStudio>header aside button{padding:11px 12px;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-size:8px;font-weight:900}
+.seedStudio>header aside button:hover{border-color:#fff;background:rgba(255,255,255,.14)}
+.seedPickerGrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;padding:18px!important}
+.seedPickerCard{min-width:0;display:grid!important;grid-template-columns:42px minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:8px 10px;margin:0!important;padding:12px!important;position:relative;border:1px solid #d9e2eb;border-radius:11px;background:#fff;color:#17263b!important;box-shadow:0 5px 14px rgba(21,42,67,.04);transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.seedPickerCard:hover{border-color:rgba(var(--region-rgb),.55);box-shadow:0 8px 20px rgba(21,42,67,.08);transform:translateY(-1px)}
+.seedNumber{width:42px;height:42px;grid-row:1;display:grid;place-items:center;border-radius:9px;background:linear-gradient(145deg,#10253e,#1b456d);color:#fff!important;font-family:var(--font-display);font-size:13px!important;font-weight:900;letter-spacing:0!important}
+.seedTeamIdentity{min-width:0;display:flex;align-items:center;gap:9px;color:#17263b!important;letter-spacing:0!important}
+.seedTeamIdentity>img{width:36px;height:36px;flex:0 0 auto;object-fit:contain}
+.seedTeamIdentity>span{min-width:0}
+.seedTeamIdentity b,.seedTeamIdentity small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seedTeamIdentity b{font-size:9px}
+.seedTeamIdentity small{margin-top:3px;color:var(--region);font-size:7px}
+.seedRoute{padding:5px 6px;border-radius:5px;background:#eef3f7;color:#708095!important;font-size:6px!important;font-weight:900;letter-spacing:.3px!important;white-space:nowrap}
+.seedPickerCard select{height:38px;grid-column:1/4;width:100%;margin:2px 0 0!important;padding:0 34px 0 10px;border:1px solid #d4dee8;border-radius:8px;background:#f7f9fb;color:#20334a;font-size:9px!important;font-weight:800;outline:none}
+.seedPickerCard select:focus{border-color:var(--region);box-shadow:0 0 0 3px rgba(var(--region-rgb),.1)}
+.seedStudio>footer{display:flex;align-items:center;gap:10px;margin:0 18px 18px;padding:11px 13px;border:1px solid rgba(var(--region-rgb),.18);border-radius:9px;background:rgba(var(--region-rgb),.055)}
+.seedStudio>footer>i{width:30px;height:30px;display:grid;place-items:center;flex:0 0 auto;border-radius:8px;background:var(--region);color:#fff;font-size:17px;font-style:normal}
+.seedStudio>footer p{margin:0}.seedStudio>footer b,.seedStudio>footer small{display:block}.seedStudio>footer b{font-size:8px}.seedStudio>footer small{margin-top:2px;color:#6d7c8f;font-size:7px}
+
+.officialCountdownGate{min-height:520px!important;padding:48px 26px!important;overflow:hidden;position:relative;border-color:#203a58!important;background:radial-gradient(circle at 50% 20%,rgba(var(--region-rgb),.27),transparent 31%),linear-gradient(145deg,#081728,#102a43)!important;color:#fff!important;box-shadow:0 18px 42px rgba(10,27,44,.16)}
+.officialCountdownGate:before,.officialCountdownGate:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.officialCountdownGate:before{width:260px;height:260px;right:-100px;top:-100px;border:1px solid rgba(255,255,255,.08)}.officialCountdownGate:after{width:380px;height:380px;left:-190px;bottom:-260px;border:1px solid rgba(255,255,255,.06)}
+.officialGateMark{width:116px;height:116px;display:grid;place-items:center;position:relative;z-index:1;border:1px solid rgba(255,255,255,.13);border-radius:28px;background:rgba(255,255,255,.07)}
+.officialGateMark img{width:86px!important;height:86px!important;object-fit:contain}.officialGateMark i{width:12px;height:12px;position:absolute;right:10px;top:10px;border:3px solid #102a43;border-radius:50%;background:#f0be37;box-shadow:0 0 0 5px rgba(240,190,55,.15);animation:officialGatePulse 1.5s ease-in-out infinite}
+@keyframes officialGatePulse{50%{box-shadow:0 0 0 10px rgba(240,190,55,0)}}
+.officialCountdownGate>span{position:relative;z-index:1;margin-top:20px!important;color:#efc34b!important;font-size:9px!important;letter-spacing:1px}
+.officialCountdownGate h2{position:relative;z-index:1;margin:9px 0 6px!important;color:#fff;font-size:25px!important}.officialCountdownGate>p{max-width:650px!important;position:relative;z-index:1;color:#aebdcb!important;font-size:10px!important;line-height:1.6}
+.playoffCountdown{display:flex;align-items:center;justify-content:center;gap:8px;margin:27px 0 20px;position:relative;z-index:1}
+.playoffCountdown>div{width:90px;padding:13px 8px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px rgba(255,255,255,.05)}
+.playoffCountdown b,.playoffCountdown small{display:block}.playoffCountdown b{font-family:var(--font-display);font-size:28px;line-height:1}.playoffCountdown small{margin-top:7px;color:#8fa3b7;font-size:6px;font-weight:900}.playoffCountdown>i{color:#6f8398;font-size:19px;font-style:normal;font-weight:900}
+.officialGateMeta{min-width:min(600px,100%);display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative;z-index:1}
+.officialGateMeta>span{padding:10px 12px;border:1px solid rgba(255,255,255,.09);border-radius:8px;background:rgba(2,10,19,.25);text-align:left}.officialGateMeta b,.officialGateMeta small{display:block}.officialGateMeta b{font-size:10px}.officialGateMeta small{margin-top:3px;color:#7f94aa;font-size:6px;font-weight:800}
+.officialCountdownGate>button{min-width:250px;position:relative;z-index:1;margin-top:21px!important;padding:13px 16px!important;background:var(--region)!important;font-size:9px!important;box-shadow:0 9px 24px rgba(var(--region-rgb),.22)}
+
+.seedingAfterBracket.playoffPreview{display:block;margin:16px 0 10px;padding:18px;border:1px solid #d5dfe9;border-radius:13px;background:linear-gradient(145deg,#fff,#f5f8fb);box-shadow:0 9px 24px rgba(20,39,64,.05)}
+.seedingAfterBracket>header{display:grid;grid-template-columns:minmax(240px,.7fr) 1.3fr;align-items:end;gap:20px;margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid #e0e6ed}
+.seedingAfterBracket>header span{color:var(--region);font-size:7px;font-weight:900;letter-spacing:.8px}.seedingAfterBracket>header h2{margin:4px 0 0;font-size:17px}.seedingAfterBracket>header p{margin:0;color:#66768a;font-size:8px!important;line-height:1.55}
+.seedingPreviewGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seedingPreviewGrid article{min-width:0;display:grid;grid-template-columns:28px 42px 1fr;align-items:center;gap:8px;padding:9px;border:1px solid #dde5ed;border-radius:9px;background:#fff}
+.seedingPreviewGrid article>span{width:28px;height:28px;display:grid;place-items:center;border-radius:7px;background:#132b46;color:#fff;font-family:var(--font-display);font-size:9px;font-weight:900}.seedingPreviewGrid img{width:40px;height:40px;object-fit:contain}.seedingPreviewGrid article>div{min-width:0}.seedingPreviewGrid b,.seedingPreviewGrid small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.seedingPreviewGrid b{font-size:8px}.seedingPreviewGrid small{margin-top:3px;color:#79889a;font-size:6px}
+.seedingAfterBracket .bracketShare{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding-top:13px;border-top:1px solid #e0e6ed}.seedingAfterBracket .bracketShare>div:first-child b,.seedingAfterBracket .bracketShare>div:first-child small{display:block}.seedingAfterBracket .bracketShare>div:first-child b{color:#1a2d43;font-size:8px}.seedingAfterBracket .bracketShare>div:first-child small{margin-top:3px;color:#78889a;font-size:7px}.seedingAfterBracket .bracketShare>button{min-width:245px}
+.playoffV2 .customFooter{border-color:rgba(var(--region-rgb),.22);background:linear-gradient(90deg,rgba(var(--region-rgb),.05),#fff)}
+.playoffV2 .officialFooter{border-color:#d6dfe8}.playoffV2 .officialFooter .primary:disabled{background:#18314b;color:#91a0af;opacity:.78}
+
+@media(max-width:980px){.seedPickerGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.playoffV2 .playoffModeTabs button{grid-template-columns:38px 1fr}.playoffV2 .modeTabIcon{width:38px;height:38px}.playoffV2 .modeStatus{grid-column:2;justify-self:start}.seedingPreviewGrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.playoffV2 .playoffModeTabs{grid-template-columns:1fr;gap:7px;padding:5px}.playoffV2 .playoffModeTabs button{min-height:68px;grid-template-columns:40px minmax(0,1fr) auto;padding:10px}.playoffV2 .modeStatus{grid-column:auto;justify-self:auto}.seedStudio>header{min-height:0!important;align-items:flex-start!important;flex-direction:column!important;padding:19px!important}.seedStudio>header h2{font-size:21px!important}.seedStudio>header p{font-size:12px!important}.seedStudio>header aside{width:100%;justify-content:space-between}.seedPickerGrid{grid-template-columns:1fr!important;padding:12px!important}.seedPickerCard{grid-template-columns:42px minmax(0,1fr) auto;padding:11px!important}.seedTeamIdentity b{font-size:12px}.seedTeamIdentity small{font-size:10px}.seedRoute{font-size:8px!important}.seedPickerCard select{height:44px;font-size:16px!important}.seedStudio>footer{margin:0 12px 12px}.seedStudio>footer b{font-size:11px}.seedStudio>footer small{font-size:10px}.officialCountdownGate{min-height:520px!important;padding:34px 14px!important}.officialCountdownGate h2{font-size:22px!important}.officialCountdownGate>p{font-size:12px!important}.playoffCountdown{width:100%;gap:4px}.playoffCountdown>div{width:auto;min-width:0;flex:1;padding:11px 3px}.playoffCountdown b{font-size:23px}.playoffCountdown small{font-size:6px}.playoffCountdown>i{font-size:13px}.officialGateMeta{grid-template-columns:1fr}.officialGateMeta b{font-size:11px}.officialGateMeta small{font-size:8px}.officialCountdownGate>button{width:100%;min-width:0}.seedingAfterBracket.playoffPreview{padding:13px}.seedingAfterBracket>header{grid-template-columns:1fr;gap:7px}.seedingAfterBracket>header h2{font-size:18px}.seedingAfterBracket>header p{font-size:11px!important}.seedingPreviewGrid{grid-template-columns:1fr 1fr;gap:6px}.seedingPreviewGrid article{grid-template-columns:25px 35px 1fr;gap:6px;padding:8px}.seedingPreviewGrid img{width:34px;height:34px}.seedingPreviewGrid b{font-size:9px}.seedingPreviewGrid small{font-size:7px}.seedingAfterBracket .bracketShare{align-items:stretch;flex-direction:column}.seedingAfterBracket .bracketShare>button{width:100%;min-width:0}.playoffV2 .bracketFooter>div:last-child{display:grid;grid-template-columns:1fr;gap:7px}.playoffV2 .bracketFooter>div:last-child button{width:100%}}
+@media(max-width:430px){.playoffV2 .playoffModeTabs button{grid-template-columns:38px 1fr}.playoffV2 .modeStatus{grid-column:2;justify-self:start}.seedingPreviewGrid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.officialGateMark i{animation:none}.seedPickerCard,.playoffV2 .playoffModeTabs button{transition:none}}
