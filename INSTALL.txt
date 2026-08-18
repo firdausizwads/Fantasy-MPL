@@ -1,39 +1,19 @@
-FANTASY MPL — CURRENT-WEEK PREDICTIONS, REGIONAL FANTASY & LIVE META LAB
+FANTASY MPL — MISSING LIVE ADMIN FILES BUILD REPAIR
 
-PREREQUISITE
-Migration 025 must already be applied.
+The latest commit imports three files that were not copied into the repository.
 
-A. RUN SQL IN ORDER
-1. supabase/migrations/026_prediction_week_and_seven_day_window.sql
-   Expected: seven_day_window_ready: true
-2. supabase/migrations/027_official_regional_fantasy.sql
-   Expected: regional_fantasy_ready: true
-3. supabase/migrations/028_live_meta_lab.sql
-   Expected: live_meta_ready: true
-
-B. COPY APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer folder.
-3. Replace matching files.
-4. Commit:
-   Launch current-week predictions, regional fantasy and cloud Meta Lab
-5. Push main and wait for Vercel Production.
+2. Do not copy the outer fantasy-mpl-missing-live-admin-files folder.
+3. Confirm these files appear:
+   app/admin-live-overview.tsx
+   app/admin-weekly-mvp-live.tsx
+   app/live-admin.css
+4. No existing file needs to be deleted.
+5. No Supabase migration is required.
+6. Commit:
+   Add missing live admin overview and MVP modules
+7. Push main and wait for GitHub Quality Checks and Vercel.
 
-C. PREDICTIONS
-- UI chooses the week containing the earliest upcoming scheduled match.
-- Match prediction opens 7 days before each match and locks at match start.
-- Weekly MVP opens 24 hours before the first match and locks at that first match.
-- Public Supabase/cloud status language is removed.
-
-D. OFFICIAL REGIONAL FANTASY
-- No private league required.
-- Every user builds one weekly lineup per region.
-- Five unique roles, five unique professional teams, one 2x captain.
-- Locks at the first regional match.
-- Admin scoring writes real fantasy ledger transactions and leaderboard snapshots.
-
-E. LIVE META LAB
-- Cards save to the authenticated account.
-- Server deadline uses competition_weeks.meta_locks_at.
-- Admin Console > Meta results publishes verified official outcomes and source URL.
-- Weekly scoring awards Meta Lab ledger points.
+Verified against exact GitHub commit 3d6c61e:
+- npm run typecheck: passed
+- npm run build: passed
