@@ -1,26 +1,23 @@
-FANTASY MPL — FIXTURE SYNC DIAGNOSTICS & REGION PERSISTENCE HOTFIX
+FANTASY MPL — PANDASCORE LIST NORMALIZATION HOTFIX
 
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-fixture-sync-region-hotfix folder.
+2. Do not copy the outer fantasy-mpl-pandascore-normalization-hotfix folder.
 3. Replace matching files.
-4. No Supabase migration is required; Migration 024 remains valid.
+4. No Supabase migration is required.
 5. Commit:
-   Fix regional tab persistence and PandaScore sync diagnostics
+   Fix PandaScore Season 18 list normalization
 6. Push main and wait for Vercel Production to become Ready.
 
-REGION FIX
-- Current in-memory region now has first priority during auth refresh.
-- Current /my, /id or /ph pathname is used before the original mounted route.
-- Returning to a background tab no longer resets ID/PH to MY.
+CAUSE
+PandaScore single-match responses include serie.season and serie.year, but list responses may expose only serie.full_name. The connector required numeric season/year, so valid Season 18 2026 records could all be rejected before staging.
 
-SYNC DIAGNOSTICS
-- SYNC NOW now displays a persistent success or error panel.
-- Success shows fetched, staged and unresolved counts.
-- Errors show HTTP status and the exact safe server/database message.
-- Missing environment variable names are identified without exposing values.
+FIX
+- Accepts verified "Season 18 2026" labels when numeric fields are omitted.
+- Retrieves missing series start dates from /series/{id}.
+- Separates raw provider count from accepted/staged count.
+- Shows rejection categories: wrongSeason, opponents, missingTime, missingSeriesStart.
 
 AFTER DEPLOYMENT
-1. Open Admin Console > Fixture sync.
+1. Admin Console > Fixture sync.
 2. Click SYNC NOW once.
-3. If successful, review mappings.
-4. If failed, send the persistent error text shown on screen; never send secrets.
+3. Send the persistent result line if accepted/staged is still zero.
