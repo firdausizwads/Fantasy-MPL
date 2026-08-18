@@ -1,23 +1,40 @@
-FANTASY MPL — PANDASCORE LIST NORMALIZATION HOTFIX
+FANTASY MPL — LIVE ADMIN OVERVIEW & WEEKLY MVP
 
+A. DATABASE FIRST
+1. Open Supabase Dashboard > SQL Editor.
+2. Run:
+   supabase/migrations/025_live_admin_overview_and_mvp.sql
+3. Expected:
+   live_overview_ready: true
+   live_mvp_ready: true
+
+B. APPLICATION FILES
 1. Copy the CONTENTS of this folder into the repository root.
-2. Do not copy the outer fantasy-mpl-pandascore-normalization-hotfix folder.
+2. Do not copy the outer fantasy-mpl-live-admin-overview-mvp folder.
 3. Replace matching files.
-4. No Supabase migration is required.
-5. Commit:
-   Fix PandaScore Season 18 list normalization
-6. Push main and wait for Vercel Production to become Ready.
+4. Commit:
+   Replace demo admin overview and MVP with live cloud data
+5. Push main and wait for Vercel Production to become Ready.
 
-CAUSE
-PandaScore single-match responses include serie.season and serie.year, but list responses may expose only serie.full_name. The connector required numeric season/year, so valid Season 18 2026 records could all be rejected before staging.
+C. VERIFY OVERVIEW
+Admin Console > Overview must show real counts for:
+- registered regional managers
+- current-week match predictions and distinct managers
+- MVP predictions
+- submitted lineups
+- pending and verified results
+- unresolved PandaScore mappings
+- unapplied fixture staging
+- score transactions
+- latest PandaScore sync and scoring activity
 
-FIX
-- Accepts verified "Season 18 2026" labels when numeric fields are omitted.
-- Retrieves missing series start dates from /series/{id}.
-- Separates raw provider count from accepted/staged count.
-- Shows rejection categories: wrongSeason, opponents, missingTime, missingSeriesStart.
+D. VERIFY WEEKLY MVP
+Admin Console > Weekly MVP:
+1. Select a real competition week.
+2. Search the active Season 18 roster.
+3. Select the verified player.
+4. Enter the official source URL.
+5. Publish only after official confirmation.
 
-AFTER DEPLOYMENT
-1. Admin Console > Fixture sync.
-2. Click SYNC NOW once.
-3. Send the persistent result line if accepted/staged is still zero.
+E. MANUAL FIXTURE TOOLS
+The old Weeks & Fixtures tab is renamed Manual fixture tools. Keep it for provider outages, emergency corrections, playoff fixtures, postponed matches and mapping conflicts. PandaScore remains the primary regular-season schedule source.

@@ -2015,6 +2015,8 @@ export type Database = {
       admin_map_pandascore_team: { Args: { external_id: number; target_team: string }; Returns: undefined }
       admin_apply_pandascore_fixtures: { Args: { target_region: string }; Returns: Json }
       admin_pandascore_sync_status: { Args: { target_region: string }; Returns: Json }
+      admin_live_overview: { Args: { target_region: string }; Returns: Json }
+      admin_publish_weekly_mvp: { Args: { target_week: string; target_player: string; target_source_url: string }; Returns: undefined }
       update_my_profile: {
         Args: {
           new_manager_name: string
