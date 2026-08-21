@@ -7,11 +7,15 @@ type Region='MY'|'ID'|'PH';
 type AuthMode='register'|'signin';
 type Stage='welcome'|'battleground'|'ready';
 
+const MLBB_LOGO='/brand/mobile-legends-bang-bang-logo.png';
+
 const REGIONS:Record<Region,{name:string;country:string;headline:string;copy:string;cinematic:string;logo:string;thumb:string}>={
   MY:{name:'MPL Malaysia',country:'MALAYSIA',headline:'OWN THE ARENA',copy:'Explore Malaysia’s fantasy roster, weekly predictions, draft tools and regional competition.',cinematic:'Born from the arena. Built for bold predictions.',logo:'/leagues/display/mpl-my.webp',thumb:'/leagues/thumb/mpl-my.webp'},
   ID:{name:'MPL Indonesia',country:'INDONESIA',headline:'RULE THE META',copy:'Follow Indonesia’s teams, study the meta and preview every competitive Fantasy MPL workspace.',cinematic:'Where every draft becomes a statement.',logo:'/leagues/display/mpl-id.webp',thumb:'/leagues/thumb/mpl-id.webp'},
   PH:{name:'MPL Philippines',country:'PHILIPPINES',headline:'BACK THE CHAMPIONS',copy:'Enter the Philippine regional hub, explore its players and preview the complete fantasy experience.',cinematic:'Champions rise when the community believes.',logo:'/leagues/display/mpl-ph.webp',thumb:'/leagues/thumb/mpl-ph.webp'}
 };
+
+const CINEMATIC_PRELOAD_ASSETS=[MLBB_LOGO,...Object.values(REGIONS).flatMap(region=>[region.logo,region.thumb])];
 
 function Brand(){return <a className="guestBrand" href="/" aria-label="Fantasy MPL home"><img src="/brand/fantasy-mpl-emblem-96.webp" alt=""/><span><b>FANTASY MPL</b><small>FANTASY · PREDICTIONS · COMMUNITY</small></span></a>}
 
@@ -22,6 +26,14 @@ export default function GuestEntry({initialRegion,onExplore,onAuth}:{initialRegi
   const[selected,setSelected]=useState<Region|undefined>(initialRegion);
   const[showcaseRegion,setShowcaseRegion]=useState<Region>(initialRegion||'MY');
   const regionEntries=useMemo(()=>Object.entries(REGIONS) as [Region,(typeof REGIONS)[Region]][],[]);
+
+  useEffect(()=>{
+    CINEMATIC_PRELOAD_ASSETS.forEach(src=>{
+      const image=new Image();
+      image.decoding='async';
+      image.src=src;
+    });
+  },[]);
 
   useEffect(()=>{
     if(stage!=='welcome')return;
@@ -51,9 +63,9 @@ export default function GuestEntry({initialRegion,onExplore,onAuth}:{initialRegi
 
     {stage==='welcome'&&<section className="guestCinematic" aria-live="polite">
       <div className="cinematicGrid" aria-hidden="true"/><div className="cinematicBeam" aria-hidden="true"/><div className="cinematicGrain" aria-hidden="true"/>
-      <article className={`cinematicIntro ${scene===0?'active':''}`} aria-hidden={scene!==0}><span>THE REGIONAL FANTASY EXPERIENCE</span><h1>WELCOME TO<br/><em>FANTASY MPL.</em></h1><p>Fantasy. Predictions. Draft intelligence. Community.</p><div className="cinematicMlbbReveal" aria-hidden="true"><span className="mlbbPortal"><i/><i/><i/></span><span className="mlbbLightSweep"/><img src="/brand/mobile-legends-bang-bang-logo.png" alt=""/></div></article>
+      <article className={`cinematicIntro ${scene===0?'active':''}`} aria-hidden={scene!==0}><span>THE REGIONAL FANTASY EXPERIENCE</span><h1>WELCOME TO<br/><em>FANTASY MPL.</em></h1><p>Fantasy. Predictions. Draft intelligence. Community.</p><div className="cinematicMlbbReveal" aria-hidden="true"><span className="mlbbPortal"><i/><i/><i/></span><span className="mlbbLightSweep"/><img src={MLBB_LOGO} alt="" loading="eager" decoding="async" fetchPriority="high"/></div></article>
       {regionEntries.map(([code,region],index)=><article className={`cinematicRegion cinematic${code} ${scene===index+1?'active':''} ${scene>index+1?'played':''}`} aria-hidden={scene!==index+1} key={code}><div className="cinematicRegionWord">{region.country}</div><div className="cinematicRegionCopy"><span>REGIONAL ARENA</span><h2>{region.name}</h2><p>{region.cinematic}</p><small>SEASON 18 · {region.headline}</small></div><div className="cinematicRegionLogo"><i/><img src={region.logo} alt={`${region.name} logo`}/></div></article>)}
-      <article className={`cinematicFinal ${scene===4?'active':''}`} aria-hidden={scene!==4}><div className="cinematicFinalMarks">{regionEntries.map(([code,region])=><span key={code}><img src={region.thumb} alt={`${region.name} mark`}/></span>)}</div><img className="cinematicFinalBrand" src="/brand/mobile-legends-bang-bang-logo.png" alt="Mobile Legends: Bang Bang"/><span>THE ARENA IS OPEN</span><h2>THREE REGIONS.<br/>ONE FANTASY ARENA.</h2><p>Choose your battleground next.</p></article>
+      <article className={`cinematicFinal ${scene===4?'active':''}`} aria-hidden={scene!==4}><div className="cinematicFinalMarks">{regionEntries.map(([code,region])=><span key={code}><img src={region.thumb} alt={`${region.name} mark`}/></span>)}</div><img className="cinematicFinalBrand" src={MLBB_LOGO} alt="Mobile Legends: Bang Bang" loading="eager" decoding="async" fetchPriority="high"/><span>THE ARENA IS OPEN</span><h2>THREE REGIONS.<br/>ONE FANTASY ARENA.</h2><p>Choose your battleground next.</p></article>
       <div className="cinematicTimeline" aria-hidden="true"><span className={scene>=1?'active':''}>MALAYSIA</span><span className={scene>=2?'active':''}>INDONESIA</span><span className={scene>=3?'active':''}>PHILIPPINES</span><i><b style={{width:`${Math.min(100,(scene/4)*100)}%`}}/></i></div>
     </section>}
 
