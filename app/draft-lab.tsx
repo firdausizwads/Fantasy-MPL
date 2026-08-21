@@ -94,6 +94,16 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
   const sequence=useMemo(()=>createDraftSequence(firstSide),[firstSide]);
   const current = sequence[actions.length];
   const used = useMemo(() => new Set(actions), [actions]);
+  const pickerVisible=Boolean((pickerOpen||mobileTab==='heroes')&&current);
+
+  useEffect(()=>{
+    if(!pickerVisible)return;
+    const previousOverflow=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape'){setPickerOpen(false);setMobileTab('draft')}};
+    window.addEventListener('keydown',onKeyDown);
+    return()=>{document.body.style.overflow=previousOverflow;window.removeEventListener('keydown',onKeyDown)};
+  },[pickerVisible]);
 
   useEffect(() => {
     try {
@@ -146,6 +156,8 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
     const counterPick=candidates.map(item=>({...item.common,score:item.metric.pick_rate*weight('pick_rate',.35)+item.metric.win_rate*weight('win_rate',.25)+item.metric.contest_rate*weight('pick_contest',.15)+item.synergy*100*weight('synergy',.15)+item.counter*100*weight('counter',.1),reason:enemy.length?`Counter-fit against ${enemy.length} visible enemy pick${enemy.length===1?'':'s'}`:`Safe current-patch pick · ${item.metric.win_rate.toFixed(1)}% win rate`})).sort((a,b)=>b.score-a.score||a.hero_name.localeCompare(b.hero_name)).slice(0,3);
     setGroups({priorityBan,potentialPick,counterPick});
   },[actions,current?.side,current?.type,modelBundle,sequence]);
+
+  function closePicker(){setPickerOpen(false);setMobileTab('draft')}
 
   function chooseHero(hero: string) {
     if (!current || used.has(hero)) return;
@@ -206,10 +218,10 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
     </div>
     {actions.length===sequence.length&&<DraftReport region={region} actions={actions} sequence={sequence} bundle={modelBundle} status={intelligence}/>} 
 
-    {(pickerOpen || mobileTab === 'heroes') && current && <section className={`heroPicker guidedHeroPicker ${mobileTab === 'heroes' ? 'mobilePicker' : ''}`}>
-      <div className="heroPickerHead"><div><span className={current.side === 'RED' ? 'red' : ''}>{current.side} SIDE · {current.type}</span><h2>SELECT THE HERO TO {current.type}</h2><p>Search manually or apply verified guidance without leaving this screen.</p></div><button onClick={() => { setPickerOpen(false); setMobileTab('draft'); }} aria-label="Close hero selector">×</button></div>
-      <div className="heroPickerContent"><main className="heroPickerMain"><div className="heroPickerTools"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="SEARCH HERO" inputMode="search"/><div>{ROLE_ORDER.map(item => <button type="button" className={role === item ? 'active' : ''} onClick={() => setRole(item)} key={item}>{item}</button>)}</div></div><div className="heroGrid">{filtered.map(hero => <button onClick={() => chooseHero(hero)} key={hero}><span className="heroPortrait"><img src={heroPhoto(hero)} alt="" decoding="async"/></span><b>{hero}</b><small>{rolesFor(hero).join(' · ')}</small></button>)}</div>{!filtered.length && <p className="heroPickerEmpty">NO AVAILABLE HERO MATCHES THIS FILTER.</p>}</main><PickerInsights current={current} status={intelligence} groups={groups} choose={chooseHero}/></div>
-    </section>}
+    {pickerVisible&&current&&<div className="heroPickerOverlay" onMouseDown={event=>{if(event.target===event.currentTarget)closePicker()}}><section className={`heroPicker guidedHeroPicker ${mobileTab==='heroes'?'mobilePicker':''}`} role="dialog" aria-modal="true" aria-labelledby="hero-picker-title">
+      <div className="heroPickerHead"><div><span className={current.side==='RED'?'red':''}>{current.side} SIDE · {current.type}</span><h2 id="hero-picker-title">SELECT THE HERO TO {current.type}</h2><p>Search manually or apply verified guidance without leaving this screen.</p></div><button type="button" onClick={closePicker} aria-label="Close hero selector">×</button></div>
+      <div className="heroPickerContent"><main className="heroPickerMain"><div className="heroPickerTools"><input value={search} onChange={event=>setSearch(event.target.value)} placeholder="SEARCH HERO" inputMode="search" aria-label="Search heroes"/><div>{ROLE_ORDER.map(item=><button type="button" className={role===item?'active':''} onClick={()=>setRole(item)} key={item}>{item}</button>)}</div></div><div className="heroGrid" tabIndex={0} aria-label="Available heroes">{filtered.map(hero=><button onClick={()=>chooseHero(hero)} key={hero}><span className="heroPortrait"><img src={heroPhoto(hero)} alt="" decoding="async"/></span><b>{hero}</b><small>{rolesFor(hero).join(' · ')}</small></button>)}</div>{!filtered.length&&<p className="heroPickerEmpty">NO AVAILABLE HERO MATCHES THIS FILTER.</p>}</main><PickerInsights current={current} status={intelligence} groups={groups} choose={chooseHero}/></div>
+    </section></div>}
 
     <footer className="draftDisclaimer"><span>i</span><p><b>UNOFFICIAL ANALYSIS TOOL.</b> LIVE DRAFT LAB IS NOT AFFILIATED WITH OR ENDORSED BY MOONTON. RECOMMENDATIONS ARE PATCH-BASED GUIDANCE, NOT GUARANTEED OUTCOMES.</p></footer>
   </div>;

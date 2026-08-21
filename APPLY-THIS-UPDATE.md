@@ -1,91 +1,96 @@
-# Fantasy MPL — Draft Intelligence Sources Modernization
+# Fantasy MPL — Live Draft Report & Hero Picker Fix
 
-Commit: `f78aefa Modernize Draft Intelligence source governance`
+Commit: `16ef08b Fix Draft Report dark mode and hero picker layout`
 
 ## Fixed
 
-The nested **Admin Console → Draft Intelligence → Sources** workspace has been rebuilt instead of only recolored.
+### Draft Report dark mode
 
-### Source governance overview
+The report container was dark, but several nested legacy surfaces were still light. Dark mode now covers the complete report:
 
-- Added a clear governance summary explaining why sources must be reviewed.
-- Added visible counts for registered, approved, commercially permitted and primary sources.
-- Pending or unconfirmed sources are clearly described as blocked from model activation.
+- draft estimate area;
+- blue and red draft profile cards;
+- individual metric cells;
+- selected hero pills;
+- estimate progress bars;
+- complete action timeline;
+- every timeline action card; and
+- model-limitation notice.
 
-### Modern source library
+The report now uses deep navy surfaces, white primary text, blue-grey secondary text and a controlled dark-gold limitation notice.
 
-Each provider now has a structured source card showing:
+### Hero pick/ban window
 
-- approval status;
-- primary-source status;
-- provider URL;
-- recorded licence;
-- commercial-use permission;
-- terms link;
-- exact public attribution; and
-- a warning when attribution is missing.
+The hero selector has been rebuilt as a real viewport-safe modal dialog.
 
-The commercial-use field keeps its original security meaning. It was not weakened or automatically enabled.
+Improvements:
 
-### Guided source review
+- centered desktop window with a maximum readable width;
+- guaranteed fit inside the browser viewport;
+- responsive sizing for desktop, laptop, tablet and mobile;
+- dedicated backdrop instead of the previous pseudo-element workaround;
+- page scrolling is locked while the selector is open;
+- the hero grid scrolls independently while the heading, filters and guidance stay available;
+- mobile safe-area support;
+- compact mobile guidance panel;
+- two-column mobile hero grid;
+- responsive desktop hero columns;
+- close button, backdrop click and Escape-key support;
+- accessible dialog name, hero-search label and available-hero region;
+- body scrolling is restored after selecting a hero or closing the window; and
+- no mobile auto-focus/zoom regression.
 
-The old flat form is now divided into three understandable steps:
+### Tablet layout
 
-1. Provider identity
-2. Rights and public credit
-3. Review decision
-
-Improvements include:
-
-- full-width responsive form controls;
-- clearer field descriptions;
-- modern permission cards;
-- explicit pending/approved/rejected/suspended status;
-- review-safety guidance;
-- improved required URL validation; and
-- clearer save progress text.
-
-### Dark and light themes
-
-- Removed the remaining white nested panels from dark mode.
-- Added deep navy cards, inputs, permission controls and attribution panels.
-- Fixed the active Draft Intelligence tab and other admin accent controls in light mode.
-- Light mode now uses clean white cards and soft blue-grey form sections.
-- Desktop and mobile layouts have no page-level horizontal overflow.
+At widths below 900px, the Live Draft workspace and completed report now stack cleanly. This removes the horizontal overflow previously seen around 721–900px.
 
 ## Files changed
 
-- `app/admin-console-modern.css`
-- `app/admin-draft-intelligence.tsx`
+- `app/draft-final-fixes.css` — new
+- `app/draft-lab.tsx`
+- `app/layout.tsx`
+- `tests/mobile.spec.ts`
 - `tests/public.spec.ts`
 
 No file deletion, Supabase migration or new environment variable is required.
 
 ## Audit results
 
-- TypeScript/build compilation: passed
+- TypeScript: passed
 - Production build: passed
 - Hero assets: `133/133`
-- Desktop Playwright: `17 passed`, `3 mobile-only skipped`
-- Mobile Playwright: `17 passed`, `3 intentionally skipped`
-- Sources theme regression: passed on desktop and mobile in dark and light mode
-- Dark Sources large white surfaces: `0`
-- Source form controls: confirmed full-width
-- Page-level horizontal overflow: `0`
+- Picker portraits loaded during the interaction test: `133/133`
+- Desktop Playwright: `18 passed`, `3 mobile-only skipped`
+- Mobile Playwright: `18 passed`, `3 intentionally skipped`
+- Picker viewport matrix passed at:
+  - 1920×1080
+  - 1440×900
+  - 1280×720
+  - 1024×768
+  - 768×1024
+  - 430×932
+  - 375×812
+  - 320×700
+- Picker page overflow: `0`
+- Picker escapes viewport: `0`
+- Dark Draft Report large white surfaces: `0`
+- Report overflow: `0` across desktop, tablet and mobile checks
 - Dependency vulnerabilities: `0`
 
 ## Apply with GitHub Desktop
 
-1. Apply the previous `Fantasy-MPL-modern-admin-console.zip` update first.
-2. Extract `Fantasy-MPL-draft-sources-fix.zip`.
-3. Copy the extracted `app` and `tests` folders into your Fantasy MPL repository.
+1. Apply the previous Draft Intelligence Sources fix first.
+2. Extract `Fantasy-MPL-live-draft-final-fix.zip`.
+3. Copy the extracted `app` and `tests` folders into the root of your Fantasy MPL repository.
 4. Choose **Replace/Overwrite**.
-5. In GitHub Desktop, confirm the three changed files listed above.
+5. Open GitHub Desktop and confirm the five changed files listed above.
 6. Commit with:
-   `Modernize Draft Intelligence source governance`
+   `Fix Draft Report dark mode and hero picker layout`
 7. Push to GitHub and wait for Vercel to redeploy.
-8. Sign in as an administrator and open:
-   **Admin Console → Draft Intelligence → Sources**
-9. Check the page once in dark mode and once in light mode.
+8. Test:
+   - Live Draft Lab → choose the active ban/pick slot;
+   - scroll the hero list and choose a hero;
+   - complete/open a saved draft report in dark mode;
+   - repeat once on mobile.
 
 Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.

@@ -386,6 +386,15 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: /Build the draft/i })).toBeVisible();
     await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/api/draft-model')))).toBeTruthy();
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
+    const pickerDialog=page.getByRole('dialog', { name: /SELECT THE HERO TO BAN/i });
+    await expect(pickerDialog).toBeVisible();
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+    const pickerFit=await pickerDialog.evaluate(element=>{const rect=element.getBoundingClientRect();return{top:rect.top,left:rect.left,right:rect.right,bottom:rect.bottom,width:innerWidth,height:innerHeight,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1}});
+    expect(pickerFit.top).toBeGreaterThanOrEqual(0);
+    expect(pickerFit.left).toBeGreaterThanOrEqual(0);
+    expect(pickerFit.right).toBeLessThanOrEqual(pickerFit.width);
+    expect(pickerFit.bottom).toBeLessThanOrEqual(pickerFit.height);
+    expect(pickerFit.overflow).toBeFalsy();
     const heroPortraits = page.locator('.heroGrid .heroPortrait img');
     await expect(heroPortraits).toHaveCount(133);
     await expect.poll(() => heroPortraits.evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth > 0))).toBeTruthy();
@@ -396,6 +405,8 @@ test.describe('public experience', () => {
     const atlas = page.getByRole('button', { name: /ATLAS.*ROAM/i });
     await expect(atlas.locator('img')).toHaveAttribute('src', /\/heroes\/atlas\.webp$/);
     await atlas.click();
+    await expect(pickerDialog).toHaveCount(0);
+    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
     const selectedAtlas = page.getByRole('button', { name: /BAN slot 1: ATLAS/i });
     await expect(selectedAtlas).toBeVisible();
     await expect(selectedAtlas.locator('img')).toHaveAttribute('src', /\/heroes\/atlas\.webp$/);
@@ -410,6 +421,38 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: 'Draft Report' })).toBeVisible();
     await expect(page.getByText(/MODEL LIMITATION/i)).toBeVisible();
     await expect(page.locator('.draftTimeline span')).toHaveCount(20);
+  });
+
+  test('authenticated dark Draft Report has no light surfaces on desktop or mobile', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_color_mode', 'dark');
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'DraftReportManager', email: 'draft-report@example.com', country: 'MY',
+        fullName: 'Draft Report Manager', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'user', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+      localStorage.setItem('fmpl_draft_tool', JSON.stringify({ firstSide:'BLUE', mode:'companion', actions:['AAMON','AKAI','ALDOUS','ALICE','ALUCARD','ANGELA','ARGUS','ARLOTT','ATLAS','AULUS','AURORA','BADANG','BALMOND','BANE','BARATS','BAXIA','BEATRIX','BELERICK','BENEDETTA','BRODY'] }));
+    });
+    await page.goto('/my#draftlab');
+    const report=page.locator('.draftReport');
+    await expect(report.getByRole('heading', { name: 'Draft Report' })).toBeVisible();
+    const audit=await report.evaluate(root=>{
+      const leaks:string[]=[];
+      for(const element of root.querySelectorAll('*')){
+        const rect=element.getBoundingClientRect();
+        if(rect.width*rect.height<1200)continue;
+        const match=getComputedStyle(element).backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+        if(!match)continue;
+        const alpha=match[4]==null?1:Number(match[4]);
+        if(alpha>.5&&Number(match[1])>225&&Number(match[2])>225&&Number(match[3])>225)leaks.push((element.className||element.tagName).toString());
+      }
+      return{leaks,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
+    });
+    expect(audit.leaks).toEqual([]);
+    expect(audit.overflow).toBeFalsy();
+    await expect(report.locator('.draftEstimate')).toHaveCSS('background-color','rgb(9, 24, 39)');
+    await expect(report.locator('.draftStatGrid>article').first()).toHaveCSS('background-color','rgb(16, 36, 56)');
+    await expect(report.locator('.estimateDisclaimer')).toHaveCSS('background-color','rgb(43, 38, 24)');
   });
 
   test('policy pages and metadata routes are available', async ({ page, request }) => {

@@ -37,10 +37,17 @@ test.describe('mobile navigation', () => {
     await expect(picker.locator('.heroPortrait img').first()).toHaveAttribute('src', /\/heroes\/.+\.webp$/);
     await expect(page.locator('.heroPickerTools input')).not.toBeFocused();
     await expect(page.locator('.heroPickerTools input')).toHaveCSS('font-size', '16px');
-    const dimensions = await picker.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
+    const heroGrid = picker.locator('.heroGrid');
+    const dimensions = await heroGrid.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
     expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight);
-    await picker.evaluate(element => { element.scrollTop = element.scrollHeight; });
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+    await heroGrid.evaluate(element => { element.scrollTop = element.scrollHeight; });
     await expect(page.getByRole('button', { name: /ZILONG.*EXP/i })).toBeVisible();
+    const rect = await picker.evaluate(element => { const box=element.getBoundingClientRect(); return {top:box.top,left:box.left,right:box.right,bottom:box.bottom,width:innerWidth,height:innerHeight}; });
+    expect(rect.top).toBeGreaterThanOrEqual(0);
+    expect(rect.left).toBeGreaterThanOrEqual(0);
+    expect(rect.right).toBeLessThanOrEqual(rect.width);
+    expect(rect.bottom).toBeLessThanOrEqual(rect.height);
   });
 
   test('mobile navigation opens Live Draft Lab and hides deferred leagues', async ({ page }) => {
