@@ -29,6 +29,8 @@ Open **Vercel → fantasy-mpl → Settings → Environment Variables**. Add the 
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public | Supabase publishable browser key |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Secret, server only** | Server-side fixture ingestion |
 | `PANDASCORE_API_TOKEN` | **Secret, server only** | PandaScore API access |
+| `RONEAI_API_TOKEN` | **Secret, server only** | OpenMLBB/RoneAI Draft Intelligence access |
+| `RONEAI_API_BASE_URL` | Server configuration | Approved OpenMLBB production base URL |
 | `PANDASCORE_SYNC_SECRET` | **Secret, server only** | Protects the database ingestion RPC; at least 32 random characters |
 | `CRON_SECRET` | **Secret, server only** | Protects scheduled synchronization requests |
 

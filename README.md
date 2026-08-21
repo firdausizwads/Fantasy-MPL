@@ -10,12 +10,13 @@ Fantasy MPL is an independent, mobile-first fantasy esports and prediction platf
 - Public manager profiles and private personal details protected by Row Level Security
 - Cloud avatar uploads and self-service account export/deletion
 - Separate MY, ID and PH memberships, feature controls and leaderboards
-- Season 18 teams, rosters, fixtures and regional fantasy lineups
+- Season 18 teams, rosters, sourced player portraits, fixtures and regional fantasy lineups
+- Complete 131-hero local portrait catalog for Live Draft Lab
 - Server-locked match, Weekly MVP and Meta Lab predictions
 - Prediction and fantasy scoring ledgers
 - Realtime league drafts, player ownership, lineups, transfers and chat foundations
 - Custom and official playoff bracket modes
-- Public Live Draft Lab with evidence-gated recommendations
+- Public Live Draft Lab with evidence-gated recommendations and authorized OpenMLBB/RoneAI integration terms
 - Administrator fixture, scoring, regional operations and PandaScore tools
 
 ## Technology
@@ -42,6 +43,7 @@ Never commit `.env.local`. Never place a secret key, service-role key, database 
 
 ```bash
 npm run typecheck
+npm run test:assets
 npm run build
 npm run test:e2e
 npm audit --omit=dev
@@ -75,6 +77,14 @@ Test future migrations in a separate Supabase project before applying them to pr
 - PandaScore ingestion is callable only by the server-side Supabase role after migration 029.
 - The Supabase publishable key is intentionally public; server secrets are not.
 - Security headers are configured in `next.config.ts`.
+
+## OpenMLBB / RoneAI
+
+Fantasy MPL has written permission for current non-commercial production use, server-side caching, derived recommendations and public display. Review [RONEAI-INTEGRATION.md](./RONEAI-INTEGRATION.md) before connecting the server token or changing the business model.
+
+Required attribution:
+
+> Powered by MLBB Public Data API • Data © Moonton (Mobile Legends) • API maintained by ridwaanhall / RoneAI.
 
 ## Deployment
 

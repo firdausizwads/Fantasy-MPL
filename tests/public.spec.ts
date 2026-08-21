@@ -177,8 +177,14 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: /Build the draft/i })).toBeVisible();
     await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/api/draft-model')))).toBeTruthy();
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
-    await page.getByRole('button', { name: /ATLAS.*ROAM/i }).click();
-    await expect(page.getByRole('button', { name: /BAN slot 1: ATLAS/i })).toBeVisible();
+    await expect(page.locator('.heroGrid .heroPortrait img')).toHaveCount(131);
+    const atlas = page.getByRole('button', { name: /ATLAS.*ROAM/i });
+    await expect(atlas.locator('img')).toHaveAttribute('src', /\/heroes\/atlas\.webp$/);
+    await atlas.click();
+    const selectedAtlas = page.getByRole('button', { name: /BAN slot 1: ATLAS/i });
+    await expect(selectedAtlas).toBeVisible();
+    await expect(selectedAtlas.locator('img')).toHaveAttribute('src', /\/heroes\/atlas\.webp$/);
+    await expect(page.getByText(/Powered by MLBB Public Data API/i)).toBeVisible();
     await expect(page.locator('.draftTurn > span')).toHaveText('RED SIDE');
   });
 

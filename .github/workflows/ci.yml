@@ -25,6 +25,8 @@ jobs:
         run: npm ci
       - name: Type-check
         run: npm run typecheck
+      - name: Verify local image assets
+        run: npm run test:assets
       - name: Security audit
         run: npm audit --omit=dev --audit-level=high
       - name: Production build

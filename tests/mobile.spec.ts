@@ -32,6 +32,8 @@ test.describe('mobile navigation', () => {
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
     const picker = page.locator('.guidedHeroPicker');
     await expect(picker).toBeVisible();
+    await expect(picker.locator('.heroPortrait img')).toHaveCount(131);
+    await expect(picker.locator('.heroPortrait img').first()).toHaveAttribute('src', /\/heroes\/.+\.webp$/);
     await expect(page.locator('.heroPickerTools input')).not.toBeFocused();
     await expect(page.locator('.heroPickerTools input')).toHaveCSS('font-size', '16px');
     const dimensions = await picker.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));

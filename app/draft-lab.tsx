@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import heroAssets from './hero-assets.json';
 
 type Region = 'MY' | 'ID' | 'PH';
 type Side = 'BLUE' | 'RED';
@@ -27,6 +28,8 @@ const HEROES: Record<Exclude<Role, 'ALL'>, string[]> = {
 
 const ALL_HEROES = Array.from(new Set(Object.values(HEROES).flat())).sort();
 const ROLE_ORDER: Role[] = ['ALL', 'EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+const HERO_PORTRAITS:Record<string,string>=Object.fromEntries(heroAssets.map(hero=>[hero.name.toUpperCase(),hero.photo]));
+const heroPhoto=(hero:string)=>HERO_PORTRAITS[hero.toUpperCase()];
 
 // Generic tournament tool sequence. The user chooses side A. Opening bans
 // and first picks follow 1–2–2–1; the second phase follows 1–2–1.
@@ -52,14 +55,14 @@ function rolesFor(hero: string) {
 
 function DraftSlot({ hero, type, active, number, onClick }: { hero?: string; type: ActionType; active: boolean; number: number; onClick: () => void }) {
   return <button className={`draftSlot ${type.toLowerCase()} ${hero ? 'filled' : ''} ${active ? 'active' : ''}`} onClick={onClick} disabled={!active && !hero} aria-label={`${type} slot ${number}${hero ? `: ${hero}` : ''}`}>
-    <span>{hero ? hero.slice(0, 2) : type === 'BAN' ? '×' : number}</span>
+    <span>{hero ? <img src={heroPhoto(hero)} alt=""/> : type === 'BAN' ? '×' : number}</span>
     <b>{hero || (active ? `SELECT ${type}` : `${type} ${number}`)}</b>
     {hero && <small>{rolesFor(hero).join(' · ') || 'HERO'}</small>}
   </button>;
 }
 
-function PickerInsights({current,status,groups,choose}:{current:DraftAction;status:IntelligenceStatus|null;groups:RecommendationGroups;choose:(hero:string)=>void}){const cards=[{tag:'BAN',title:'Priority Ban',items:groups.priorityBan},{tag:'READ',title:'Potential Pick',items:groups.potentialPick},{tag:'PICK',title:'Counter Pick',items:groups.counterPick}];return <aside className="pickerInsights"><header><span>LIVE DRAFT GUIDANCE</span><h3>{current.side} SIDE · {current.type}</h3></header>{status?.ready?<div>{cards.map(card=>{const item=card.items[0];return <button type="button" disabled={!item} onClick={()=>item&&choose(item.hero_name)} key={card.tag}><span>{card.tag}</span>{item?<><b>{item.hero_name}</b><small>{item.evidence_level} · {item.sample_size} GAMES</small></>:<><b>NO RESULT</b><small>INSUFFICIENT EVIDENCE</small></>}</button>})}</div>:<section><i>◈</i><b>GUIDANCE DATA PENDING</b><p>{status?.blocker||'An approved current-patch source is required.'}</p></section>}<footer>Tap a recommendation to apply it to the active slot.</footer></aside>}
-function RecommendationCard({title,tag,items}:{title:string;tag:string;items:Recommendation[]}){const lead=items[0];return <article className="analysisCard"><header><span>{tag}</span><b>{title}</b></header>{lead?<><div className="analysisLead"><i>{lead.hero_name.slice(0,2)}</i><div><h3>{lead.hero_name}</h3><p>{lead.reason}</p></div></div><footer><b>{lead.evidence_level} EVIDENCE</b><span>{lead.sample_size} GAMES</span></footer>{items.length>1&&<div className="analysisAlternatives">{items.slice(1).map((item,index)=><span key={item.hero_name}><i>{index+2}</i><b>{item.hero_name}</b></span>)}</div>}</>:<div className="analysisEmpty">NO VERIFIED RECOMMENDATION</div>}</article>}
+function PickerInsights({current,status,groups,choose}:{current:DraftAction;status:IntelligenceStatus|null;groups:RecommendationGroups;choose:(hero:string)=>void}){const cards=[{tag:'BAN',title:'Priority Ban',items:groups.priorityBan},{tag:'READ',title:'Potential Pick',items:groups.potentialPick},{tag:'PICK',title:'Counter Pick',items:groups.counterPick}];return <aside className="pickerInsights"><header><span>LIVE DRAFT GUIDANCE</span><h3>{current.side} SIDE · {current.type}</h3></header>{status?.ready?<div>{cards.map(card=>{const item=card.items[0];return <button type="button" disabled={!item} onClick={()=>item&&choose(item.hero_name)} key={card.tag}><span>{card.tag}</span>{item?<><i className="recommendationHero"><img src={heroPhoto(item.hero_name)} alt=""/></i><b>{item.hero_name}</b><small>{item.evidence_level} · {item.sample_size} GAMES</small></>:<><b>NO RESULT</b><small>INSUFFICIENT EVIDENCE</small></>}</button>})}</div>:<section><i>◈</i><b>GUIDANCE DATA PENDING</b><p>{status?.blocker||'An approved current-patch source is required.'}</p></section>}<footer>Tap a recommendation to apply it to the active slot.</footer></aside>}
+function RecommendationCard({title,tag,items}:{title:string;tag:string;items:Recommendation[]}){const lead=items[0];return <article className="analysisCard"><header><span>{tag}</span><b>{title}</b></header>{lead?<><div className="analysisLead"><i><img src={heroPhoto(lead.hero_name)} alt=""/></i><div><h3>{lead.hero_name}</h3><p>{lead.reason}</p></div></div><footer><b>{lead.evidence_level} EVIDENCE</b><span>{lead.sample_size} GAMES</span></footer>{items.length>1&&<div className="analysisAlternatives">{items.slice(1).map((item,index)=><span key={item.hero_name}><i>{index+2}</i><b>{item.hero_name}</b></span>)}</div>}</>:<div className="analysisEmpty">NO VERIFIED RECOMMENDATION</div>}</article>}
 function ModelPanel({ remaining, current, status, groups, loading }: { remaining: number; current?: DraftAction; status: IntelligenceStatus | null; groups: RecommendationGroups; loading: boolean }) {
   const ready=Boolean(status?.ready);
   return <aside className="draftModelPanel toolAnalysisPanel">
@@ -180,6 +183,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
     <section className="draftLabHero genericDraftHero"><div><span>CURRENT-PATCH MLBB DRAFT TOOL</span><h1>BUILD THE DRAFT.<br/><em>READ THE NEXT MOVE.</em></h1><p>CHOOSE WHICH SIDE ACTS FIRST, RECORD EACH BAN AND PICK, THEN REVIEW PRIORITY BANS, POTENTIAL OPPOSING PICKS AND COUNTER OPTIONS.</p><div className="draftHeroActions"><button className="active">LIVE COMPANION</button><span className="draftBetaPill">BETA TEST · GUIDANCE PENDING</span></div></div><div className="toolBrandCard"><img src="/brand/fantasy-mpl-emblem-display.webp" alt=""/><div><small>FANTASY MPL</small><b>DRAFT INTELLIGENCE</b><span>CURRENT PATCH TOOL</span></div></div></section>
 
     <div className="draftIntegrity"><span>PUBLIC BETA</span><p>GENERIC PATCH TOOL · NO TEAM TENDENCIES · NO BROADCAST PROCESSING · RECOMMENDATIONS REQUIRE VERIFIED MATCHUP DATA.</p><a href="/live-draft">PUBLIC TOOL ↗</a></div>
+    <div className="roneAttribution"><span>AUTHORIZED DATA INTEGRATION</span><p>Powered by MLBB Public Data API <i>•</i> Data © Moonton (Mobile Legends) <i>•</i> API maintained by ridwaanhall / RoneAI.</p><small>NON-COMMERCIAL BETA · SERVER-CACHED SNAPSHOTS · TOKEN NEVER EXPOSED TO THE BROWSER</small></div>
 
     <section className="draftToolSetup"><div><small>WHICH SIDE ACTS FIRST?</small><p>Match the first-ban side shown in your preview or lobby.</p></div><div className="firstSideChoices"><button className={firstSide==='BLUE'?'active blue':''} onClick={()=>changeFirstSide('BLUE')} disabled={!draftReady}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>BLUE SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button><button className={firstSide==='RED'?'active red':''} onClick={()=>changeFirstSide('RED')} disabled={!draftReady}><i><img src={REGION_INFO[region].logo} alt=""/></i><span><b>RED SIDE</b><small>FIRST BAN · FIRST PICK</small></span></button></div><div className="draftSetupActions"><button onClick={undo} disabled={!actions.length}>↶ UNDO</button><button onClick={reset} disabled={!actions.length}>RESET</button></div></section>
 
@@ -204,7 +208,7 @@ export default function DraftLab({ region, notify }: { region: Region; notify?: 
 
     {(pickerOpen || mobileTab === 'heroes') && current && <section className={`heroPicker guidedHeroPicker ${mobileTab === 'heroes' ? 'mobilePicker' : ''}`}>
       <div className="heroPickerHead"><div><span className={current.side === 'RED' ? 'red' : ''}>{current.side} SIDE · {current.type}</span><h2>SELECT THE HERO TO {current.type}</h2><p>Search manually or apply verified guidance without leaving this screen.</p></div><button onClick={() => { setPickerOpen(false); setMobileTab('draft'); }} aria-label="Close hero selector">×</button></div>
-      <div className="heroPickerContent"><main className="heroPickerMain"><div className="heroPickerTools"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="SEARCH HERO" inputMode="search"/><div>{ROLE_ORDER.map(item => <button type="button" className={role === item ? 'active' : ''} onClick={() => setRole(item)} key={item}>{item}</button>)}</div></div><div className="heroGrid">{filtered.map(hero => <button onClick={() => chooseHero(hero)} key={hero}><span>{hero.slice(0,2)}</span><b>{hero}</b><small>{rolesFor(hero).join(' · ')}</small></button>)}</div>{!filtered.length && <p className="heroPickerEmpty">NO AVAILABLE HERO MATCHES THIS FILTER.</p>}</main><PickerInsights current={current} status={intelligence} groups={groups} choose={chooseHero}/></div>
+      <div className="heroPickerContent"><main className="heroPickerMain"><div className="heroPickerTools"><input value={search} onChange={event => setSearch(event.target.value)} placeholder="SEARCH HERO" inputMode="search"/><div>{ROLE_ORDER.map(item => <button type="button" className={role === item ? 'active' : ''} onClick={() => setRole(item)} key={item}>{item}</button>)}</div></div><div className="heroGrid">{filtered.map(hero => <button onClick={() => chooseHero(hero)} key={hero}><span className="heroPortrait"><img src={heroPhoto(hero)} alt="" loading="lazy"/></span><b>{hero}</b><small>{rolesFor(hero).join(' · ')}</small></button>)}</div>{!filtered.length && <p className="heroPickerEmpty">NO AVAILABLE HERO MATCHES THIS FILTER.</p>}</main><PickerInsights current={current} status={intelligence} groups={groups} choose={chooseHero}/></div>
     </section>}
 
     <footer className="draftDisclaimer"><span>i</span><p><b>UNOFFICIAL ANALYSIS TOOL.</b> LIVE DRAFT LAB IS NOT AFFILIATED WITH OR ENDORSED BY MOONTON. RECOMMENDATIONS ARE PATCH-BASED GUIDANCE, NOT GUARANTEED OUTCOMES.</p></footer>

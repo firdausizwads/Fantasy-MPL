@@ -1,0 +1,14 @@
+/* Official MLBB hero portraits for Live Draft Lab */
+.guidedHeroPicker .heroGrid button{min-height:102px;display:grid;grid-template-columns:56px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;gap:3px 9px;padding:9px}
+.guidedHeroPicker .heroGrid .heroPortrait{width:56px;height:56px;grid-row:1/3;display:block;overflow:hidden;border:1px solid #344a63;border-radius:10px;background:#17283b}
+.guidedHeroPicker .heroGrid .heroPortrait img{width:100%;height:100%;display:block;object-fit:cover}
+.guidedHeroPicker .heroGrid button>b{min-width:0;margin:0!important;align-self:end;font-size:9px!important}
+.guidedHeroPicker .heroGrid button>small{min-width:0;margin-top:2px!important;align-self:start;font-size:6px!important;line-height:1.35}
+.draftSlot.filled>span{overflow:hidden;padding:0;background:#16283c!important}
+.draftSlot.filled>span img{width:100%;height:100%;display:block;object-fit:cover}
+.analysisLead>i{overflow:hidden}.analysisLead>i img{width:100%;height:100%;display:block;object-fit:cover}
+.recommendationHero{width:36px;height:36px;display:block!important;margin-top:7px;overflow:hidden;border:1px solid #2f465f;border-radius:7px;background:#182b40;font-style:normal}
+.recommendationHero img{width:100%;height:100%;display:block;object-fit:cover}
+@media(max-width:720px){.guidedHeroPicker .heroGrid button{min-height:104px;grid-template-columns:48px minmax(0,1fr);padding:8px}.guidedHeroPicker .heroGrid .heroPortrait{width:48px;height:48px}.guidedHeroPicker .heroGrid button>b{font-size:10px!important}.guidedHeroPicker .heroGrid button>small{font-size:8px!important}.recommendationHero{width:30px;height:30px}}
+.roneAttribution{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin:10px 0;padding:10px 12px;border:1px solid #d5e0ea;border-radius:9px;background:linear-gradient(90deg,#f5f9fc,#fff)}.roneAttribution>span{padding:6px 7px;border-radius:5px;background:#132a44;color:#fff;font-size:7px;font-weight:900;letter-spacing:.45px}.roneAttribution p{margin:0;color:#455a72;font-size:8px!important;font-weight:750}.roneAttribution p i{padding:0 4px;color:var(--region);font-style:normal}.roneAttribution small{color:#7a8a9b;font-size:6px;font-weight:800;text-align:right}
+@media(max-width:720px){.roneAttribution{grid-template-columns:1fr;align-items:flex-start}.roneAttribution>span{justify-self:start}.roneAttribution p{font-size:10px!important;line-height:1.5}.roneAttribution small{font-size:8px;text-align:left}}

@@ -18,6 +18,7 @@ import './regional-fantasy.css';
 import './live-meta.css';
 import './mobile-polish-playoffs.css';
 import './playoff-experience.css';
+import './hero-portraits.css';
 import { SITE_URL } from '../lib/site';
 
 const jakarta = localFont({

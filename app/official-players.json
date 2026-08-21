@@ -796,88 +796,88 @@
   "team": "APBR",
   "name": "JMPINKMAN",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/apbr/jmpinkman.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/JM.png"
  },
  {
   "region": "PH",
   "team": "APBR",
   "name": "Shizou",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/apbr/shizou.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shizou.png"
  },
  {
   "region": "PH",
   "team": "APBR",
   "name": "Jamespangks",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/apbr/jamespangks.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jamespangks.png"
  },
  {
   "region": "PH",
   "team": "APBR",
   "name": "LanceCy",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/apbr/lancecy.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/LanceCy.png"
  },
  {
   "region": "PH",
   "team": "APBR",
   "name": "Escalera",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/apbr/escalera.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Escalera.png"
  },
  {
   "region": "PH",
   "team": "FLCN",
   "name": "Flap",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/flcn/flap.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/FlapTzy.png"
  },
  {
   "region": "PH",
   "team": "FLCN",
   "name": "Super Marco",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/flcn/super-marco.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SUPER_MARCO.png"
  },
  {
   "region": "PH",
   "team": "FLCN",
   "name": "Kyle",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/flcn/kyle.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KyleTzy.png"
  },
  {
   "region": "PH",
   "team": "FLCN",
   "name": "Hadji",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/flcn/hadji.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Hadji.png"
  },
  {
   "region": "PH",
   "team": "FLCN",
   "name": "Owgwen",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/flcn/owgwen.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Owgwen.png"
  },
  {
   "region": "PH",
   "team": "OMG",
   "name": "Louis",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/omg/louis.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Louis.png"
  },
  {
   "region": "PH",
@@ -892,168 +892,168 @@
   "team": "OMG",
   "name": "Raizen",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/omg/raizen.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Raizen.png"
  },
  {
   "region": "PH",
   "team": "OMG",
   "name": "Minguin",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/omg/minguin.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Minguin.png"
  },
  {
   "region": "PH",
   "team": "OMG",
   "name": "Perkziva",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/omg/perkziva.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Perkz.png"
  },
  {
   "region": "PH",
   "team": "ONPH",
   "name": "Kirk",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/onph/kirk.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kirk.png"
  },
  {
   "region": "PH",
   "team": "ONPH",
   "name": "Savero",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/onph/savero.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Savero.png"
  },
  {
   "region": "PH",
   "team": "ONPH",
   "name": "K1NGKONG",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/onph/k1ngkong.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/K1NGKONG.png"
  },
  {
   "region": "PH",
   "team": "ONPH",
   "name": "Super Frince",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/onph/super-frince.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Frince.png"
  },
  {
   "region": "PH",
   "team": "ONPH",
   "name": "Super Yoshi",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/onph/super-yoshi.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Yoshi.png"
  },
  {
   "region": "PH",
   "team": "RORA",
   "name": "Nathzz",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/rora/nathzz.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nathzz.png"
  },
  {
   "region": "PH",
   "team": "RORA",
   "name": "Domeng",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/rora/domeng.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Domeng.png"
  },
  {
   "region": "PH",
   "team": "RORA",
   "name": "Koyl",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/rora/koyl.webp",
+  "source": "https://liquipedia.net/mobilelegends/Koyl"
  },
  {
   "region": "PH",
   "team": "RORA",
   "name": "Yue",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/rora/yue.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Yue.png"
  },
  {
   "region": "PH",
   "team": "RORA",
   "name": "Light",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/rora/light.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Light.png"
  },
  {
   "region": "PH",
   "team": "TLPH",
   "name": "Sanford",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tlph/sanford.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanford.png"
  },
  {
   "region": "PH",
   "team": "TLPH",
   "name": "Teddy",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tlph/teddy.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Teddyqt.png"
  },
  {
   "region": "PH",
   "team": "TLPH",
   "name": "KarlTzy",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tlph/karltzy.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KarlTzy.png"
  },
  {
   "region": "PH",
   "team": "TLPH",
   "name": "Sanji",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tlph/sanji.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanji.png"
  },
  {
   "region": "PH",
   "team": "TLPH",
   "name": "Jaypee",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tlph/jaypee.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jaypee.png"
  },
  {
   "region": "PH",
   "team": "TNC",
   "name": "Ryota",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tnc/ryota.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Ryota.png"
  },
  {
   "region": "PH",
   "team": "TNC",
   "name": "Jowm",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tnc/jowm.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jowm.png"
  },
  {
   "region": "PH",
   "team": "TNC",
   "name": "Zaida",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/tnc/zaida.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Zaida.png"
  },
  {
   "region": "PH",
@@ -1076,80 +1076,80 @@
   "team": "TWIS",
   "name": "Lansu",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/twis/lansu.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lansu.png"
  },
  {
   "region": "PH",
   "team": "TWIS",
   "name": "Bennyqt",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/twis/bennyqt.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Bennyqt.png"
  },
  {
   "region": "PH",
   "team": "TWIS",
   "name": "Sensu1",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/twis/sensu1.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sensui.png"
  },
  {
   "region": "PH",
   "team": "TWIS",
   "name": "Sionnn",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/twis/sionnn.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sionnn.png"
  },
  {
   "region": "PH",
   "team": "TWIS",
   "name": "Tracy",
   "role": "Roam",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+  "photo": "/players/ph/twis/tracy.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Tracy.jpg"
  },
  {
   "region": "ID",
   "team": "BTR",
   "name": "Shogun",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/btr/shogun.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shogun.png"
  },
  {
   "region": "ID",
   "team": "BTR",
   "name": "Nnael",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/btr/nnael.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nnael.png"
  },
  {
   "region": "ID",
   "team": "BTR",
   "name": "Moreno",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/btr/moreno.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Moreno.png"
  },
  {
   "region": "ID",
   "team": "BTR",
   "name": "EMANN",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/btr/emann.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/EMANN.png"
  },
  {
   "region": "ID",
   "team": "BTR",
   "name": "Finn",
   "role": "Roamer",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/btr/finn.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Finn.png"
  },
  {
   "region": "ID",
@@ -1164,47 +1164,47 @@
   "team": "ONICID",
   "name": "Lutpiii",
   "role": "EXP Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/lutpiii.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lutpiii.png"
  },
  {
   "region": "ID",
   "team": "ONICID",
   "name": "Kairi",
   "role": "Jungle",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/kairi.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kairi.png"
  },
  {
   "region": "ID",
   "team": "ONICID",
   "name": "S A N Z",
   "role": "Mid Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/s-a-n-z.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/S_A_N_Z.png"
  },
  {
   "region": "ID",
   "team": "ONICID",
   "name": "Kelra",
   "role": "Gold Lane",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/kelra.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kelra.png"
  },
  {
   "region": "ID",
   "team": "ONICID",
   "name": "Kiboy",
   "role": "Roamer",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/kiboy.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kiboy.png"
  },
  {
   "region": "ID",
   "team": "ONICID",
   "name": "SamueL",
   "role": "Flex",
-  "photo": null,
-  "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+  "photo": "/players/id/onicid/samuel.webp",
+  "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SamueL.png"
  }
 ]

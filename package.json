@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run build && npm run test:e2e",
     "test:e2e": "playwright test",
+    "test:assets": "node scripts/verify-assets.mjs",
     "test:production": "node scripts/production-smoke.mjs",
     "load:regional": "k6 run scripts/load/regional-read.js"
   },
