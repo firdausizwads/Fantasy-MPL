@@ -12,6 +12,10 @@ test.describe('public experience', () => {
     await expect(page.locator('.guestJourney')).toHaveCount(0);
     await expect(page.getByRole('button', { name: /EXPLORE THE ARENA/i })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /CREATE YOUR MANAGER/i })).toHaveCount(0);
+    await expect(page.locator('.cinematicMlbbReveal img')).toHaveAttribute('src', '/brand/mobile-legends-bang-bang-logo.png');
+    await expect(page.locator('.cinematicFinalBrand')).toHaveAttribute('src', '/brand/mobile-legends-bang-bang-logo.png');
+    await expect(page.locator('.cinematicFinalMarks img')).toHaveCount(3);
+    await expect(page.locator('.cinematicFinalMarks b')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true }).click();
     await expect(page.getByRole('button', { name: 'CREATE ACCOUNT', exact: true })).toBeVisible();

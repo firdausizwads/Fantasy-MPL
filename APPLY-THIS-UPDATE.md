@@ -1,82 +1,69 @@
-# Fantasy MPL — Cinematic Entry & Modern Team Showcase
+# Fantasy MPL — MLBB Cinematic Logo Reveal
 
-Commit: `007af0a Refine cinematic intro and modernize team showcase`
+Commit: `eb208da Add MLBB cinematic logo reveal and simplify finale marks`
 
-## Requested adjustments completed
+## Changes completed
 
-### Removed from the welcome screen
+### Official MLBB logo in the welcome cinematic
 
-- Removed the numbered `1–2–3` journey tracker.
-- Removed the **Explore the Arena** button.
-- Removed the **Create Your Manager** body button.
-- Removed the manual intro-skip control.
+The Fantasy MPL emblem displayed beside **Welcome to Fantasy MPL** has been replaced with the Mobile Legends: Bang Bang logo.
 
-The small **Sign In** and **Create Free Account** controls remain in the header so account access is still easy, but they do not interrupt the cinematic presentation.
+The same MLBB logo is also used as the central identity in the final **Three Regions. One Fantasy Arena** scene.
 
-## Fully automated cinematic advertisement
+### Game-entry-inspired animation
 
-The first page now plays automatically as a short Fantasy MPL promotional sequence:
+The new logo does not appear as a static image. It uses an original game-entry-inspired reveal consisting of:
 
-1. Fantasy MPL brand introduction
-2. MPL Malaysia scene
-3. MPL Indonesia scene
-4. MPL Philippines scene
-5. “Three Regions. One Fantasy Arena” finale
-6. Smooth fade and slide into **Choose Your Battleground**
+- blurred scale-in;
+- bright golden logo flash;
+- energy-cut line;
+- moving golden light sweep;
+- rotating portal rings;
+- counter-rotating dashed inner ring;
+- pulsing orange ambient glow; and
+- controlled overshoot and settling motion.
 
-The complete sequence takes approximately nine seconds. Each region receives its own:
+The animation is original to Fantasy MPL and does not copy game files or a proprietary animation sequence.
 
-- ambient regional color;
-- official league identity;
-- large cinematic logo reveal;
-- headline and regional message;
-- background word treatment;
-- light-beam, grid and grain effects; and
-- animated progress timeline without numbered steps.
+### MY / ID / PH blue tags removed
 
-Users with reduced-motion enabled receive a shortened, static finale before the battleground page appears.
+The three regional league marks remain above the final MLBB logo, but the small blue text badges have been completely removed.
 
-## Modern Team Showcase
+There are no longer any blue:
 
-The old continuously moving marquee has been removed.
+- `MY`
+- `ID`
+- `PH`
 
-It is replaced by a modern interactive regional team directory preview:
+labels attached to those final-scene marks.
 
-- MY, ID and PH league selectors;
-- official regional league marks;
-- responsive verified team grid;
-- clean team-logo cards;
-- team name and code;
-- staggered card entrance animations;
-- modern hover states on desktop;
-- two-column mobile layout;
-- one-column layout for very narrow devices; and
-- visible verified-team counts.
+## Asset provenance
 
-The grid changes instantly when visitors select Malaysia, Indonesia or the Philippines.
+New asset:
 
-## Desktop and mobile behavior
+- `public/brand/mobile-legends-bang-bang-logo.png`
 
-The cinematic scenes and battleground page were validated at:
+Provenance record:
 
-- 1440×1000
-- 768×1024
-- 430×932
-- 375×812
-- 320×700
+- `app/brand-asset-sources.json`
 
-Every size passed with:
+Recorded source information:
 
-- visible cinematic logo and copy;
-- three battleground cards;
-- complete modern team grid;
-- no page-level horizontal overflow; and
-- no runtime errors.
+- Name: Mobile Legends: Bang Bang 2025 logo
+- Author: Moonton
+- Original source: `https://www.mobilelegends.com/`
+- Reference page: `https://en.wikipedia.org/wiki/File:Mobile_Legends_Bang_Bang_2025_logo.png`
+- Purpose: brand identification in the non-commercial Fantasy MPL welcome cinematic
+
+The existing unofficial-platform disclaimer remains visible. Use of the logo identifies Mobile Legends: Bang Bang and does not claim affiliation or endorsement.
 
 ## Files changed
 
 - `app/guest-entry.tsx`
 - `app/guest-entry.css`
+- `app/brand-asset-sources.json` — new
+- `public/brand/mobile-legends-bang-bang-logo.png` — new
+- `scripts/verify-assets.mjs`
 - `tests/public.spec.ts`
 
 No Supabase migration, environment variable or file deletion is required.
@@ -86,29 +73,27 @@ No Supabase migration, environment variable or file deletion is required.
 - TypeScript: passed
 - Production build: passed
 - Desktop Playwright: `19 passed`, `3 mobile-only skipped`
-- Mobile feature suite: all tests passed after one teardown-only retry
-- Automated guest flow: passed on desktop and mobile
-- Modern showcase region switching: passed (`8 MY`, `9 ID`, `8 PH` team records)
-- Viewport matrix: `5/5` passed
-- Horizontal overflow: `0`
-- Runtime errors: `0`
+- Mobile functional suite: passed after one teardown-only retry
+- MLBB intro logo path: verified
+- MLBB finale logo path: verified
+- Finale regional marks: `3`
+- Finale MY/ID/PH badge elements: `0`
+- Brand provenance records: `1/1`
 - Hero assets: `133/133`
+- Horizontal overflow: `0`
 - Dependency vulnerabilities: `0`
 
 ## Apply with GitHub Desktop
 
-1. Apply `Fantasy-MPL-guest-first-entry.zip` first.
-2. Extract `Fantasy-MPL-cinematic-entry-team-showcase.zip`.
-3. Copy the extracted `app` and `tests` folders into your repository.
+1. Apply `Fantasy-MPL-cinematic-entry-team-showcase.zip` first.
+2. Extract `Fantasy-MPL-mlbb-logo-cinematic-fix.zip`.
+3. Copy the extracted folders into your Fantasy MPL repository.
 4. Choose **Replace/Overwrite**.
-5. In GitHub Desktop, confirm these three updated files:
-   - `app/guest-entry.tsx`
-   - `app/guest-entry.css`
-   - `tests/public.spec.ts`
+5. In GitHub Desktop, confirm the six files listed above.
 6. Commit with:
-   `Refine cinematic intro and modernize team showcase`
+   `Add MLBB cinematic logo reveal and simplify finale marks`
 7. Push to GitHub.
-8. Wait for Vercel to show **Ready**.
-9. Close every old Fantasy MPL tab and open the website in a fresh tab so the new cinematic JavaScript bundle is loaded.
+8. Wait until Vercel displays **Ready**.
+9. Close every old Fantasy MPL browser tab and open the site in a new tab to load the new image, CSS and JavaScript bundles.
 
 Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.
