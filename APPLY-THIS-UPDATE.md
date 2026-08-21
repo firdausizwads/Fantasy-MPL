@@ -1,67 +1,105 @@
-# Fantasy MPL — Region Reliability & Prizes Dark-Mode Fix
+# Fantasy MPL — Modern Admin Console Update
 
-Commit: `0c42189 Harden region switching and finish prizes dark mode`
+Commit: `c00e529 Redesign admin console for guided light and dark workflows`
 
-## Fixed
+## What changed
 
-### Region selection reliability
+### Easier tool discovery
 
-- Switching to a region already joined is now immediate and does not make an unnecessary Supabase insert request.
-- Joining a new region retries transient network failures up to three times with an eight-second timeout per attempt.
-- Raw `TypeError: Load failed` messages are replaced by a clear, safe retry message.
-- The current region remains unchanged if a new membership cannot be confirmed.
-- Region cards are disabled while a join is being confirmed, preventing duplicate requests.
-- A visible `CONNECTING SECURELY…` state is shown during the request.
-- The behavior is covered on both desktop and mobile.
+The old horizontal tab strip has been replaced by a guided administration workspace.
 
-### Prizes dark mode
+Desktop now includes a persistent tool rail grouped into:
 
-Dark styling now covers the complete page, including:
+1. **Monitor**
+   - Command overview
+2. **Competition**
+   - Results & scoring
+   - Fixture manager
+   - PandaScore sync
+   - Weekly MVP
+3. **Data & Platform**
+   - Meta results
+   - Players & teams
+   - Draft intelligence
+   - Regional controls
 
-- prize notice;
-- Fantasy Dust container and inner panels;
-- daily check-in cards;
-- reward wheel;
-- legal notice;
-- all 1st–8th prize cards; and
-- sponsor panel.
+Every tool now has an icon, a clear name and a short explanation. Cloud-only tools remain visible in local preview with a `CLOUD` label instead of disappearing, so administrators can understand the complete platform.
 
-No large white surfaces remain and there is no page-level horizontal overflow at desktop or mobile widths.
+Mobile now uses a dedicated **Browse All** tool selector rather than an overflowing horizontal tab row.
+
+### Guided administration
+
+- Added a modern Admin Command Center hero.
+- Uses the signed-in administrator’s real name, avatar or initials instead of a hard-coded identity.
+- Shows the active league, season and region-isolated status.
+- Added a recommended weekly workflow:
+  1. Sync fixtures
+  2. Verify results
+  3. Run scoring
+  4. Publish MVP
+- Added a contextual heading and explanation for every workspace.
+- Added visible active scope and secure admin-session indicators.
+- Kept existing Supabase permissions, server-side security and region isolation unchanged.
+
+### Modern light and dark themes
+
+A dedicated `admin-console-modern.css` theme layer now covers:
+
+- overview and action queues;
+- results and scoring;
+- fixture manager;
+- PandaScore synchronization;
+- Weekly MVP;
+- player and team registry;
+- Meta results;
+- Draft Intelligence;
+- Regional Controls;
+- forms, tables, warnings, status cards and result modals.
+
+Dark mode uses deep navy surfaces, white primary text and blue-grey supporting text. Light mode uses clean white cards, soft blue-grey backgrounds and clearer borders. Both modes preserve each region’s accent color.
 
 ## Files changed
 
+- `app/admin-console-modern.css` — new
+- `app/layout.tsx`
 - `app/page.tsx`
-- `app/globals.css`
-- `app/dark-mode-hardening.css`
 - `tests/public.spec.ts`
 
-No files need to be deleted for this update.
+No files need to be deleted. No Supabase migration or new environment variable is required.
 
 ## Audit results
 
 - TypeScript: passed
 - Production build: passed
-- Asset verification: passed (`133/133` hero portraits)
-- Desktop Playwright: `15 passed`, `3 mobile-only skipped`
-- Mobile Playwright: `15 passed`, `3 intentionally skipped`
-- Dark-surface audit: passed on all 11 primary authenticated pages on desktop and mobile
-- Page-level horizontal overflow: none across all 22 desktop/mobile page checks
-- Runtime/page errors during the 22-page audit: none
-- Production smoke test: `22/22` live routes passed
-- Production dependency audit: `0 vulnerabilities`
-
-Intentionally unresolved verified portrait gaps remain unchanged: Cull, Vin, Zehn, and Miguel.
+- Hero assets: `133/133`
+- Desktop Playwright: `16 passed`, `3 mobile-only skipped`
+- Mobile Playwright: `16 passed`, `3 intentionally skipped`
+- Admin tool/theme matrix: all `16/16` available combinations passed
+  - desktop and mobile;
+  - dark and light mode;
+  - overview, results, MVP and players;
+  - zero large opposite-theme surface leaks;
+  - zero horizontal overflow;
+  - zero runtime/page errors.
+- Live production smoke test: `22/22` routes passed
+- Dependency audit: `0 vulnerabilities`
 
 ## Apply with GitHub Desktop
 
-1. Make sure the previous Creator Hub/dark-page update has already been applied.
-2. Close any running local Fantasy MPL development server.
-3. Extract `Fantasy-MPL-region-prizes-fix.zip`.
+1. Make sure the previous region reliability and Prizes dark-mode update is already applied.
+2. Close any running local Fantasy MPL server.
+3. Extract `Fantasy-MPL-modern-admin-console.zip`.
 4. Copy the extracted `app` and `tests` folders into the root of your Fantasy MPL repository.
 5. Choose **Replace/Overwrite** when asked.
-6. Open GitHub Desktop and confirm the four changed files listed above.
-7. Commit with: `Harden region switching and finish prizes dark mode`
+6. Open GitHub Desktop and confirm these four changes:
+   - new `app/admin-console-modern.css`;
+   - updated `app/layout.tsx`;
+   - updated `app/page.tsx`;
+   - updated `tests/public.spec.ts`.
+7. Commit with:
+   `Redesign admin console for guided light and dark workflows`
 8. Push to GitHub.
-9. Let Vercel redeploy, then test region switching and the Prizes page in dark mode.
+9. Allow Vercel to redeploy.
+10. Sign in with an administrator account and check Admin Console once in dark mode and once in light mode.
 
-Do not add `.env.local`, Supabase server secrets, PandaScore tokens, or RoneAI tokens to the commit.
+Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.

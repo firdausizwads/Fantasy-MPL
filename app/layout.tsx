@@ -21,6 +21,7 @@ import './playoff-experience.css';
 import './hero-portraits.css';
 import './dark-mode.css';
 import './dark-mode-hardening.css';
+import './admin-console-modern.css';
 import { SITE_URL } from '../lib/site';
 
 const jakarta = localFont({

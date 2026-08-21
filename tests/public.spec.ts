@@ -95,6 +95,74 @@ test.describe('public experience', () => {
     await expect(page.getByText(/TypeError|Load failed/i)).toHaveCount(0);
   });
 
+  test('admin console is discoverable and theme-safe on desktop and mobile', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_color_mode', 'dark');
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'AdminManager', email: 'admin@example.com', country: 'MY',
+        fullName: 'Admin Test Manager', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'admin', joined: ['MY', 'ID', 'PH'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/my#admin');
+    await expect(page.getByRole('heading', { name: 'Admin Command Center' })).toBeVisible();
+    await expect(page.locator('.adminSectionHeader h2')).toHaveText('Command overview');
+
+    const openMobileTools = async () => {
+      if (!isMobile) return;
+      const browser = page.locator('.adminMobileNavigator>button');
+      if ((await browser.getAttribute('aria-expanded')) !== 'true') await browser.click();
+      await expect(page.locator('.adminMobileToolMenu')).toBeVisible();
+    };
+
+    if (isMobile) {
+      await expect(page.locator('.adminToolRail')).toBeHidden();
+      await openMobileTools();
+      await expect(page.locator('.adminMobileToolMenu [data-admin-nav]')).toHaveCount(9);
+    } else {
+      await expect(page.locator('.adminToolRail')).toBeVisible();
+      await expect(page.locator('.adminToolRail [data-admin-nav]')).toHaveCount(9);
+      await expect(page.locator('.adminToolRail').getByText('MONITOR', { exact: true })).toBeVisible();
+      await expect(page.locator('.adminToolRail').getByText('COMPETITION', { exact: true })).toBeVisible();
+      await expect(page.locator('.adminToolRail').getByText('DATA & PLATFORM', { exact: true })).toBeVisible();
+    }
+
+    for (const [tool, heading] of [['matches', 'Results & scoring'], ['mvp', 'Weekly MVP'], ['players', 'Players & teams']] as const) {
+      await openMobileTools();
+      const scope = isMobile ? page.locator('.adminMobileToolMenu') : page.locator('.adminToolRail');
+      await scope.locator(`[data-admin-nav="${tool}"]`).click();
+      await expect(page.locator('.adminSectionHeader h2')).toHaveText(heading);
+      await expect(page.locator('.adminToolContent')).toHaveAttribute('data-admin-tool', tool);
+    }
+
+    const darkAudit = await page.locator('.adminPage').evaluate(root => {
+      const leaks:string[]=[];
+      for (const element of root.querySelectorAll('*')) {
+        const rect=element.getBoundingClientRect();
+        if(rect.width*rect.height<2500||rect.bottom<0)continue;
+        const match=getComputedStyle(element).backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+        if(!match)continue;
+        const alpha=match[4]==null?1:Number(match[4]);
+        if(alpha>.5&&Number(match[1])>225&&Number(match[2])>225&&Number(match[3])>225)leaks.push((element.className||element.tagName).toString());
+      }
+      return {leaks,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1};
+    });
+    expect(darkAudit.leaks).toEqual([]);
+    expect(darkAudit.overflow).toBeFalsy();
+
+    if (isMobile) {
+      await page.getByRole('button', { name: 'Open navigation' }).click();
+      await page.getByRole('button', { name: 'Switch to light mode' }).click();
+      await page.getByRole('button', { name: 'Close navigation' }).click();
+    } else {
+      await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    }
+    await expect(page.locator('.shell')).toHaveClass(/lightMode/);
+    await expect(page.locator('.adminSectionHeader')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    const lightOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    expect(lightOverflow).toBeFalsy();
+  });
+
   test('dark mode has no large light surface leaks', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('fmpl_color_mode', 'dark');

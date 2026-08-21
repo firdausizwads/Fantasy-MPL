@@ -283,7 +283,7 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
       {view==='playoffs' && <PlayoffPredictor region={region} notify={notify} teams={officialTeams[region]} teamIndex={TEAM_INDEX} PageBanner={PageBanner}/>} 
       {view==='profile' && <ProfilePage session={session} save={saveProfile} notify={notify} PageBanner={PageBanner}/>} 
       {view==='prizes' && <PrizesPage region={region}/>} 
-      {view==='admin' && isAdmin && <AdminConsole region={region} notify={notify}/>} 
+      {view==='admin' && isAdmin && <AdminConsole region={region} session={session} notify={notify}/>}
     </main>
     {mobileOpen&&<MobileDrawer view={view} region={region} session={session} colorMode={colorMode} canAdmin={isAdmin} onToggleColor={toggleColorMode} choose={v=>{setView(v);setMobileOpen(false)}} changeRegion={()=>{setMobileOpen(false);setRegionModal(true)}} signOut={signOut} close={()=>setMobileOpen(false)}/>}
     {regionModal && <RegionGate joined={session.joined} onChoose={joinRegion} close={()=>setRegionModal(false)} busy={regionSwitching}/>}
@@ -423,7 +423,74 @@ function DraftRoom({league,close,update,notify}:{league:LocalLeague;close:()=>vo
 }
 
 type AdminTab='overview'|'matches'|'fixtures'|'mvp'|'players'|'draft-intelligence'|'operations'|'fixture-sync'|'meta-results';
-function AdminConsole({region,notify}:{region:Region;notify:(s:string)=>void}){const [tab,setTab]=useState<AdminTab>('overview');const [results,setResults]=useState<Record<string,{home:string;away:string;state:string}>>({});const [mvp,setMvp]=useState('');const [job,setJob]=useState<'idle'|'running'|'done'>('idle');function score(){setJob('running');notify('Scoring job started…');setTimeout(()=>{setJob('done');notify('Scoring complete — 142 point transactions created.')},1700)}return <div className="page adminPage"><div className="adminBanner"><div><span className="adminBadge">⚙ ADMIN CONTROL CENTER</span><h1>{REGIONS[region].name}</h1><p>Manage Season 18 competition data for this region only.</p></div><div className="adminIdentity"><span>AZ</span><div><small>SIGNED IN AS</small><b>Platform administrator</b></div></div></div><div className="adminTabs"><button className={tab==='overview'?'active':''} onClick={()=>setTab('overview')}>Overview</button><button className={tab==='matches'?'active':''} onClick={()=>setTab('matches')}>Matches & results</button>{supabase&&<button className={tab==='fixtures'?'active':''} onClick={()=>setTab('fixtures')}>Manual fixture tools</button>}<button className={tab==='mvp'?'active':''} onClick={()=>setTab('mvp')}>Weekly MVP</button><button className={tab==='players'?'active':''} onClick={()=>setTab('players')}>Players & teams</button>{supabase&&<button className={tab==='draft-intelligence'?'active':''} onClick={()=>setTab('draft-intelligence')}>Draft intelligence</button>}{supabase&&<button className={tab==='operations'?'active':''} onClick={()=>setTab('operations')}>Regional operations</button>}{supabase&&<button className={tab==='fixture-sync'?'active':''} onClick={()=>setTab('fixture-sync')}>Fixture sync</button>}{supabase&&<button className={tab==='meta-results'?'active':''} onClick={()=>setTab('meta-results')}>Meta results</button>}</div>{tab==='overview'&&(supabase?<AdminLiveOverview region={region} notify={notify} open={setTab}/>:<AdminOverview region={region} job={job} score={score} setTab={setTab}/>)} {tab==='matches'&&(supabase?<AdminScoring region={region} notify={notify}/>:<AdminMatches region={region} results={results} setResults={setResults} notify={notify}/>)} {tab==='fixtures'&&supabase&&<AdminFixtures region={region} notify={notify}/>} {tab==='mvp'&&(supabase?<AdminWeeklyMvpLive region={region} notify={notify}/>:<AdminMvp region={region} mvp={mvp} setMvp={setMvp} notify={notify}/>)} {tab==='players'&&<AdminPlayers region={region} notify={notify}/>} {tab==='draft-intelligence'&&supabase&&<AdminDraftIntelligence region={region} notify={notify}/>} {tab==='operations'&&supabase&&<AdminRegionalOperations region={region} notify={notify}/>} {tab==='fixture-sync'&&supabase&&<AdminPandaScoreSync region={region} notify={notify}/>} {tab==='meta-results'&&supabase&&<AdminMetaResults region={region} notify={notify}/>}</div>}
+type AdminTool={id:AdminTab;label:string;description:string;group:'MONITOR'|'COMPETITION'|'DATA & PLATFORM';icon:IconName;requiresCloud?:boolean};
+const ADMIN_TOOLS:AdminTool[]=[
+  {id:'overview',label:'Command overview',description:'Health, queues and urgent work',group:'MONITOR',icon:'dashboard'},
+  {id:'matches',label:'Results & scoring',description:'Verify matches and award points',group:'COMPETITION',icon:'leaderboard'},
+  {id:'fixtures',label:'Fixture manager',description:'Create weeks and match schedules',group:'COMPETITION',icon:'competition',requiresCloud:true},
+  {id:'fixture-sync',label:'PandaScore sync',description:'Import and reconcile live fixtures',group:'COMPETITION',icon:'predictions',requiresCloud:true},
+  {id:'mvp',label:'Weekly MVP',description:'Publish the verified official MVP',group:'COMPETITION',icon:'profile'},
+  {id:'meta-results',label:'Meta results',description:'Publish official weekly outcomes',group:'DATA & PLATFORM',icon:'meta',requiresCloud:true},
+  {id:'players',label:'Players & teams',description:'Review the active regional roster',group:'DATA & PLATFORM',icon:'directory'},
+  {id:'draft-intelligence',label:'Draft intelligence',description:'Sources, evidence and model gates',group:'DATA & PLATFORM',icon:'draftlab',requiresCloud:true},
+  {id:'operations',label:'Regional controls',description:'Feature switches and snapshots',group:'DATA & PLATFORM',icon:'admin',requiresCloud:true}
+];
+const ADMIN_GROUPS:AdminTool['group'][]=['MONITOR','COMPETITION','DATA & PLATFORM'];
+
+function AdminToolButton({tool,active,choose,compact=false}:{tool:AdminTool;active:boolean;choose:(tab:AdminTab)=>void;compact?:boolean}){
+  const unavailable=Boolean(tool.requiresCloud&&!supabase);
+  return <button type="button" data-admin-nav={tool.id} className={`${active?'active ':''}${unavailable?'unavailable':''}`} onClick={()=>choose(tool.id)} disabled={unavailable} aria-current={active?'page':undefined} title={unavailable?'Available when Supabase is connected':tool.description}><i><AppIcon name={tool.icon}/></i><span><b>{tool.label}</b>{!compact&&<small>{tool.description}</small>}</span>{unavailable?<em>CLOUD</em>:active?<em>OPEN</em>:<em>›</em>}</button>
+}
+
+function AdminWorkflowGuide({open}:{open:(tab:AdminTab)=>void}){
+  const steps:[string,string,AdminTab,boolean][]=[
+    ['1','Sync fixtures','fixture-sync',Boolean(supabase)],
+    ['2','Verify results','matches',true],
+    ['3','Run scoring','matches',true],
+    ['4','Publish MVP','mvp',true]
+  ];
+  return <section className="adminWorkflowGuide" aria-label="Recommended weekly administration workflow"><header><div><span>RECOMMENDED WORKFLOW</span><h2>Complete the week in the right order</h2></div><p>Follow these steps to keep public fixtures, results and points consistent.</p></header><div>{steps.map(([number,label,target,available],index)=><button type="button" onClick={()=>open(target)} disabled={!available} key={`${number}-${label}`}><i>{number}</i><span><b>{label}</b><small>{index===0?'Import the provider schedule':index===1?'Confirm official match data':index===2?'Create audited point entries':'Release the verified winner'}</small></span><em>{available?'→':'CLOUD'}</em></button>)}</div></section>
+}
+
+function AdminConsole({region,session,notify}:{region:Region;session:Session;notify:(s:string)=>void}){
+  const [tab,setTab]=useState<AdminTab>('overview');
+  const [mobileTools,setMobileTools]=useState(false);
+  const [results,setResults]=useState<Record<string,{home:string;away:string;state:string}>>({});
+  const [mvp,setMvp]=useState('');
+  const [job,setJob]=useState<'idle'|'running'|'done'>('idle');
+  const activeTool=ADMIN_TOOLS.find(tool=>tool.id===tab)||ADMIN_TOOLS[0];
+  function score(){setJob('running');notify('Scoring job started…');setTimeout(()=>{setJob('done');notify('Scoring complete — 142 point transactions created.')},1700)}
+  function choose(next:AdminTab){const tool=ADMIN_TOOLS.find(item=>item.id===next);if(tool?.requiresCloud&&!supabase){notify('This secure tool becomes available when Supabase is connected.');return}setTab(next);setMobileTools(false);window.scrollTo({top:0,behavior:'smooth'})}
+  const initials=session.name.slice(0,2).toUpperCase();
+  return <div className="page adminPage">
+    <section className="adminCommandHero">
+      <div className="adminCommandCopy"><span><i/> SECURE REGIONAL ADMINISTRATION</span><h1>Admin Command Center</h1><p>Run fixtures, official results, scoring and platform controls from one guided workspace.</p><div className="adminCommandMeta"><b><LeagueMark region={region}/> {REGIONS[region].name}</b><span>SEASON 18</span><span>REGION-ISOLATED</span></div></div>
+      <div className="adminOperator"><span>{session.avatar?<img src={session.avatar} alt="Administrator profile"/>:initials}</span><div><small>SIGNED IN WITH ADMIN ACCESS</small><b>{session.name}</b><p>{session.accountRole.replace('_',' ')}</p></div><em>SECURE</em></div>
+    </section>
+
+    <div className="adminMobileNavigator"><button type="button" aria-expanded={mobileTools} onClick={()=>setMobileTools(current=>!current)}><i><AppIcon name={activeTool.icon}/></i><span><small>CURRENT ADMIN TOOL</small><b>{activeTool.label}</b></span><em>{mobileTools?'CLOSE':'BROWSE ALL'}</em></button>{mobileTools&&<div className="adminMobileToolMenu">{ADMIN_GROUPS.map(group=><section key={group}><h2>{group}</h2>{ADMIN_TOOLS.filter(tool=>tool.group===group).map(tool=><AdminToolButton tool={tool} active={tab===tool.id} choose={choose} compact key={tool.id}/>)}</section>)}</div>}</div>
+
+    <div className="adminWorkspaceLayout">
+      <nav className="adminToolRail" aria-label="Admin console tools"><header><span>ADMIN WORKSPACE</span><h2>Tools & controls</h2><p>Choose an area to see only the controls needed for that task.</p></header>{ADMIN_GROUPS.map(group=><section key={group}><h3>{group}</h3>{ADMIN_TOOLS.filter(tool=>tool.group===group).map(tool=><AdminToolButton tool={tool} active={tab===tool.id} choose={choose} key={tool.id}/>)}</section>)}<footer><i>✓</i><span><b>REGIONAL SAFETY</b><small>Changes are scoped to {region} and recorded by secure database policies.</small></span></footer></nav>
+
+      <section className="adminWorkArea">
+        <header className="adminSectionHeader"><div><span>ADMIN CONSOLE <i>›</i> {activeTool.group}</span><h2>{activeTool.label}</h2><p>{activeTool.description}. Every sensitive action should be supported by an official source and reviewed before publishing.</p></div><aside><small>ACTIVE SCOPE</small><b>{region} · SEASON 18</b><span><i/> ADMIN SESSION</span></aside></header>
+        {tab==='overview'&&<AdminWorkflowGuide open={choose}/>}
+        <div className="adminToolContent" data-admin-tool={tab}>
+          {tab==='overview'&&(supabase?<AdminLiveOverview region={region} notify={notify} open={choose}/>:<AdminOverview region={region} job={job} score={score} setTab={choose}/>)}
+          {tab==='matches'&&(supabase?<AdminScoring region={region} notify={notify}/>:<AdminMatches region={region} results={results} setResults={setResults} notify={notify}/>)}
+          {tab==='fixtures'&&supabase&&<AdminFixtures region={region} notify={notify}/>}
+          {tab==='mvp'&&(supabase?<AdminWeeklyMvpLive region={region} notify={notify}/>:<AdminMvp region={region} mvp={mvp} setMvp={setMvp} notify={notify}/>)}
+          {tab==='players'&&<AdminPlayers region={region} notify={notify}/>}
+          {tab==='draft-intelligence'&&supabase&&<AdminDraftIntelligence region={region} notify={notify}/>}
+          {tab==='operations'&&supabase&&<AdminRegionalOperations region={region} notify={notify}/>}
+          {tab==='fixture-sync'&&supabase&&<AdminPandaScoreSync region={region} notify={notify}/>}
+          {tab==='meta-results'&&supabase&&<AdminMetaResults region={region} notify={notify}/>}
+        </div>
+      </section>
+    </div>
+  </div>
+}
 function AdminOverview({region,job,score,setTab}:{region:Region;job:string;score:()=>void;setTab:(t:AdminTab)=>void}){return <><div className="adminStats"><AdminStat label="REGISTERED MANAGERS" value="2,481" note="+186 this week"/><AdminStat label="WEEK 5 SUBMISSIONS" value="1,927" note="77.6% participation"/><AdminStat label="ACTIVE PRIVATE LEAGUES" value="364" note="2,742 drafted players"/><AdminStat label="PENDING RESULTS" value="2" note="Requires verification" warn/></div><div className="adminGrid"><section className="panel adminQueue"><div className="panelHead"><div><h2>Action queue</h2><p>Items requiring administrator attention</p></div></div><AdminAction color="red" title="2 match results pending" copy="Verify series scores and player statistics." action="Review" click={()=>setTab('matches')}/><AdminAction color="gold" title="Week 5 MVP not selected" copy={`Publish the official ${REGIONS[region].name} weekly MVP.`} action="Select" click={()=>setTab('mvp')}/><AdminAction color="cyan" title="Scoring ready to calculate" copy="All Week 4 results have passed validation." action={job==='running'?'Running…':job==='done'?'Completed':'Run scoring'} click={score}/></section><section className="panel scoreJob"><span className={job}>∑</span><h2>Scoring engine</h2><p>Calculates prediction and fantasy ledgers from finalized official results.</p><div><small>LAST SUCCESSFUL RUN</small><b>{job==='done'?'Just now':'Week 4 · Sunday 11:42 PM'}</b></div><button className="primary" disabled={job==='running'} onClick={score}>{job==='running'?'Calculating points…':'Calculate finalized results'}</button></section></div><section className="panel auditPanel"><div className="panelHead"><div><h2>Recent administrator activity</h2><p>Immutable regional audit trail</p></div><button className="textBtn">VIEW ALL</button></div>{[['Result finalized','SRG 2–1 HomeBois','AqilZ','12 min ago'],['Schedule updated','Week 5 · Match 2','AqilZ','1 hour ago'],['Player imported','10 roster records','System','Yesterday']].map(x=><div className="auditRow" key={x[1]}><span>✓</span><div><b>{x[0]}</b><small>{x[1]}</small></div><p>{x[2]}</p><time>{x[3]}</time></div>)}</section></>}
 function AdminStat({label,value,note,warn}:{label:string;value:string;note:string;warn?:boolean}){return <div className="adminStat"><small>{label}</small><strong className={warn?'warn':''}>{value}</strong><span>{note}</span></div>}
 function AdminAction({color,title,copy,action,click}:{color:string;title:string;copy:string;action:string;click:()=>void}){return <div className="adminAction"><i className={color}/><div><b>{title}</b><p>{copy}</p></div><button onClick={click}>{action} →</button></div>}
