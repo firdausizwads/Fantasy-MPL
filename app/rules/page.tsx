@@ -12,6 +12,6 @@ export default function RulesPage() {
     { title: 'Deadlines', paragraphs: ['Server time controls all locks. Browser clocks do not override a closed fixture, lineup, Meta Lab card, H2H ban, or playoff bracket.'] },
     { title: 'Corrections', paragraphs: ['Finalized errors are corrected through an append-only score ledger. Historical transactions remain auditable, with reversing and replacement entries where required.'] },
     { title: 'Tie-breakers', items: ['Total points.', 'Prediction accuracy or configured fantasy metric.', 'Exact-score count.', 'Captain points where applicable.', 'Published league-specific tie-break rules.'] },
-    { title: 'Beta notice', paragraphs: ['Sample points, standings, creator profiles, prices, and recommendations must not be treated as official until the relevant data is verified and the competition is marked active.'] }
+    { title: 'Beta notice', paragraphs: ['Sample points, standings, prices and recommendations must not be treated as official until the relevant data is verified and the competition is marked active.'] }
   ]}/>;
 }

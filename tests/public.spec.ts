@@ -71,9 +71,10 @@ test.describe('public experience', () => {
         accountRole: 'user', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
       }));
     });
-    for (const view of ['predictions', 'fantasy', 'competition', 'directory', 'playoffs']) {
+    for (const view of ['predictions', 'fantasy', 'competition', 'directory', 'playoffs', 'draftlab', 'meta', 'leaderboard', 'profile']) {
       await page.goto(`/my#${view}`);
       await expect(page.locator('.shell')).toHaveClass(/darkMode/);
+      await page.waitForTimeout(250);
       const lightLeaks = await page.locator('.shell.darkMode').evaluate(root => {
         const leaks:string[]=[];
         for (const element of root.querySelectorAll('*')) {
@@ -88,6 +89,10 @@ test.describe('public experience', () => {
       });
       expect(lightLeaks, `${view} contains light surfaces`).toEqual([]);
     }
+    await expect(page.getByRole('button', { name: /Creator Hub/i })).toHaveCount(0);
+    await page.goto('/my#creators');
+    await expect(page.getByRole('heading', { name: /PLAY AGAINST THE VOICES OF MPL/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Creator Hub/i })).toHaveCount(0);
   });
 
   test('regional entry lanes and cached model endpoint are available', async ({ page, request }) => {

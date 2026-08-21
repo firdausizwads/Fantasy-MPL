@@ -25,6 +25,7 @@ test.describe('mobile navigation', () => {
     await expect(drawer.getByText('COMMUNITY', { exact: true })).toBeVisible();
     await expect(drawer.getByText('ACCOUNT', { exact: true })).toBeVisible();
     await expect(drawer.getByRole('button', { name: /Admin Console/i })).toHaveCount(0);
+    await expect(drawer.getByRole('button', { name: /Creator Hub/i })).toHaveCount(0);
   });
 
   test('mobile hero picker scrolls through the complete catalog without auto zoom', async ({ page }) => {

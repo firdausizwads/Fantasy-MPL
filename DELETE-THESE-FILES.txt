@@ -1,0 +1,3 @@
+Delete this existing file from your repository:
+
+app/creator-hub.tsx
