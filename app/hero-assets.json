@@ -24,6 +24,12 @@
     "provider": "Moonton / MLBB official web assets"
   },
   {
+    "name": "ALPHA",
+    "photo": "/heroes/alpha.webp",
+    "source": "https://akmweb.youngjoygame.com/web/madmin/image/796cd5f6a8ba0e76226fd0cd6866eb1e.jpg?w=100-100-28181b",
+    "provider": "Moonton / MLBB official web assets"
+  },
+  {
     "name": "ALUCARD",
     "photo": "/heroes/alucard.webp",
     "source": "https://akmwebstatic.yuanzhanapp.com/web/madmin/image_2f53289ddd423fa9bc95d380b6d79719.jpg",
@@ -333,6 +339,12 @@
     "name": "HILDA",
     "photo": "/heroes/hilda.webp",
     "source": "https://akmwebstatic.yuanzhanapp.com/web/madmin/image_fec6f3923209642a74789e42c41a2038.png",
+    "provider": "Moonton / MLBB official web assets"
+  },
+  {
+    "name": "HIRARA",
+    "photo": "/heroes/hirara.webp",
+    "source": "https://akmweb.youngjoygame.com/web/svnres/img/test/homepage_2_1_88_1205_1/100_71224844b111f09367df00e4f9b97753.png",
     "provider": "Moonton / MLBB official web assets"
   },
   {

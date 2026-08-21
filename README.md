@@ -10,8 +10,9 @@ Fantasy MPL is an independent, mobile-first fantasy esports and prediction platf
 - Public manager profiles and private personal details protected by Row Level Security
 - Cloud avatar uploads and self-service account export/deletion
 - Separate MY, ID and PH memberships, feature controls and leaderboards
+- Persistent region-aware dark mode with MY, ID and PH ambient palettes
 - Season 18 teams, rosters, sourced player portraits, fixtures and regional fantasy lineups
-- Complete 131-hero local portrait catalog for Live Draft Lab
+- Complete 133-hero local portrait catalog for Live Draft Lab, including Alpha and Hirara
 - Server-locked match, Weekly MVP and Meta Lab predictions
 - Prediction and fantasy scoring ledgers
 - Realtime league drafts, player ownership, lineups, transfers and chat foundations

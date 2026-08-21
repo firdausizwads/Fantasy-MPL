@@ -11,7 +11,7 @@ function verifyPublicFile(publicPath,label){
  const file=path.join(root,'public',publicPath.slice(1));
  if(!fs.existsSync(file)||fs.statSync(file).size<500){console.error(`FAIL ${label}: missing or empty ${publicPath}`);failed=true}
 }
-if(heroes.length!==131){console.error(`FAIL hero catalog expected 131, received ${heroes.length}`);failed=true}
+if(heroes.length!==133){console.error(`FAIL hero catalog expected 133, received ${heroes.length}`);failed=true}
 const heroNames=new Set();
 for(const hero of heroes){
  if(heroNames.has(hero.name)){console.error(`FAIL duplicate hero ${hero.name}`);failed=true}

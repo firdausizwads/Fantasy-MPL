@@ -1,7 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('public experience', () => {
-  test('registration page renders core identity and controls', async ({ page }) => {
+  test('registration page renders core identity and controls', async ({ page, request }) => {
+    const initial = await request.get('/');
+    const initialMarkup = await initial.text();
+    expect(initialMarkup).toContain('PREPARING YOUR ARENA');
+    expect(initialMarkup).not.toContain('CREATE YOUR MANAGER PROFILE');
     await page.goto('/');
     await expect(page).toHaveTitle(/Fantasy MPL/i);
     await expect(page.getByRole('heading', { name: /Build your roster/i })).toBeVisible();
@@ -28,6 +32,34 @@ test.describe('public experience', () => {
     await expect(page.getByText('#284', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Borneo Rivals', { exact: true })).toHaveCount(0);
     await expect(page.getByText(/NO VERIFIED DATA/i)).toBeVisible();
+  });
+
+  test('authenticated startup never flashes login and dark mode persists', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      (window as unknown as { __sawLogin: boolean }).__sawLogin = false;
+      new MutationObserver(() => {
+        if (document.body?.innerText.includes('CREATE YOUR MANAGER PROFILE')) {
+          (window as unknown as { __sawLogin: boolean }).__sawLogin = true;
+        }
+      }).observe(document, { subtree: true, childList: true, characterData: true });
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'StartupManager', email: 'startup@example.com', country: 'MY',
+        fullName: 'Startup Test Manager', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'user', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/my');
+    await expect(page.getByText(/WELCOME BACK, STARTUPMANAGER/i)).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { __sawLogin: boolean }).__sawLogin)).toBeFalsy();
+    await expect(page.locator('.shell')).toHaveClass(/darkMode/);
+    if (isMobile) await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    await expect(page.locator('.shell')).toHaveClass(/lightMode/);
+    await page.reload();
+    await expect(page.locator('.shell')).toHaveClass(/lightMode/);
+    if (isMobile) await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+    await expect(page.locator('.shell')).toHaveClass(/darkMode/);
   });
 
   test('regional entry lanes and cached model endpoint are available', async ({ page, request }) => {
@@ -177,7 +209,13 @@ test.describe('public experience', () => {
     await expect(page.getByRole('heading', { name: /Build the draft/i })).toBeVisible();
     await expect.poll(() => page.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/api/draft-model')))).toBeTruthy();
     await page.getByRole('button', { name: 'BAN slot 1', exact: true }).first().click();
-    await expect(page.locator('.heroGrid .heroPortrait img')).toHaveCount(131);
+    const heroPortraits = page.locator('.heroGrid .heroPortrait img');
+    await expect(heroPortraits).toHaveCount(133);
+    await expect.poll(() => heroPortraits.evaluateAll(images => images.every(image => (image as HTMLImageElement).naturalWidth > 0))).toBeTruthy();
+    const hirara = page.getByRole('button', { name: /HIRARA.*JUNGLE/i });
+    await hirara.scrollIntoViewIfNeeded();
+    await expect(hirara).toBeVisible();
+    await expect(hirara.locator('img')).toHaveAttribute('src', /\/heroes\/hirara\.webp$/);
     const atlas = page.getByRole('button', { name: /ATLAS.*ROAM/i });
     await expect(atlas.locator('img')).toHaveAttribute('src', /\/heroes\/atlas\.webp$/);
     await atlas.click();
