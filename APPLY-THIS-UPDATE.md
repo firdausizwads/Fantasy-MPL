@@ -1,105 +1,91 @@
-# Fantasy MPL — Modern Admin Console Update
+# Fantasy MPL — Draft Intelligence Sources Modernization
 
-Commit: `c00e529 Redesign admin console for guided light and dark workflows`
+Commit: `f78aefa Modernize Draft Intelligence source governance`
 
-## What changed
+## Fixed
 
-### Easier tool discovery
+The nested **Admin Console → Draft Intelligence → Sources** workspace has been rebuilt instead of only recolored.
 
-The old horizontal tab strip has been replaced by a guided administration workspace.
+### Source governance overview
 
-Desktop now includes a persistent tool rail grouped into:
+- Added a clear governance summary explaining why sources must be reviewed.
+- Added visible counts for registered, approved, commercially permitted and primary sources.
+- Pending or unconfirmed sources are clearly described as blocked from model activation.
 
-1. **Monitor**
-   - Command overview
-2. **Competition**
-   - Results & scoring
-   - Fixture manager
-   - PandaScore sync
-   - Weekly MVP
-3. **Data & Platform**
-   - Meta results
-   - Players & teams
-   - Draft intelligence
-   - Regional controls
+### Modern source library
 
-Every tool now has an icon, a clear name and a short explanation. Cloud-only tools remain visible in local preview with a `CLOUD` label instead of disappearing, so administrators can understand the complete platform.
+Each provider now has a structured source card showing:
 
-Mobile now uses a dedicated **Browse All** tool selector rather than an overflowing horizontal tab row.
+- approval status;
+- primary-source status;
+- provider URL;
+- recorded licence;
+- commercial-use permission;
+- terms link;
+- exact public attribution; and
+- a warning when attribution is missing.
 
-### Guided administration
+The commercial-use field keeps its original security meaning. It was not weakened or automatically enabled.
 
-- Added a modern Admin Command Center hero.
-- Uses the signed-in administrator’s real name, avatar or initials instead of a hard-coded identity.
-- Shows the active league, season and region-isolated status.
-- Added a recommended weekly workflow:
-  1. Sync fixtures
-  2. Verify results
-  3. Run scoring
-  4. Publish MVP
-- Added a contextual heading and explanation for every workspace.
-- Added visible active scope and secure admin-session indicators.
-- Kept existing Supabase permissions, server-side security and region isolation unchanged.
+### Guided source review
 
-### Modern light and dark themes
+The old flat form is now divided into three understandable steps:
 
-A dedicated `admin-console-modern.css` theme layer now covers:
+1. Provider identity
+2. Rights and public credit
+3. Review decision
 
-- overview and action queues;
-- results and scoring;
-- fixture manager;
-- PandaScore synchronization;
-- Weekly MVP;
-- player and team registry;
-- Meta results;
-- Draft Intelligence;
-- Regional Controls;
-- forms, tables, warnings, status cards and result modals.
+Improvements include:
 
-Dark mode uses deep navy surfaces, white primary text and blue-grey supporting text. Light mode uses clean white cards, soft blue-grey backgrounds and clearer borders. Both modes preserve each region’s accent color.
+- full-width responsive form controls;
+- clearer field descriptions;
+- modern permission cards;
+- explicit pending/approved/rejected/suspended status;
+- review-safety guidance;
+- improved required URL validation; and
+- clearer save progress text.
+
+### Dark and light themes
+
+- Removed the remaining white nested panels from dark mode.
+- Added deep navy cards, inputs, permission controls and attribution panels.
+- Fixed the active Draft Intelligence tab and other admin accent controls in light mode.
+- Light mode now uses clean white cards and soft blue-grey form sections.
+- Desktop and mobile layouts have no page-level horizontal overflow.
 
 ## Files changed
 
-- `app/admin-console-modern.css` — new
-- `app/layout.tsx`
-- `app/page.tsx`
+- `app/admin-console-modern.css`
+- `app/admin-draft-intelligence.tsx`
 - `tests/public.spec.ts`
 
-No files need to be deleted. No Supabase migration or new environment variable is required.
+No file deletion, Supabase migration or new environment variable is required.
 
 ## Audit results
 
-- TypeScript: passed
+- TypeScript/build compilation: passed
 - Production build: passed
 - Hero assets: `133/133`
-- Desktop Playwright: `16 passed`, `3 mobile-only skipped`
-- Mobile Playwright: `16 passed`, `3 intentionally skipped`
-- Admin tool/theme matrix: all `16/16` available combinations passed
-  - desktop and mobile;
-  - dark and light mode;
-  - overview, results, MVP and players;
-  - zero large opposite-theme surface leaks;
-  - zero horizontal overflow;
-  - zero runtime/page errors.
-- Live production smoke test: `22/22` routes passed
-- Dependency audit: `0 vulnerabilities`
+- Desktop Playwright: `17 passed`, `3 mobile-only skipped`
+- Mobile Playwright: `17 passed`, `3 intentionally skipped`
+- Sources theme regression: passed on desktop and mobile in dark and light mode
+- Dark Sources large white surfaces: `0`
+- Source form controls: confirmed full-width
+- Page-level horizontal overflow: `0`
+- Dependency vulnerabilities: `0`
 
 ## Apply with GitHub Desktop
 
-1. Make sure the previous region reliability and Prizes dark-mode update is already applied.
-2. Close any running local Fantasy MPL server.
-3. Extract `Fantasy-MPL-modern-admin-console.zip`.
-4. Copy the extracted `app` and `tests` folders into the root of your Fantasy MPL repository.
-5. Choose **Replace/Overwrite** when asked.
-6. Open GitHub Desktop and confirm these four changes:
-   - new `app/admin-console-modern.css`;
-   - updated `app/layout.tsx`;
-   - updated `app/page.tsx`;
-   - updated `tests/public.spec.ts`.
-7. Commit with:
-   `Redesign admin console for guided light and dark workflows`
-8. Push to GitHub.
-9. Allow Vercel to redeploy.
-10. Sign in with an administrator account and check Admin Console once in dark mode and once in light mode.
+1. Apply the previous `Fantasy-MPL-modern-admin-console.zip` update first.
+2. Extract `Fantasy-MPL-draft-sources-fix.zip`.
+3. Copy the extracted `app` and `tests` folders into your Fantasy MPL repository.
+4. Choose **Replace/Overwrite**.
+5. In GitHub Desktop, confirm the three changed files listed above.
+6. Commit with:
+   `Modernize Draft Intelligence source governance`
+7. Push to GitHub and wait for Vercel to redeploy.
+8. Sign in as an administrator and open:
+   **Admin Console → Draft Intelligence → Sources**
+9. Check the page once in dark mode and once in light mode.
 
 Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.

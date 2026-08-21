@@ -163,6 +163,49 @@ test.describe('public experience', () => {
     expect(lightOverflow).toBeFalsy();
   });
 
+  test('Draft Intelligence Sources uses modern dark and light surfaces', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_color_mode', 'dark');
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'SourceAdmin', email: 'sources@example.com', country: 'MY',
+        fullName: 'Source Admin', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'admin', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/my#admin');
+    await page.locator('.adminToolContent').evaluate(element => {
+      element.innerHTML = `<div class="intelligenceConsole">
+        <nav class="intelligenceTabs"><button>Overview</button><button class="active">Sources</button><button>Patch & Data</button><button>Draft Import</button><button>Model</button></nav>
+        <div class="sourceWorkspace modernSourceWorkspace">
+          <section class="sourceGovernanceSummary"><div><span>DATA SOURCE GOVERNANCE</span><h2>Approve evidence before it reaches public models.</h2><p>Record ownership, usage rights and exact attribution.</p></div><div class="sourceGovernanceStats"><article><small>REGISTERED</small><b>1</b><span>source</span></article><article><small>APPROVED</small><b>1</b><span>provider</span></article><article><small>COMMERCIAL RIGHTS</small><b>0</b><span>permission</span></article><article><small>PRIMARY</small><b>0</b><span>source</span></article></div></section>
+          <section class="panel sourceLibrary"><div class="intelligenceSectionHead"><div><span>REGISTERED SOURCES</span><h2>Source library</h2></div></div><div class="sourceCards"><article class="sourceCard sourceCardapproved"><div class="sourceCardTop"><span class="sourceStatus sourceStatusapproved">APPROVED</span></div><h3>OpenMLBB / RoneAI</h3><div class="sourceRightsGrid"><div><small>LICENCE</small><b>Provider authorization</b></div><div class="unconfirmed"><small>COMMERCIAL USE</small><b>UNCONFIRMED</b></div></div><blockquote><span>PUBLIC ATTRIBUTION</span><p>Required provider credit.</p></blockquote></article></div></section>
+          <form class="panel sourceReviewForm modernSourceReview"><div class="intelligenceSectionHead"><div><span>GUIDED SOURCE REVIEW</span><h2>Register or update a provider</h2></div></div><section class="sourceFormSection"><div class="sourceFormSectionTitle"><i>1</i><div><h3>Provider identity</h3><p>Record official references.</p></div></div><div class="formGrid"><label>SOURCE NAME<input value="OpenMLBB / RoneAI"></label><label>LICENCE<input value="Authorization"></label><label class="wide">PROVIDER URL<input value="https://example.com"></label></div></section><section class="sourceFormSection"><div class="sourceFormSectionTitle"><i>2</i><div><h3>Rights and public credit</h3></div></div><div class="formGrid"><label class="wide">PUBLIC ATTRIBUTION<input value="Required provider credit"></label><label class="wide">REVIEW NOTES<textarea>Non-commercial only.</textarea></label></div></section><section class="sourceFormSection"><div class="sourceDecisionGrid"><label class="sourceStatusField">REVIEW STATUS<select><option>PENDING REVIEW</option></select></label><div class="sourcePermissions"><label><input type="checkbox"><i>○</i><span><b>Commercial use confirmed</b><small>Written permission required</small></span></label></div></div></section></form>
+        </div></div>`;
+    });
+
+    await expect(page.locator('.sourceLibrary')).toHaveCSS('background-color', 'rgb(12, 29, 46)');
+    await expect(page.locator('.sourceFormSection').first()).toHaveCSS('background-color', 'rgb(10, 25, 40)');
+    const fieldSizing = await page.locator('.sourceFormSection .formGrid label').first().evaluate(label => ({ label: label.getBoundingClientRect().width, input: label.querySelector('input')!.getBoundingClientRect().width }));
+    expect(fieldSizing.input).toBeGreaterThanOrEqual(fieldSizing.label - 1);
+    const darkLeaks = await page.locator('.modernSourceWorkspace').evaluate(root => [...root.querySelectorAll('*')].filter(element => {
+      const rect=element.getBoundingClientRect();
+      const match=getComputedStyle(element).backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+      if(!match||rect.width*rect.height<1800)return false;
+      const alpha=match[4]==null?1:Number(match[4]);
+      return alpha>.5&&Number(match[1])>225&&Number(match[2])>225&&Number(match[3])>225;
+    }).length);
+    expect(darkLeaks).toBe(0);
+
+    if (isMobile) {
+      await page.getByRole('button', { name: 'Open navigation' }).click();
+      await page.getByRole('button', { name: 'Switch to light mode' }).click();
+      await page.getByRole('button', { name: 'Close navigation' }).click();
+    } else await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    await expect(page.locator('.sourceLibrary')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.intelligenceTabs button.active')).toHaveCSS('background-color', 'rgb(23, 105, 210)');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)).toBeFalsy();
+  });
+
   test('dark mode has no large light surface leaks', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('fmpl_color_mode', 'dark');
