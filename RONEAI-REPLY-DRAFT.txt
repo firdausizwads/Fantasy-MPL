@@ -1,0 +1,36 @@
+Subject: Re: OpenMLBB / RoneAI API integration for Fantasy MPL
+
+Hi RoneAI team,
+
+Thank you for the clear authorization and usage terms. I confirm that Fantasy MPL will comply with the current conditions.
+
+Under the current permission, Fantasy MPL will:
+
+- use the API only for non-commercial purposes;
+- keep the API token server-side and never expose it in browser code;
+- use permitted server-side caching in Supabase;
+- use derived data only for public recommendation features allowed by your terms;
+- not use the API in any advertising, sponsorship, subscription, or other revenue-generating feature without separate written commercial approval;
+- display the required attribution exactly as follows: “Powered by MLBB Public Data API • Data © Moonton (Mobile Legends) • API maintained by ridwaanhall / RoneAI.”; and
+- delete stored API snapshots if access is terminated.
+
+Before I activate production requests, could you please send the full technical onboarding documentation and clarify the following points?
+
+1. The confirmed production base URL and whether integrations should wait until the planned public release around mid-November 2026.
+2. The exact authentication header name and token format. If a credential needs to be issued, please use a secure delivery method rather than including it in documentation or public examples.
+3. Endpoint paths, HTTP methods, request parameters, response schemas, error schemas, and sample responses for pick rate, ban rate, win rate, counters, and synergies.
+4. Exact accepted values for Mythic, Honor, and Glory rank filters, plus supported patch identifiers and time-window values.
+5. Hero identifiers, pagination, sorting, regional filters, data freshness fields, and any schema/versioning guarantees.
+6. How the approximate limit of 50 requests per day per user is measured when Fantasy MPL uses a server-side cache, including the relevant rate-limit response headers and 429 retry guidance.
+7. Recommended cache TTL, retention limits, snapshot deletion procedure, and whether RoneAI must be notified after deletion if access ends.
+8. Service-status, changelog, deprecation, and API-versioning channels.
+9. Whether a free, non-sponsored API feature may remain active if Fantasy MPL later runs a separate sponsor-funded community prize campaign. I will treat this as prohibited unless you confirm the boundary in writing.
+10. Where future attribution-rule changes will be published so Fantasy MPL can keep the wording current.
+
+A sandbox, Postman/OpenAPI collection, or redacted sample payloads would also be helpful.
+
+Because the service is currently under maintenance, I will keep live API calls disabled until the production details above are confirmed and the service is ready. No API token will be committed to GitHub or exposed through a NEXT_PUBLIC environment variable.
+
+Thank you,
+Firdaus
+Fantasy MPL

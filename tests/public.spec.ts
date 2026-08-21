@@ -62,6 +62,39 @@ test.describe('public experience', () => {
     await expect(page.locator('.shell')).toHaveClass(/darkMode/);
   });
 
+  test('joined regions switch reliably on desktop and mobile', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'RegionManager', email: 'regions@example.com', country: 'MY',
+        fullName: 'Region Test Manager', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'user', joined: ['MY', 'ID', 'PH'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    await page.goto('/my#dashboard');
+    await expect(page.locator('.hero')).toContainText('MPL Malaysia');
+
+    const openRegionSelector = async () => {
+      if (isMobile) {
+        await page.getByRole('button', { name: 'Open navigation' }).click();
+        await page.locator('.drawerRegion').click();
+      } else {
+        await page.locator('.desktopRegionCard').click();
+      }
+      await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible();
+    };
+
+    await openRegionSelector();
+    await page.getByRole('button', { name: /MPL Indonesia/i }).click();
+    await expect(page).toHaveURL(/\/id#dashboard$/);
+    await expect(page.locator('.hero')).toContainText('MPL Indonesia');
+
+    await openRegionSelector();
+    await page.getByRole('button', { name: /MPL Philippines/i }).click();
+    await expect(page).toHaveURL(/\/ph#dashboard$/);
+    await expect(page.locator('.hero')).toContainText('MPL Philippines');
+    await expect(page.getByText(/TypeError|Load failed/i)).toHaveCount(0);
+  });
+
   test('dark mode has no large light surface leaks', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('fmpl_color_mode', 'dark');
@@ -71,7 +104,7 @@ test.describe('public experience', () => {
         accountRole: 'user', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
       }));
     });
-    for (const view of ['predictions', 'fantasy', 'competition', 'directory', 'playoffs', 'draftlab', 'meta', 'leaderboard', 'profile']) {
+    for (const view of ['predictions', 'fantasy', 'competition', 'directory', 'playoffs', 'draftlab', 'meta', 'leaderboard', 'profile', 'prizes']) {
       await page.goto(`/my#${view}`);
       await expect(page.locator('.shell')).toHaveClass(/darkMode/);
       await page.waitForTimeout(250);

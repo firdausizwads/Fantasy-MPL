@@ -150,6 +150,7 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   const [session,setSession]=useState<Session>(initialSession);
   const [view,setView]=useState<View>('dashboard');
   const [regionModal,setRegionModal]=useState(false);
+  const [regionSwitching,setRegionSwitching]=useState<Region|null>(null);
   const [toast,setToast]=useState('');
   const [mobileOpen,setMobileOpen]=useState(false);
   const [colorMode,setColorMode]=useState<'dark'|'light'>('dark');
@@ -200,10 +201,29 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
   if(!session.email) return <Auth onComplete={(fullName,name,email,country)=>setSession({...initialSession,fullName,name,email,country,termsAccepted:true})}/>;
   if(cloudUserId&&!session.termsAccepted) return <TermsAcceptance onComplete={()=>setSession(current=>({...current,termsAccepted:true}))}/>;
   if(!session.country) return <CountrySetup name={session.name} onComplete={country=>setSession(s=>({...s,country}))}/>;
-  if(!session.active) return <RegionGate joined={session.joined} onChoose={(r)=>joinRegion(r)} />;
+  if(!session.active) return <RegionGate joined={session.joined} onChoose={joinRegion} busy={regionSwitching}/>;
 
   async function joinRegion(region:Region){
-    if(supabase&&cloudUserId){const {error}=await supabase.from('region_memberships').insert({user_id:cloudUserId,region_code:region});if(error&&error.code!=='23505'){notify(error.message);return}}
+    if(regionSwitching)return;
+    if(session.active===region){setRegionModal(false);return}
+    const alreadyJoined=session.joined.includes(region);
+    if(!alreadyJoined&&supabase&&cloudUserId){
+      setRegionSwitching(region);
+      try{
+        const {error}=await retryTransient(async()=>{
+          const result=await withTimeout(supabase!.from('region_memberships').insert({user_id:cloudUserId,region_code:region}),8000,'Region membership request timed out.');
+          if(result.error&&/load failed|fetch|network|timed out/i.test(result.error.message))throw result.error;
+          return result;
+        },3);
+        if(error&&error.code!=='23505'){
+          notify(`Could not join ${REGIONS[region].name}. ${error.message}`);
+          return;
+        }
+      }catch{
+        notify(`Could not reach the regional service. Your current region is unchanged — please try again.`);
+        return;
+      }finally{setRegionSwitching(null)}
+    }
     try{localStorage.setItem('fmpl_active_region',region);window.history.replaceState(null,'',`/${region.toLowerCase()}#dashboard`)}catch{}
     setSession(s=>({...s,active:region,joined:s.joined.includes(region)?s.joined:[...s.joined,region]}));
     setRegionModal(false);setView('dashboard');notify(`${REGIONS[region].name} selected`);
@@ -266,7 +286,7 @@ export function FantasyMplApp({initialRegion}:{initialRegion?:Region}={}){
       {view==='admin' && isAdmin && <AdminConsole region={region} notify={notify}/>} 
     </main>
     {mobileOpen&&<MobileDrawer view={view} region={region} session={session} colorMode={colorMode} canAdmin={isAdmin} onToggleColor={toggleColorMode} choose={v=>{setView(v);setMobileOpen(false)}} changeRegion={()=>{setMobileOpen(false);setRegionModal(true)}} signOut={signOut} close={()=>setMobileOpen(false)}/>}
-    {regionModal && <RegionGate joined={session.joined} onChoose={joinRegion} close={()=>setRegionModal(false)}/>} 
+    {regionModal && <RegionGate joined={session.joined} onChoose={joinRegion} close={()=>setRegionModal(false)} busy={regionSwitching}/>}
     <div className={`toast ${toast?'show':''}`}>{toast}</div>
   </div>;
 }
@@ -285,7 +305,14 @@ function TermsAcceptance({onComplete}:{onComplete:()=>void}){const[confirmed,set
 
 function CountrySetup({name,onComplete}:{name:string;onComplete:(country:string)=>void}){const [country,setCountry]=useState('');return <div className="countrySetup"><div className="countrySetupCard"><Logo/><span className="seasonTag"><i/> COMPLETE YOUR PROFILE</span><h1>WELCOME, {name}</h1><p>CHOOSE YOUR HOME COUNTRY. YOUR FLAG WILL APPEAR BESIDE YOUR NAME ON REGIONAL LEADERBOARDS.</p><div className="countryGrid">{COUNTRIES.map(c=><button key={c.code} className={country===c.code?'selected':''} onClick={()=>setCountry(c.code)}><span><FlagIcon code={c.code}/></span><b>{c.name}</b></button>)}</div><button className="primary" disabled={!country} onClick={()=>onComplete(country)}>SAVE COUNTRY & CONTINUE</button></div></div>}
 
-function RegionGate({joined,onChoose,close}:{joined:Region[];onChoose:(r:Region)=>void;close?:()=>void}){const copy:Record<Region,{country:string;headline:string;description:string}>={MY:{country:'MALAYSIA',headline:'OWN THE ARENA',description:'BUILD YOUR REGIONAL ROSTER AND COMPETE WITH MALAYSIA’S FANTASY COMMUNITY.'},ID:{country:'INDONESIA',headline:'RULE THE META',description:'ENTER INDONESIA’S MOST COMPETITIVE FANTASY AND PREDICTION TABLES.'},PH:{country:'PHILIPPINES',headline:'BACK THE CHAMPIONS',description:'PREDICT THE PHILIPPINE POWERHOUSES AND CLIMB THE REGIONAL RANKINGS.'}};return <div className="regionGate battleGate"><div className="battleShell"><div className="battleTop"><Logo/>{close&&<button className="battleClose" onClick={close}><AppIcon name="close"/></button>}</div><div className="battleIntro"><span>FANTASY MPL · SEASON 18</span><h1>CHOOSE YOUR BATTLEGROUND</h1><p>THREE INDEPENDENT LEAGUES. THREE REGIONAL IDENTITIES. EVERY SCORE, ROSTER AND RANKING REMAINS SEPARATE.</p></div><div className="battleCards">{(Object.keys(REGIONS) as Region[]).map(r=>{const d=copy[r];return <button key={r} className={`battleCard battle${r}`} onClick={()=>onChoose(r)}><img className="battleWatermark" src={REGIONS[r].logo} alt=""/><div className="battleCardTop"><span><LeagueMark region={r}/></span><b>{d.country}</b><i>SEASON 18</i></div><div className="battleLogo"><img src={REGIONS[r].logo} alt={`${REGIONS[r].name} official logo`}/></div><div className="battleInfo"><small>REGIONAL COMPETITION</small><h2>{REGIONS[r].name}</h2><strong>{d.headline}</strong><p>{d.description}</p></div><div className="battleEnter"><span>{joined.includes(r)?'CONTINUE COMPETITION':'JOIN COMPETITION'}</span><i>→</i></div></button>})}</div><div className="battleFoot"><span>◈</span><p>ONE ACCOUNT CAN JOIN EVERY REGION, BUT POINTS AND LEADERBOARDS NEVER MIX.</p></div></div></div>}
+function RegionGate({joined,onChoose,close,busy=null}:{joined:Region[];onChoose:(r:Region)=>void;close?:()=>void;busy?:Region|null}){
+  const copy:Record<Region,{country:string;headline:string;description:string}>={
+    MY:{country:'MALAYSIA',headline:'OWN THE ARENA',description:'BUILD YOUR REGIONAL ROSTER AND COMPETE WITH MALAYSIA’S FANTASY COMMUNITY.'},
+    ID:{country:'INDONESIA',headline:'RULE THE META',description:'ENTER INDONESIA’S MOST COMPETITIVE FANTASY AND PREDICTION TABLES.'},
+    PH:{country:'PHILIPPINES',headline:'BACK THE CHAMPIONS',description:'PREDICT THE PHILIPPINE POWERHOUSES AND CLIMB THE REGIONAL RANKINGS.'}
+  };
+  return <div className="regionGate battleGate" aria-busy={Boolean(busy)}><div className="battleShell"><div className="battleTop"><Logo/>{close&&<button className="battleClose" onClick={close} disabled={Boolean(busy)} aria-label="Close region selector"><AppIcon name="close"/></button>}</div><div className="battleIntro"><span>FANTASY MPL · SEASON 18</span><h1>CHOOSE YOUR BATTLEGROUND</h1><p>THREE INDEPENDENT LEAGUES. THREE REGIONAL IDENTITIES. EVERY SCORE, ROSTER AND RANKING REMAINS SEPARATE.</p></div><div className="battleCards">{(Object.keys(REGIONS) as Region[]).map(r=>{const d=copy[r],isBusy=busy===r;return <button key={r} className={`battleCard battle${r}${isBusy?' joining':''}`} onClick={()=>onChoose(r)} disabled={Boolean(busy)}><img className="battleWatermark" src={REGIONS[r].logo} alt=""/><div className="battleCardTop"><span><LeagueMark region={r}/></span><b>{d.country}</b><i>SEASON 18</i></div><div className="battleLogo"><img src={REGIONS[r].logo} alt={`${REGIONS[r].name} official logo`}/></div><div className="battleInfo"><small>REGIONAL COMPETITION</small><h2>{REGIONS[r].name}</h2><strong>{d.headline}</strong><p>{d.description}</p></div><div className="battleEnter"><span>{isBusy?'CONNECTING SECURELY…':joined.includes(r)?'CONTINUE COMPETITION':'JOIN COMPETITION'}</span><i>{isBusy?'⋯':'→'}</i></div></button>})}</div><div className="battleFoot"><span>◈</span><p>{busy?`CONNECTING TO ${REGIONS[busy].name.toUpperCase()} — PLEASE KEEP THIS WINDOW OPEN.`:'ONE ACCOUNT CAN JOIN EVERY REGION, BUT POINTS AND LEADERBOARDS NEVER MIX.'}</p></div></div></div>
+}
 
 type IconName='dashboard'|'predictions'|'fantasy'|'leagues'|'leaderboard'|'competition'|'playoffs'|'directory'|'meta'|'draftlab'|'profile'|'prizes'|'admin'|'menu'|'close'|'logout';
 const NAV_ITEMS:{id:View;icon:IconName;label:string}[]=[{id:'dashboard',icon:'dashboard',label:'Dashboard'},{id:'predictions',icon:'predictions',label:'Predictions'},{id:'fantasy',icon:'fantasy',label:'My Fantasy Team'},{id:'draftlab',icon:'draftlab',label:'Live Draft Lab'},{id:'leaderboard',icon:'leaderboard',label:'Leaderboards'},{id:'competition',icon:'competition',label:'Schedule & Standings'},{id:'playoffs',icon:'playoffs',label:'Playoff Predictor'},{id:'meta',icon:'meta',label:'Meta Lab'},{id:'directory',icon:'directory',label:'Teams & Players'},{id:'profile',icon:'profile',label:'My Profile'},{id:'prizes',icon:'prizes',label:'Prizes · Soon'},{id:'admin',icon:'admin',label:'Admin Console'}];
