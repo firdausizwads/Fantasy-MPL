@@ -1,137 +1,114 @@
-# Fantasy MPL — Guest-First Entry Experience
+# Fantasy MPL — Cinematic Entry & Modern Team Showcase
 
-Commit: `6f19f62 Add animated guest-first regional browsing`
+Commit: `007af0a Refine cinematic intro and modernize team showcase`
 
-## Main change
+## Requested adjustments completed
 
-Visitors are no longer forced to register or sign in before seeing Fantasy MPL.
+### Removed from the welcome screen
 
-A new visitor can now:
+- Removed the numbered `1–2–3` journey tracker.
+- Removed the **Explore the Arena** button.
+- Removed the **Create Your Manager** body button.
+- Removed the manual intro-skip control.
 
-1. See the welcoming Fantasy MPL introduction.
-2. Continue through the animated regional battleground selection.
-3. Choose MPL Malaysia, MPL Indonesia or MPL Philippines.
-4. Enter the regional dashboard in Guest Preview mode.
-5. Browse the website’s main features before deciding whether to create an account.
+The small **Sign In** and **Create Free Account** controls remain in the header so account access is still easy, but they do not interrupt the cinematic presentation.
 
-Authentication, Supabase RLS and administrator permissions remain unchanged.
+## Fully automated cinematic advertisement
 
-## New 1–2–3 visual journey
+The first page now plays automatically as a short Fantasy MPL promotional sequence:
 
-### Step 1 — Welcome
+1. Fantasy MPL brand introduction
+2. MPL Malaysia scene
+3. MPL Indonesia scene
+4. MPL Philippines scene
+5. “Three Regions. One Fantasy Arena” finale
+6. Smooth fade and slide into **Choose Your Battleground**
 
-- New cinematic welcome page.
-- Fantasy MPL identity and three-region orbit visual.
-- Explains which features can be explored.
-- Automatic fade transition after approximately six seconds.
-- Manual **Explore the Arena** and **Skip Intro** controls.
-- Persistent **Sign In** and **Create Free Account** access.
+The complete sequence takes approximately nine seconds. Each region receives its own:
 
-### Step 2 — Choose your battleground
+- ambient regional color;
+- official league identity;
+- large cinematic logo reveal;
+- headline and regional message;
+- background word treatment;
+- light-beam, grid and grain effects; and
+- animated progress timeline without numbered steps.
 
-- Three region cards appear using a staggered 1–2–3 pop animation.
-- Existing MY, ID and PH regional identities are preserved.
-- Each region clearly explains what the visitor can explore.
-- Visitors can switch regions later from the normal region selector.
+Users with reduced-motion enabled receive a shortened, static finale before the battleground page appears.
 
-### Step 3 — Arena ready
+## Modern Team Showcase
 
-- Selected regional league logo is displayed.
-- Short loading transition opens the guest regional command center.
-- An **Enter Now** option is also available.
+The old continuously moving marquee has been removed.
 
-## Team showcase
+It is replaced by a modern interactive regional team directory preview:
 
-The region-selection page now includes a moving Season 18 team showcase below the battleground cards.
+- MY, ID and PH league selectors;
+- official regional league marks;
+- responsive verified team grid;
+- clean team-logo cards;
+- team name and code;
+- staggered card entrance animations;
+- modern hover states on desktop;
+- two-column mobile layout;
+- one-column layout for very narrow devices; and
+- visible verified-team counts.
 
-- Uses the existing verified team identity assets.
-- Covers Malaysia, Indonesia and the Philippines.
-- Pauses when hovered on desktop.
-- Uses a static accessible layout when reduced-motion mode is enabled.
+The grid changes instantly when visitors select Malaysia, Indonesia or the Philippines.
 
-## Guest Preview mode
+## Desktop and mobile behavior
 
-Guests can browse:
+The cinematic scenes and battleground page were validated at:
 
-- Dashboard
-- Predictions
-- My Fantasy Team
-- Live Draft Lab
-- Schedule & Standings
-- Playoff Predictor
-- Meta Lab
-- Leaderboards preview
-- Teams & Players
-- Prizes
+- 1440×1000
+- 768×1024
+- 430×932
+- 375×812
+- 320×700
 
-Guest preview state is stored in `sessionStorage`, allowing a page refresh without forcing the visitor back to the welcome screen. A new browser session still begins with the welcome experience.
+Every size passed with:
 
-## Registration and sign-in access
-
-Account controls are available from:
-
-- welcome-page header;
-- welcome-page calls to action;
-- guest desktop top bar;
-- guest preview information banner;
-- desktop guest sidebar card;
-- mobile navigation drawer;
-- leaderboard account prompt; and
-- protected save/submit actions.
-
-The authentication page now includes **Continue Exploring**, allowing visitors to return to the feature they were viewing.
-
-## Guest safety and account boundaries
-
-- Guests may explore interfaces and local preview interactions.
-- Official prediction submission redirects to account creation.
-- Meta Lab save and submission redirect to account creation.
-- Guest Profile and Admin Console navigation are hidden.
-- Verified leaderboard participation requires an account.
-- No guest access bypasses Supabase authentication, RLS or server-side security.
+- visible cinematic logo and copy;
+- three battleground cards;
+- complete modern team grid;
+- no page-level horizontal overflow; and
+- no runtime errors.
 
 ## Files changed
 
-- `app/guest-entry.tsx` — new
-- `app/guest-entry.css` — new
-- `app/layout.tsx`
-- `app/page.tsx`
-- `app/meta-lab.tsx`
+- `app/guest-entry.tsx`
+- `app/guest-entry.css`
 - `tests/public.spec.ts`
-- `tests/mobile.spec.ts`
 
-No file deletion, Supabase migration or new environment variable is required.
+No Supabase migration, environment variable or file deletion is required.
 
 ## Audit results
 
 - TypeScript: passed
 - Production build: passed
 - Desktop Playwright: `19 passed`, `3 mobile-only skipped`
-- Mobile Playwright: `19 passed`, `3 intentionally skipped`
-- Guest feature audit: `20/20` desktop/mobile page checks passed
-- Guest page runtime errors: `0`
-- Guest page horizontal overflow: `0`
-- Entry experience passed at:
-  - 1440×1000
-  - 768×1024
-  - 430×932
-  - 375×812
-  - 320×700
+- Mobile feature suite: all tests passed after one teardown-only retry
+- Automated guest flow: passed on desktop and mobile
+- Modern showcase region switching: passed (`8 MY`, `9 ID`, `8 PH` team records)
+- Viewport matrix: `5/5` passed
+- Horizontal overflow: `0`
+- Runtime errors: `0`
 - Hero assets: `133/133`
 - Dependency vulnerabilities: `0`
 
 ## Apply with GitHub Desktop
 
-1. Apply the previous Live Draft Report and Hero Picker update first.
-2. Extract `Fantasy-MPL-guest-first-entry.zip`.
-3. Copy the extracted `app` and `tests` folders into your Fantasy MPL repository.
+1. Apply `Fantasy-MPL-guest-first-entry.zip` first.
+2. Extract `Fantasy-MPL-cinematic-entry-team-showcase.zip`.
+3. Copy the extracted `app` and `tests` folders into your repository.
 4. Choose **Replace/Overwrite**.
-5. Open GitHub Desktop and confirm the seven changed files listed above.
+5. In GitHub Desktop, confirm these three updated files:
+   - `app/guest-entry.tsx`
+   - `app/guest-entry.css`
+   - `tests/public.spec.ts`
 6. Commit with:
-   `Add animated guest-first regional browsing`
+   `Refine cinematic intro and modernize team showcase`
 7. Push to GitHub.
-8. Wait until the Vercel deployment status is **Ready**.
-9. Close old Fantasy MPL browser tabs and open the website in a new tab.
-10. Test the complete welcome → battleground → guest dashboard journey once on desktop and once on mobile.
+8. Wait for Vercel to show **Ready**.
+9. Close every old Fantasy MPL tab and open the website in a fresh tab so the new cinematic JavaScript bundle is loaded.
 
 Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.

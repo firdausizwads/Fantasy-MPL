@@ -8,8 +8,10 @@ test.describe('public experience', () => {
     expect(initialMarkup).not.toContain('CREATE YOUR MANAGER PROFILE');
     await page.goto('/');
     await expect(page).toHaveTitle(/Fantasy MPL/i);
-    await expect(page.getByRole('heading', { name: /YOUR MPL JOURNEY STARTS HERE/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /EXPLORE THE ARENA/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /WELCOME TO FANTASY MPL/i })).toBeVisible();
+    await expect(page.locator('.guestJourney')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /EXPLORE THE ARENA/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /CREATE YOUR MANAGER/i })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true }).click();
     await expect(page.getByRole('button', { name: 'CREATE ACCOUNT', exact: true })).toBeVisible();
@@ -39,12 +41,17 @@ test.describe('public experience', () => {
   });
 
   test('visitors can browse regional features before creating an account', async ({ page, isMobile }) => {
+    test.setTimeout(45_000);
     await page.goto('/');
-    await page.getByRole('button', { name: /EXPLORE THE ARENA/i }).click();
-    await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /WELCOME TO FANTASY MPL/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible({ timeout: 12_000 });
     await expect(page.locator('.guestRegionCard')).toHaveCount(3);
-    await expect(page.getByText('SEASON 18 TEAM SHOWCASE')).toBeVisible();
-    await page.getByRole('button', { name: /MPL Indonesia/i }).click();
+    await expect(page.locator('.modernTeamShowcase')).toBeVisible();
+    await expect(page.locator('.modernTeamShowcase header nav button')).toHaveCount(3);
+    await expect(page.locator('.modernTeamGrid article')).toHaveCount(8);
+    await page.locator('.modernTeamShowcase header nav button').filter({ hasText: 'ID' }).click();
+    await expect(page.locator('.modernTeamGrid article')).toHaveCount(9);
+    await page.locator('.guestRegionID').click();
     await expect(page.getByText(/Opening the regional command center/i)).toBeVisible();
     await expect(page.getByText(/WELCOME BACK, GUEST MANAGER/i)).toBeVisible({ timeout: 5000 });
     await expect(page).toHaveURL(/\/id#dashboard$/);
@@ -276,7 +283,7 @@ test.describe('public experience', () => {
       expect(response.status()).toBe(200);
     }
     await page.goto('/my');
-    await expect(page.getByRole('heading', { name: /YOUR MPL JOURNEY STARTS HERE/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /WELCOME TO FANTASY MPL/i })).toBeVisible();
     const model = await request.get('/api/draft-model?region=MY');
     expect(model.status()).toBe(200);
     const payload = await model.json();
