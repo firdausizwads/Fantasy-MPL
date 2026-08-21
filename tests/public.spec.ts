@@ -8,15 +8,19 @@ test.describe('public experience', () => {
     expect(initialMarkup).not.toContain('CREATE YOUR MANAGER PROFILE');
     await page.goto('/');
     await expect(page).toHaveTitle(/Fantasy MPL/i);
-    await expect(page.getByRole('heading', { name: /Build your roster/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /YOUR MPL JOURNEY STARTS HERE/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /EXPLORE THE ARENA/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true }).click();
     await expect(page.getByRole('button', { name: 'CREATE ACCOUNT', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'SIGN IN', exact: true })).toBeVisible();
     await expect(page.getByLabel(/AGE AND GUARDIAN CONFIRMATION/i)).toBeVisible();
-    await expect(page.getByText('SEASON 18 TEAM SHOWCASE')).toBeVisible();
+    await expect(page.getByRole('button', { name: /CONTINUE EXPLORING/i })).toBeVisible();
   });
 
   test('local fallback registration reaches regional onboarding', async ({ page }) => {
     await page.goto('/');
+    await page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true }).click();
     await page.getByLabel('FULL NAME *').fill('Fantasy Test Manager');
     await page.getByLabel('MANAGER NAME *').fill('TestManager');
     await page.getByLabel('EMAIL ADDRESS').fill('test@example.com');
@@ -32,6 +36,33 @@ test.describe('public experience', () => {
     await expect(page.getByText('#284', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Borneo Rivals', { exact: true })).toHaveCount(0);
     await expect(page.getByText(/NO VERIFIED DATA/i)).toBeVisible();
+  });
+
+  test('visitors can browse regional features before creating an account', async ({ page, isMobile }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /EXPLORE THE ARENA/i }).click();
+    await expect(page.getByRole('heading', { name: 'CHOOSE YOUR BATTLEGROUND' })).toBeVisible();
+    await expect(page.locator('.guestRegionCard')).toHaveCount(3);
+    await expect(page.getByText('SEASON 18 TEAM SHOWCASE')).toBeVisible();
+    await page.getByRole('button', { name: /MPL Indonesia/i }).click();
+    await expect(page.getByText(/Opening the regional command center/i)).toBeVisible();
+    await expect(page.getByText(/WELCOME BACK, GUEST MANAGER/i)).toBeVisible({ timeout: 5000 });
+    await expect(page).toHaveURL(/\/id#dashboard$/);
+    await expect(page.locator('.guestPreviewBanner').getByText('GUEST PREVIEW', { exact: true })).toBeVisible();
+
+    if (isMobile) await page.getByRole('button', { name: 'Open navigation' }).click();
+    const navigation=isMobile?page.locator('.mobileDrawer'):page.locator('.groupedNav').first();
+    await expect(navigation.getByRole('button', { name: /My Profile/i })).toHaveCount(0);
+    await navigation.getByRole('button', { name: /Teams & Players/i }).click();
+    await expect(page.getByRole('heading', { name: 'Teams & Players' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /CREATE FREE ACCOUNT/i }).first()).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Teams & Players' })).toBeVisible();
+    await expect(page.locator('.guestPreviewBanner').getByText('GUEST PREVIEW', { exact: true })).toBeVisible();
+    await page.locator('.guestPreviewBanner').getByRole('button', { name: 'CREATE FREE ACCOUNT' }).click();
+    await expect(page.getByRole('heading', { name: 'Create your manager profile' })).toBeVisible();
+    await page.getByRole('button', { name: /CONTINUE EXPLORING/i }).click();
+    await expect(page.getByRole('heading', { name: 'Teams & Players' })).toBeVisible();
   });
 
   test('authenticated startup never flashes login and dark mode persists', async ({ page, isMobile }) => {
@@ -245,7 +276,7 @@ test.describe('public experience', () => {
       expect(response.status()).toBe(200);
     }
     await page.goto('/my');
-    await expect(page.getByRole('heading', { name: /Build your roster/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /YOUR MPL JOURNEY STARTS HERE/i })).toBeVisible();
     const model = await request.get('/api/draft-model?region=MY');
     expect(model.status()).toBe(200);
     const payload = await model.json();

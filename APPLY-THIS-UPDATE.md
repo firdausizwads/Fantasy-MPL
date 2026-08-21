@@ -1,56 +1,104 @@
-# Fantasy MPL — Live Draft Report & Hero Picker Fix
+# Fantasy MPL — Guest-First Entry Experience
 
-Commit: `16ef08b Fix Draft Report dark mode and hero picker layout`
+Commit: `6f19f62 Add animated guest-first regional browsing`
 
-## Fixed
+## Main change
 
-### Draft Report dark mode
+Visitors are no longer forced to register or sign in before seeing Fantasy MPL.
 
-The report container was dark, but several nested legacy surfaces were still light. Dark mode now covers the complete report:
+A new visitor can now:
 
-- draft estimate area;
-- blue and red draft profile cards;
-- individual metric cells;
-- selected hero pills;
-- estimate progress bars;
-- complete action timeline;
-- every timeline action card; and
-- model-limitation notice.
+1. See the welcoming Fantasy MPL introduction.
+2. Continue through the animated regional battleground selection.
+3. Choose MPL Malaysia, MPL Indonesia or MPL Philippines.
+4. Enter the regional dashboard in Guest Preview mode.
+5. Browse the website’s main features before deciding whether to create an account.
 
-The report now uses deep navy surfaces, white primary text, blue-grey secondary text and a controlled dark-gold limitation notice.
+Authentication, Supabase RLS and administrator permissions remain unchanged.
 
-### Hero pick/ban window
+## New 1–2–3 visual journey
 
-The hero selector has been rebuilt as a real viewport-safe modal dialog.
+### Step 1 — Welcome
 
-Improvements:
+- New cinematic welcome page.
+- Fantasy MPL identity and three-region orbit visual.
+- Explains which features can be explored.
+- Automatic fade transition after approximately six seconds.
+- Manual **Explore the Arena** and **Skip Intro** controls.
+- Persistent **Sign In** and **Create Free Account** access.
 
-- centered desktop window with a maximum readable width;
-- guaranteed fit inside the browser viewport;
-- responsive sizing for desktop, laptop, tablet and mobile;
-- dedicated backdrop instead of the previous pseudo-element workaround;
-- page scrolling is locked while the selector is open;
-- the hero grid scrolls independently while the heading, filters and guidance stay available;
-- mobile safe-area support;
-- compact mobile guidance panel;
-- two-column mobile hero grid;
-- responsive desktop hero columns;
-- close button, backdrop click and Escape-key support;
-- accessible dialog name, hero-search label and available-hero region;
-- body scrolling is restored after selecting a hero or closing the window; and
-- no mobile auto-focus/zoom regression.
+### Step 2 — Choose your battleground
 
-### Tablet layout
+- Three region cards appear using a staggered 1–2–3 pop animation.
+- Existing MY, ID and PH regional identities are preserved.
+- Each region clearly explains what the visitor can explore.
+- Visitors can switch regions later from the normal region selector.
 
-At widths below 900px, the Live Draft workspace and completed report now stack cleanly. This removes the horizontal overflow previously seen around 721–900px.
+### Step 3 — Arena ready
+
+- Selected regional league logo is displayed.
+- Short loading transition opens the guest regional command center.
+- An **Enter Now** option is also available.
+
+## Team showcase
+
+The region-selection page now includes a moving Season 18 team showcase below the battleground cards.
+
+- Uses the existing verified team identity assets.
+- Covers Malaysia, Indonesia and the Philippines.
+- Pauses when hovered on desktop.
+- Uses a static accessible layout when reduced-motion mode is enabled.
+
+## Guest Preview mode
+
+Guests can browse:
+
+- Dashboard
+- Predictions
+- My Fantasy Team
+- Live Draft Lab
+- Schedule & Standings
+- Playoff Predictor
+- Meta Lab
+- Leaderboards preview
+- Teams & Players
+- Prizes
+
+Guest preview state is stored in `sessionStorage`, allowing a page refresh without forcing the visitor back to the welcome screen. A new browser session still begins with the welcome experience.
+
+## Registration and sign-in access
+
+Account controls are available from:
+
+- welcome-page header;
+- welcome-page calls to action;
+- guest desktop top bar;
+- guest preview information banner;
+- desktop guest sidebar card;
+- mobile navigation drawer;
+- leaderboard account prompt; and
+- protected save/submit actions.
+
+The authentication page now includes **Continue Exploring**, allowing visitors to return to the feature they were viewing.
+
+## Guest safety and account boundaries
+
+- Guests may explore interfaces and local preview interactions.
+- Official prediction submission redirects to account creation.
+- Meta Lab save and submission redirect to account creation.
+- Guest Profile and Admin Console navigation are hidden.
+- Verified leaderboard participation requires an account.
+- No guest access bypasses Supabase authentication, RLS or server-side security.
 
 ## Files changed
 
-- `app/draft-final-fixes.css` — new
-- `app/draft-lab.tsx`
+- `app/guest-entry.tsx` — new
+- `app/guest-entry.css` — new
 - `app/layout.tsx`
-- `tests/mobile.spec.ts`
+- `app/page.tsx`
+- `app/meta-lab.tsx`
 - `tests/public.spec.ts`
+- `tests/mobile.spec.ts`
 
 No file deletion, Supabase migration or new environment variable is required.
 
@@ -58,39 +106,32 @@ No file deletion, Supabase migration or new environment variable is required.
 
 - TypeScript: passed
 - Production build: passed
-- Hero assets: `133/133`
-- Picker portraits loaded during the interaction test: `133/133`
-- Desktop Playwright: `18 passed`, `3 mobile-only skipped`
-- Mobile Playwright: `18 passed`, `3 intentionally skipped`
-- Picker viewport matrix passed at:
-  - 1920×1080
-  - 1440×900
-  - 1280×720
-  - 1024×768
+- Desktop Playwright: `19 passed`, `3 mobile-only skipped`
+- Mobile Playwright: `19 passed`, `3 intentionally skipped`
+- Guest feature audit: `20/20` desktop/mobile page checks passed
+- Guest page runtime errors: `0`
+- Guest page horizontal overflow: `0`
+- Entry experience passed at:
+  - 1440×1000
   - 768×1024
   - 430×932
   - 375×812
   - 320×700
-- Picker page overflow: `0`
-- Picker escapes viewport: `0`
-- Dark Draft Report large white surfaces: `0`
-- Report overflow: `0` across desktop, tablet and mobile checks
+- Hero assets: `133/133`
 - Dependency vulnerabilities: `0`
 
 ## Apply with GitHub Desktop
 
-1. Apply the previous Draft Intelligence Sources fix first.
-2. Extract `Fantasy-MPL-live-draft-final-fix.zip`.
-3. Copy the extracted `app` and `tests` folders into the root of your Fantasy MPL repository.
+1. Apply the previous Live Draft Report and Hero Picker update first.
+2. Extract `Fantasy-MPL-guest-first-entry.zip`.
+3. Copy the extracted `app` and `tests` folders into your Fantasy MPL repository.
 4. Choose **Replace/Overwrite**.
-5. Open GitHub Desktop and confirm the five changed files listed above.
+5. Open GitHub Desktop and confirm the seven changed files listed above.
 6. Commit with:
-   `Fix Draft Report dark mode and hero picker layout`
-7. Push to GitHub and wait for Vercel to redeploy.
-8. Test:
-   - Live Draft Lab → choose the active ban/pick slot;
-   - scroll the hero list and choose a hero;
-   - complete/open a saved draft report in dark mode;
-   - repeat once on mobile.
+   `Add animated guest-first regional browsing`
+7. Push to GitHub.
+8. Wait until the Vercel deployment status is **Ready**.
+9. Close old Fantasy MPL browser tabs and open the website in a new tab.
+10. Test the complete welcome → battleground → guest dashboard journey once on desktop and once on mobile.
 
 Do not commit `.env.local`, Supabase server secrets, PandaScore tokens or RoneAI tokens.

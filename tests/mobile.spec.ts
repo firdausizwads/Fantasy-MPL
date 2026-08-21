@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 async function enterLocalDashboard(page: import('@playwright/test').Page) {
   await page.goto('/');
+  await page.getByRole('button', { name: 'CREATE FREE ACCOUNT', exact: true }).click();
   await page.getByLabel('FULL NAME *').fill('Mobile Test Manager');
   await page.getByLabel('MANAGER NAME *').fill('MobileManager');
   await page.getByLabel('EMAIL ADDRESS').fill('mobile@example.com');
