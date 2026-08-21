@@ -38,6 +38,31 @@ type StandingRow = {
   points: number;
 };
 
+function isIdBtrGeekMatch(match: MatchRow, teams: Record<string, TeamInfo>) {
+  const home = teams[match.homeTeamId]?.code;
+  const away = teams[match.awayTeamId]?.code;
+  return Boolean(home && away && [home, away].sort().join('|') === 'BTR|GEEK');
+}
+
+function preferBtrGeekCanonical(candidate: MatchRow, current: MatchRow, teams: Record<string, TeamInfo>) {
+  const candidateIsCanonical = teams[candidate.homeTeamId]?.code === 'BTR' && teams[candidate.awayTeamId]?.code === 'GEEK';
+  const currentIsCanonical = teams[current.homeTeamId]?.code === 'BTR' && teams[current.awayTeamId]?.code === 'GEEK';
+  if (candidateIsCanonical !== currentIsCanonical) return candidateIsCanonical ? candidate : current;
+  return new Date(candidate.scheduledAt).getTime() < new Date(current.scheduledAt).getTime() ? candidate : current;
+}
+
+function dedupeIdBtrGeekMatches(matches: MatchRow[], teams: Record<string, TeamInfo>, region: Region) {
+  if (region !== 'ID') return matches;
+  const selectedByWeek = new Map<string, MatchRow>();
+  matches.forEach((match) => {
+    if (!isIdBtrGeekMatch(match, teams)) return;
+    const current = selectedByWeek.get(match.weekId);
+    selectedByWeek.set(match.weekId, current ? preferBtrGeekCanonical(match, current, teams) : match);
+  });
+  if (!selectedByWeek.size) return matches;
+  return matches.filter((match) => !isIdBtrGeekMatch(match, teams) || selectedByWeek.get(match.weekId)?.id === match.id);
+}
+
 export default function CloudCompetition({
   region,
   PageBanner
@@ -101,9 +126,14 @@ export default function CloudCompetition({
     return () => { mounted = false; };
   }, [region]);
 
+  const competitionMatches = useMemo(
+    () => dedupeIdBtrGeekMatches(matches, teams, region),
+    [matches, teams, region]
+  );
+
   const weekMatches = useMemo(
-    () => matches.filter(m => m.weekId === weekId),
-    [matches, weekId]
+    () => competitionMatches.filter(m => m.weekId === weekId),
+    [competitionMatches, weekId]
   );
 
   const dayGroups = useMemo(() => {
@@ -123,7 +153,7 @@ export default function CloudCompetition({
     Object.values(teams).forEach(t => {
       table[t.id] = { team: t, matchWins: 0, matchLosses: 0, gameWins: 0, gameLosses: 0, diff: 0, points: 0 };
     });
-    matches
+    competitionMatches
       .filter(m => (m.resultState === 'verified' || m.resultState === 'finalized')
         && m.homeScore !== null && m.awayScore !== null)
       .forEach(m => {
@@ -154,9 +184,9 @@ export default function CloudCompetition({
       || (a.matchWins + a.matchLosses) - (b.matchWins + b.matchLosses)
       || b.gameWins - a.gameWins
       || a.team.name.localeCompare(b.team.name));
-  }, [matches, teams]);
+  }, [competitionMatches, teams]);
 
-  const verifiedCount = matches.filter(m => m.resultState === 'verified' || m.resultState === 'finalized').length;
+  const verifiedCount = competitionMatches.filter(m => m.resultState === 'verified' || m.resultState === 'finalized').length;
   const info = REGION_NAMES[region];
   const week = weeks.find(w => w.id === weekId);
 
