@@ -62,6 +62,34 @@ test.describe('public experience', () => {
     await expect(page.locator('.shell')).toHaveClass(/darkMode/);
   });
 
+  test('dark mode has no large light surface leaks', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('fmpl_color_mode', 'dark');
+      localStorage.setItem('fmpl_session', JSON.stringify({
+        dataVersion: 4, name: 'ContrastManager', email: 'contrast@example.com', country: 'MY',
+        fullName: 'Contrast Test Manager', address: '', bio: '', dob: '', avatar: '', termsAccepted: true,
+        accountRole: 'user', joined: ['MY'], active: 'MY', picks: {}, exactScores: {}, submittedAt: {}, captains: {}, rosters: {}, transfers: {}
+      }));
+    });
+    for (const view of ['predictions', 'fantasy', 'competition', 'directory', 'playoffs']) {
+      await page.goto(`/my#${view}`);
+      await expect(page.locator('.shell')).toHaveClass(/darkMode/);
+      const lightLeaks = await page.locator('.shell.darkMode').evaluate(root => {
+        const leaks:string[]=[];
+        for (const element of root.querySelectorAll('*')) {
+          const rect=element.getBoundingClientRect();
+          if(rect.width*rect.height<2500||rect.bottom<0)continue;
+          const match=getComputedStyle(element).backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
+          if(!match)continue;
+          const alpha=match[4]==null?1:Number(match[4]);
+          if(alpha>.5&&Number(match[1])>225&&Number(match[2])>225&&Number(match[3])>225)leaks.push((element.className||element.tagName).toString());
+        }
+        return leaks;
+      });
+      expect(lightLeaks, `${view} contains light surfaces`).toEqual([]);
+    }
+  });
+
   test('regional entry lanes and cached model endpoint are available', async ({ page, request }) => {
     for (const route of ['/my', '/id', '/ph']) {
       const response = await request.get(route);
