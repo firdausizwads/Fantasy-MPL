@@ -59,7 +59,7 @@ test.describe('mobile navigation', () => {
     await drawer.getByRole('button', { name: /Live Draft Lab/i }).click();
     await expect(page.getByRole('heading', { name: /Build the draft/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /DRAFT/i }).first()).toBeVisible();
-    await page.getByRole('button', { name: 'MODEL', exact: true }).click();
+    await page.getByRole('button', { name: 'AI RECOMMENDATION', exact: true }).click();
     await expect(page.getByText(/Recommendation data pending/i)).toBeVisible();
   });
 });
