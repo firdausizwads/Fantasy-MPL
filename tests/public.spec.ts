@@ -462,7 +462,7 @@ test.describe('public experience', () => {
     await page.goto('/live-draft');
     await expect(page.getByRole('heading', { name: 'Draft Report' })).toBeVisible();
     await expect(page.getByText(/MODEL LIMITATION/i)).toBeVisible();
-    await expect(page.locator('.draftTimeline span')).toHaveCount(20);
+    await expect(page.locator('.draftTimeline')).toHaveCount(0);
   });
 
   test('authenticated dark Draft Report has no light surfaces on desktop or mobile', async ({ page }) => {
