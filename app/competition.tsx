@@ -268,7 +268,6 @@ export default function CloudCompetition({
               <span>{row.gameWins}–{row.gameLosses}</span>
               <strong>{row.points}</strong>
               <span className={row.diff > 0 ? 'aggUp' : row.diff < 0 ? 'aggDown' : ''}>{row.diff > 0 ? `+${row.diff}` : row.diff}</span>
-              <div className="standingMobileStats"><span><small>MATCH W–L</small><b>{row.matchWins}–{row.matchLosses}</b></span><span><small>GAME W–L</small><b>{row.gameWins}–{row.gameLosses}</b></span><span><small>MATCH PTS</small><b>{row.points}</b></span><span><small>AGGREGATE</small><b className={row.diff > 0 ? 'aggUp' : row.diff < 0 ? 'aggDown' : ''}>{row.diff > 0 ? `+${row.diff}` : row.diff}</b></span></div>
             </div>)}
             <div className="standingFoot">1 match win = 1 point · ties broken by aggregate, then game wins — computed live from {verifiedCount} verified result{verifiedCount === 1 ? '' : 's'}</div>
           </section>}
