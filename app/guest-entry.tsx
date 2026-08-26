@@ -59,7 +59,7 @@ export default function GuestEntry({initialRegion,onExplore,onAuth}:{initialRegi
 
   return <main className={`guestEntry guestStage-${stage} guestScene-${scene} ${transitioning?'guestTransitioning':''}`}>
     <div className="guestAmbient guestAmbientOne"/><div className="guestAmbient guestAmbientTwo"/>
-    <header className="guestEntryHeader"><Brand/><nav><button type="button" onClick={()=>onAuth('signin')}>SIGN IN</button><button type="button" className="guestJoinButton" onClick={()=>onAuth('register')}>CREATE FREE ACCOUNT</button></nav></header>
+    <header className="guestEntryHeader"><Brand/><nav>{stage==='welcome'&&<button type="button" className="guestSkipIntro" onClick={()=>setStage('battleground')}>SKIP INTRO →</button>}<button type="button" onClick={()=>onAuth('signin')}>SIGN IN</button><button type="button" className="guestJoinButton" onClick={()=>onAuth('register')}>CREATE FREE ACCOUNT</button></nav></header>
 
     {stage==='welcome'&&<section className="guestCinematic" aria-live="polite">
       <div className="cinematicGrid" aria-hidden="true"/><div className="cinematicBeam" aria-hidden="true"/><div className="cinematicGrain" aria-hidden="true"/>

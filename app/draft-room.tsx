@@ -252,7 +252,12 @@ export default function CloudDraftRoom({
         { event: 'INSERT', schema: 'public', table: 'league_chat_reactions' },
         payload => {
           const reaction = payload.new as Reaction;
-          setReactions(prev => prev.some(r => r.id === reaction.id) ? prev : [...prev, reaction]);
+          setMessages(currentMessages => {
+            if (currentMessages.some(m => m.id === reaction.message_id)) {
+              setReactions(prev => prev.some(r => r.id === reaction.id) ? prev : [...prev, reaction]);
+            }
+            return currentMessages;
+          });
         })
       .on('postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'league_chat_reactions' },

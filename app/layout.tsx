@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -43,6 +43,14 @@ const sora = localFont({
 });
 
 const vercelObservabilityEnabled = process.env.VERCEL === '1';
+
+export const viewport: Viewport = {
+  themeColor: '#050d17',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  colorScheme: 'dark'
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
