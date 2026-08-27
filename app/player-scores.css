@@ -2,12 +2,13 @@
    Player Scores & Modern Regional Leaderboard Styles
    Supports Dark Mode & Light Mode seamlessly across desktop and mobile.
    Strict contrast hardening for all text and cards.
-   No emojis used.
+   No country flags or emojis used.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Modern Regional Leaderboard Layout (Requirement 1)
+   1. Modern Regional Leaderboard Layout (Requirement 1 & 2)
    Columns: #, MANAGER, FANTASY SCORES, PREDICTION SCORES, TOTAL SCORES
+   No flags displayed anywhere.
    -------------------------------------------------------------------------- */
 
 .modernLeaderboardPanel {
@@ -81,7 +82,7 @@
 .managerNameWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   overflow: hidden;
 }
@@ -200,7 +201,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. Modern Player Scores Leaderboard (Requirement 2 & 4)
+   2. Modern Player Scores Leaderboard (Strict Regional Separation)
    -------------------------------------------------------------------------- */
 
 .playerScoresWrap {
@@ -210,7 +211,7 @@
   width: 100%;
 }
 
-/* Regional Switcher Tabs */
+/* Regional Switcher Tabs (No Flags, Clean League Pills) */
 .regionalTabsBar {
   display: flex;
   align-items: center;
@@ -234,6 +235,17 @@
   transition: all 0.15s ease;
 }
 
+.regionalLeagueBadge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  background: rgba(var(--region-rgb, 96, 186, 255), 0.15);
+  color: var(--region, #3b82f6);
+  border: 1px solid rgba(var(--region-rgb, 96, 186, 255), 0.3);
+}
+
 .regionalTabBtn:hover {
   border-color: rgba(var(--region-rgb, 96, 186, 255), 0.5);
   color: var(--ink, #0f172a);
@@ -244,6 +256,12 @@
   background: rgba(var(--region-rgb, 96, 186, 255), 0.12);
   color: var(--region, #3b82f6);
   box-shadow: 0 4px 12px rgba(var(--region-rgb, 96, 186, 255), 0.15);
+}
+
+.regionalTabBtn.active .regionalLeagueBadge {
+  background: var(--region, #3b82f6);
+  color: #ffffff;
+  border-color: var(--region, #3b82f6);
 }
 
 .shell.lightMode .regionalTabBtn {
@@ -637,6 +655,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   color: var(--muted, #64748b);
+  white-space: nowrap;
 }
 
 .shell.lightMode .filterPill {
@@ -671,10 +690,30 @@
   border-color: #f8fafc;
 }
 
+.toolbarSecondary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
 .scoresSearchWrap {
   position: relative;
   flex: 1;
-  min-width: 220px;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted, #64748b);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
 }
 
 .scoresSearchInput {
@@ -720,7 +759,7 @@
   color: #f8fafc;
 }
 
-/* Leaderboard Table */
+/* Leaderboard Table (Desktop Defaults) */
 .playerScoresTableWrap {
   border-radius: 16px;
   overflow: hidden;
@@ -778,7 +817,7 @@
   align-items: center;
   border-bottom: 1px solid var(--line, #e2e8f0);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .playerScoresRow:last-child {
@@ -813,6 +852,7 @@
   font-size: 10px;
   font-weight: 900;
   border: 1px solid var(--line, #e2e8f0);
+  flex-shrink: 0;
 }
 
 .shell.lightMode .rowRank {
@@ -850,6 +890,10 @@
 .shell.darkMode .rowRank.r3 { color: #fb923c !important; }
 
 /* Player identity cell */
+.rowMainGroup {
+  display: contents;
+}
+
 .rowPlayerCell {
   display: flex;
   align-items: center;
@@ -889,7 +933,13 @@
   min-width: 0;
 }
 
-.rowPlayerInfo b {
+.rowPlayerNameLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rowPlayerNameLine b {
   font-size: 11px;
   font-weight: 900;
   overflow: hidden;
@@ -897,18 +947,44 @@
   white-space: nowrap;
 }
 
-.shell.lightMode .rowPlayerInfo b {
+.shell.lightMode .rowPlayerNameLine b {
   color: #0f172a;
 }
 
-.shell.darkMode .rowPlayerInfo b {
+.shell.darkMode .rowPlayerNameLine b {
   color: #f8fafc;
 }
 
-.rowPlayerInfo small {
+.rowPlayerSubline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 8px;
   color: var(--muted, #64748b);
   font-weight: 700;
+}
+
+.teamNameTxt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamCodeBadge {
+  font-weight: 800;
+  color: var(--muted, #64748b);
+}
+
+/* Mobile-only and Desktop-only element switches */
+.mobileOnlyRolePill,
+.mobileOnlyTeamLogo,
+.mobileTapHint,
+.mobileStatsStrip {
+  display: none;
+}
+
+.desktopCol {
+  display: contents;
 }
 
 /* Role Badges */
@@ -921,6 +997,7 @@
   letter-spacing: 0.6px;
   text-align: center;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .rolePill.role-gold {
@@ -1013,6 +1090,7 @@
   background: rgba(16, 185, 129, 0.12);
   color: #059669;
   border: 1px solid rgba(16, 185, 129, 0.3);
+  white-space: nowrap;
 }
 
 .shell.darkMode .rowScorePill strong {
@@ -1053,9 +1131,35 @@
   color: #0f172a;
 }
 
+/* Empty State */
+.scoresEmptyState {
+  padding: 36px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.scoresEmptyState span {
+  font-size: 24px;
+  color: var(--muted, #64748b);
+}
+
+.scoresEmptyState h3 {
+  font-size: 14px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.scoresEmptyState p {
+  font-size: 9px;
+  color: var(--muted, #64748b);
+  margin: 0;
+}
+
 /* --------------------------------------------------------------------------
-   3. Detail Modal Hardened Contrast (Requirement 3)
-   Fixes light mode readability issues completely!
+   3. Detail Modal Hardened Contrast
    -------------------------------------------------------------------------- */
 
 .breakdownModalShade {
@@ -1298,6 +1402,7 @@
   place-items: center;
   cursor: pointer;
   transition: all 0.15s ease;
+  z-index: 10;
 }
 
 .breakdownProfileHead {
@@ -1335,6 +1440,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .breakdownFormulaCard {
@@ -1469,7 +1575,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   4. Featured Dashboard Player Scores Panel (Requirement 5)
+   4. Featured Dashboard Player Scores Panel
    -------------------------------------------------------------------------- */
 
 .dashboardPlayerScoresPanel {
@@ -1667,7 +1773,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. Mobile Responsiveness Refinements
+   5. Mobile Responsiveness Overhaul (Fixes "Disaster" on Mobile)
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1024px) {
@@ -1676,28 +1782,16 @@
     grid-template-columns: 36px 1fr 95px 95px 105px;
     gap: 8px;
   }
-  .playerScoresTableHead,
-  .playerScoresRow {
-    grid-template-columns: 36px 1fr 75px 95px 40px 40px 40px 60px 95px 75px;
-  }
-  .playerScoresTableHead span:nth-child(5),
-  .playerScoresRow div:nth-child(5) {
-    display: none;
-  }
 }
 
+/* TABLET / LARGE PHONE BREAKPOINT (768px and down) */
 @media (max-width: 768px) {
-  .podiumGrid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .podiumCard.rank1 { order: 1; transform: none; }
-  .podiumCard.rank2 { order: 2; }
-  .podiumCard.rank3 { order: 3; }
-
+  /* Regional leaderboard simple table */
   .standingsHeader.simpleBoardCols,
   .standingsRow.simpleBoardCols {
-    grid-template-columns: 32px 1fr 90px;
+    grid-template-columns: 32px 1fr 95px;
+    gap: 8px;
+    padding: 10px 12px;
   }
   .standingsHeader.simpleBoardCols span:nth-child(3),
   .standingsHeader.simpleBoardCols span:nth-child(4),
@@ -1705,32 +1799,472 @@
     display: none;
   }
 
-  .playerScoresTableHead,
-  .playerScoresRow {
-    grid-template-columns: 32px 1fr 70px 40px 40px 40px 85px 65px;
-    padding: 10px 12px;
+  /* Region Switcher: Balanced 3-column grid */
+  .regionalTabsBar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
   }
-  .playerScoresTableHead span:nth-child(4),
-  .playerScoresRow div:nth-child(4),
-  .playerScoresTableHead span:nth-child(5),
-  .playerScoresRow div:nth-child(5),
-  .playerScoresTableHead span:nth-child(9),
-  .playerScoresRow div:nth-child(9) {
+
+  .regionalTabBtn {
+    padding: 8px 10px;
+    justify-content: center;
+    font-size: 10px;
+    gap: 6px;
+  }
+
+  /* Status Source Bar */
+  .scoresSourceBar {
+    padding: 8px 12px;
+    font-size: 8px;
+  }
+
+  /* Compact 3-Column Olympic Podium for Mobile */
+  .podiumGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .podiumCard {
+    padding: 14px 8px;
+    border-radius: 12px;
+  }
+
+  .podiumCard.rank1 {
+    order: 2;
+    transform: translateY(-4px);
+  }
+
+  .podiumCard.rank2 {
+    order: 1;
+    transform: none;
+  }
+
+  .podiumCard.rank3 {
+    order: 3;
+    transform: none;
+  }
+
+  .podiumRankBadge {
+    top: 6px;
+    left: 6px;
+    padding: 2px 5px;
+    font-size: 7px;
+  }
+
+  .podiumAvatarWrap {
+    width: 44px;
+    height: 44px;
+    margin: 12px 0 8px;
+  }
+
+  .rank1 .podiumAvatarWrap {
+    width: 52px;
+    height: 52px;
+  }
+
+  .podiumTeamLogo {
+    width: 18px;
+    height: 18px;
+    padding: 2px;
+    bottom: -1px;
+    right: -1px;
+  }
+
+  .podiumHandle {
+    font-size: 12px;
+    margin: 0 0 2px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .podiumMeta {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .podiumMeta .rolePill {
+    font-size: 7px;
+    padding: 2px 5px;
+  }
+
+  .podiumTeamCode {
+    font-size: 8px;
+  }
+
+  .podiumScorePill {
+    padding: 4px 8px;
+    margin-bottom: 6px;
+  }
+
+  .podiumScorePill strong {
+    font-size: 14px;
+  }
+
+  .podiumScorePill small {
+    font-size: 6px;
+  }
+
+  .podiumKDA {
+    font-size: 7.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Toolbar: Touch-friendly horizontal role bar & stacked secondary controls */
+  .scoresToolbar {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .toolbarRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .filterGroup {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filterGroup::-webkit-scrollbar {
     display: none;
   }
 
-  .dashboardScoreRow {
-    grid-template-columns: 28px 34px 1fr 75px;
+  .filterGroupLabel {
+    display: none;
+  }
+
+  .filterPill {
+    padding: 7px 14px;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+
+  .toolbarSecondary {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .scoresSearchWrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .scoresSortSelect {
+    width: 100%;
+  }
+
+  /* LEADERBOARD TABLE -> TRANSFORM INTO TOUCH-FRIENDLY MOBILE CARDS */
+  .playerScoresTableHead {
+    display: none !important;
+  }
+
+  .desktopCol {
+    display: none !important;
+  }
+
+  .playerScoresTableWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: transparent !important;
+    border: none !important;
+    overflow: visible;
+  }
+
+  .playerScoresRow {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    border: 1px solid var(--line, #e2e8f0) !important;
+    background: var(--surface, #ffffff) !important;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .playerScoresRow:active {
+    transform: scale(0.985);
+  }
+
+  .shell.lightMode .playerScoresRow {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  .shell.darkMode .playerScoresRow {
+    background: #0c1e30 !important;
+    border-color: #1a344d !important;
+  }
+
+  /* Top row of card: Rank, Avatar, Name, Role, Team on left; Score on right */
+  .rowMainGroup {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .rowMainGroup .rowRank {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+
+  .rowPlayerCell {
+    flex: 1;
+    min-width: 0;
     gap: 8px;
   }
+
+  .rowAvatarWrap {
+    width: 38px;
+    height: 38px;
+  }
+
+  .rowPlayerInfo {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rowPlayerNameLine {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .rowPlayerNameLine b {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileOnlyRolePill {
+    display: inline-block !important;
+    font-size: 7.5px;
+    padding: 1.5px 6px;
+    border-radius: 5px;
+  }
+
+  .rowPlayerSubline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  .mobileOnlyTeamLogo {
+    display: inline-block !important;
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .teamNameTxt {
+    font-size: 8.5px;
+    color: var(--muted, #64748b);
+  }
+
+  .teamCodeBadge {
+    font-size: 8.5px;
+  }
+
+  .rowScorePill {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    flex-shrink: 0 !important;
+  }
+
+  .rowScorePill strong {
+    font-size: 13px;
+    padding: 4px 8px;
+  }
+
+  .mobileTapHint {
+    display: block !important;
+    font-size: 7px;
+    font-weight: 800;
+    color: var(--muted, #64748b);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Bottom ribbon of card: 5-cell clean stat strip */
+  .mobileStatsStrip {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 4px !important;
+    padding: 7px 8px !important;
+    border-radius: 8px !important;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .shell.darkMode .mobileStatsStrip {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: #172d42;
+  }
+
+  .mobileStatItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .mobileStatItem small {
+    font-size: 6.5px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: var(--muted, #64748b);
+    text-transform: uppercase;
+  }
+
+  .mobileStatItem strong {
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    margin-top: 1px;
+  }
+
+  .shell.lightMode .mobileStatItem strong { color: #0f172a; }
+  .shell.darkMode .mobileStatItem strong { color: #f8fafc; }
+
+  .mobileStatItem strong.statKills { color: #ef4444 !important; }
+  .mobileStatItem strong.statDeaths { color: var(--muted, #64748b) !important; }
+  .mobileStatItem strong.statAssists { color: #3b82f6 !important; }
+
+  /* Dashboard Standout Widget on Mobile */
+  .dashboardPlayerScoresPanel {
+    padding: 16px;
+  }
+
+  .dashboardScoresHead {
+    gap: 8px;
+  }
+
+  .dashboardScoresHead h2 {
+    font-size: 15px;
+  }
+
+  .dashboardScoresHead button {
+    width: 100%;
+    text-align: left;
+    padding: 0;
+  }
+
+  .dashboardScoreRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
   .dashboardPlayerKDA {
     display: none;
   }
-  .breakdownProfileHead {
-    flex-direction: column;
-    text-align: center;
+
+  .dashboardPlayerAvatarWrap {
+    width: 32px;
+    height: 32px;
   }
+
+  .dashboardPlayerMeta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dashboardHandleLine b {
+    font-size: 11px;
+  }
+
+  .dashboardPlayerScorePill strong {
+    font-size: 13px;
+  }
+
+  /* Modal on Mobile */
+  .breakdownModalCard {
+    width: 95% !important;
+    max-height: 88vh !important;
+    padding: 18px 14px !important;
+    gap: 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .breakdownModalClose {
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .breakdownProfileHead {
+    gap: 12px;
+  }
+
+  .breakdownModalAvatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .breakdownModalInfo h2 {
+    font-size: 16px;
+  }
+
+  .breakdownFormulaCard {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .breakdownFormulaCard strong {
+    font-size: 18px;
+  }
+
   .statOverviewGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .statOverviewBox {
+    padding: 6px 4px !important;
+  }
+
+  .statOverviewBox small {
+    font-size: 6.5px !important;
+  }
+
+  .statOverviewBox .statNum {
+    font-size: 13px !important;
+  }
+
+  .breakdownMatchCard {
+    padding: 10px 12px;
+  }
+
+  .breakdownMatchStatsRow {
+    gap: 10px;
+    font-size: 8px;
+    flex-wrap: wrap;
   }
 }

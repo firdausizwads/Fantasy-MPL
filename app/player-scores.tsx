@@ -46,10 +46,10 @@ export interface PlayerScoreItem {
   matchBreakdown: MatchBreakdownItem[];
 }
 
-export const REGION_META: Record<Region, { name: string; flagFile: string; timezone: string }> = {
-  MY: { name: 'MPL Malaysia', flagFile: 'my.svg', timezone: 'MYT' },
-  ID: { name: 'MPL Indonesia', flagFile: 'id.svg', timezone: 'WIB' },
-  PH: { name: 'MPL Philippines', flagFile: 'ph.svg', timezone: 'PHT' }
+export const REGION_META: Record<Region, { name: string; shortName: string; timezone: string }> = {
+  MY: { name: 'MPL Malaysia', shortName: 'MPL MY', timezone: 'MYT' },
+  ID: { name: 'MPL Indonesia', shortName: 'MPL ID', timezone: 'WIB' },
+  PH: { name: 'MPL Philippines', shortName: 'MPL PH', timezone: 'PHT' }
 };
 
 export function normalizeRole(role: string): Role {
@@ -69,6 +69,62 @@ const TEAM_INDEX: Record<string, { name: string; logo: string; region: Region }>
   });
 });
 
+// Canonical region validation sets for 100% strict regional isolation
+export const REGION_TEAMS: Record<Region, Set<string>> = {
+  MY: new Set((officialTeams.MY || []).map(t => t.code.toUpperCase())),
+  ID: new Set((officialTeams.ID || []).map(t => t.code.toUpperCase())),
+  PH: new Set((officialTeams.PH || []).map(t => t.code.toUpperCase())),
+};
+
+export const REGION_PLAYERS: Record<Region, Set<string>> = {
+  MY: new Set(officialPlayers.filter(p => p.region === 'MY').map(p => p.name.toLowerCase())),
+  ID: new Set(officialPlayers.filter(p => p.region === 'ID').map(p => p.name.toLowerCase())),
+  PH: new Set(officialPlayers.filter(p => p.region === 'PH').map(p => p.name.toLowerCase())),
+};
+
+/**
+ * Validates with 100% certainty whether a player belongs strictly to targetRegion.
+ * If the team code or handle belongs to another region, it is strictly REJECTED.
+ * Zero cross-region mixing!
+ */
+export function isPlayerInRegion(
+  targetRegion: Region,
+  teamCode?: string | null,
+  handle?: string | null,
+  dbRegionCode?: string | null
+): boolean {
+  const normTeam = (teamCode || '').toUpperCase().trim();
+  const normHandle = (handle || '').toLowerCase().trim();
+  const normDbRegion = (dbRegionCode || '').toUpperCase().trim();
+
+  // 1. If teamCode belongs to another region -> REJECT
+  for (const [r, teamSet] of Object.entries(REGION_TEAMS) as [Region, Set<string>][]) {
+    if (r !== targetRegion && teamSet.has(normTeam)) {
+      return false;
+    }
+  }
+
+  // 2. If player handle belongs to another region -> REJECT
+  for (const [r, playerSet] of Object.entries(REGION_PLAYERS) as [Region, Set<string>][]) {
+    if (r !== targetRegion && playerSet.has(normHandle)) {
+      return false;
+    }
+  }
+
+  // 3. If dbRegionCode is present and doesn't match targetRegion -> REJECT
+  if (normDbRegion && normDbRegion !== targetRegion) {
+    return false;
+  }
+
+  // 4. Positive verification: matches targetRegion team, player handle, or db region
+  if (REGION_TEAMS[targetRegion].has(normTeam)) return true;
+  if (REGION_PLAYERS[targetRegion].has(normHandle)) return true;
+  if (normDbRegion === targetRegion) return true;
+
+  // Unverified player with no link to target region -> REJECT
+  return false;
+}
+
 export function getPlayerPhoto(handle: string, region?: Region): string | undefined {
   const match = officialPlayers.find(p =>
     (!region || p.region === region) && p.name.toLowerCase() === handle.toLowerCase()
@@ -76,7 +132,7 @@ export function getPlayerPhoto(handle: string, region?: Region): string | undefi
   return match?.photo || undefined;
 }
 
-// Generate realistic starter stats strictly for a given region (no mixing)
+// Generate realistic starter stats strictly for a given region (zero mixing)
 export function generateRegionalPreviewStats(region: Region): PlayerScoreItem[] {
   const items: PlayerScoreItem[] = [];
   const teams = officialTeams[region];
@@ -231,7 +287,7 @@ export default function PlayerScores({
   PageBanner?: React.ComponentType<{ tag: string; title: string; copy: string; side: React.ReactNode; sideLabel: string }>;
   onNavigate?: (view: any) => void;
 }) {
-  // Requirement 4: Strictly region-based (Malaysia shows Malaysia, ID shows ID, PH shows PH) - NO "ALL" combination!
+  // Strictly region-based (Malaysia shows Malaysia only, ID shows ID only, PH shows PH only)
   const [selectedRegion, setSelectedRegion] = useState<Region>(initialRegion);
   const [selectedRole, setSelectedRole] = useState<Role | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -270,44 +326,51 @@ export default function PlayerScores({
         });
 
         if (!rpcErr && Array.isArray(rpcRows) && rpcRows.length > 0) {
-          const formatted: PlayerScoreItem[] = rpcRows.map((r: any) => {
-            const role = normalizeRole(r.role || 'MID');
-            const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region: selectedRegion };
-            const photo = r.photo_url || getPlayerPhoto(r.handle, selectedRegion);
-            const deaths = Number(r.deaths || 0);
-            const kills = Number(r.kills || 0);
-            const assists = Number(r.assists || 0);
-            const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
-            const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
-            const score = Number(r.fantasy_score || (kills * 3 + assists));
+          // Strict regional filter: only accept players truly belonging to selectedRegion
+          const filteredRpcRows = rpcRows.filter((r: any) =>
+            isPlayerInRegion(selectedRegion, r.team_code, r.handle, r.region_code)
+          );
 
-            return {
-              playerId: r.player_id,
-              handle: r.handle,
-              role,
-              region: selectedRegion,
-              teamCode: r.team_code,
-              teamName: teamMeta.name || r.team_code,
-              teamLogo: r.team_logo_url || teamMeta.logo,
-              photoUrl: photo,
-              matchesPlayed: Number(r.matches_played || 1),
-              kills,
-              deaths,
-              assists,
-              fantasyScore: score,
-              kdaRatio,
-              kdaNumber: kdaNum,
-              isStarter: true,
-              matchBreakdown: []
-            };
-          });
+          if (filteredRpcRows.length > 0) {
+            const formatted: PlayerScoreItem[] = filteredRpcRows.map((r: any) => {
+              const role = normalizeRole(r.role || 'MID');
+              const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region: selectedRegion };
+              const photo = r.photo_url || getPlayerPhoto(r.handle, selectedRegion);
+              const deaths = Number(r.deaths || 0);
+              const kills = Number(r.kills || 0);
+              const assists = Number(r.assists || 0);
+              const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
+              const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
+              const score = Number(r.fantasy_score || (kills * 3 + assists));
 
-          if (mounted) {
-            setPlayerScores(formatted);
-            setIsLiveCloud(true);
-            setLoading(false);
+              return {
+                playerId: r.player_id,
+                handle: r.handle,
+                role,
+                region: selectedRegion,
+                teamCode: r.team_code,
+                teamName: teamMeta.name || r.team_code,
+                teamLogo: r.team_logo_url || teamMeta.logo,
+                photoUrl: photo,
+                matchesPlayed: Number(r.matches_played || 1),
+                kills,
+                deaths,
+                assists,
+                fantasyScore: score,
+                kdaRatio,
+                kdaNumber: kdaNum,
+                isStarter: true,
+                matchBreakdown: []
+              };
+            });
+
+            if (mounted) {
+              setPlayerScores(formatted);
+              setIsLiveCloud(true);
+              setLoading(false);
+            }
+            return;
           }
-          return;
         }
 
         // 2. Direct Supabase Table Fallback
@@ -326,18 +389,24 @@ export default function PlayerScores({
 
           const rosterMap = new Map<string, any>();
           (rostersData || []).forEach((r: any) => {
-            const reg = r.season?.region_code as Region || 'MY';
-            if (r.player_id && reg === selectedRegion) {
-              rosterMap.set(r.player_id, {
-                handle: r.player?.handle || 'PLAYER',
-                role: normalizeRole(r.role || 'MID'),
-                region: reg,
-                teamCode: r.team?.code || '',
-                teamName: r.team?.name || '',
-                teamLogo: r.team?.logo_url || TEAM_INDEX[r.team?.code]?.logo,
-                photoUrl: r.player?.photo_url || getPlayerPhoto(r.player?.handle || '', reg)
-              });
+            const teamCode = r.team?.code || '';
+            const playerHandle = r.player?.handle || '';
+            const dbRegion = r.season?.region_code || null;
+
+            // Strict validation: NEVER default missing region to 'MY'!
+            if (!isPlayerInRegion(selectedRegion, teamCode, playerHandle, dbRegion)) {
+              return;
             }
+
+            rosterMap.set(r.player_id, {
+              handle: playerHandle || 'PLAYER',
+              role: normalizeRole(r.role || 'MID'),
+              region: selectedRegion,
+              teamCode: teamCode,
+              teamName: r.team?.name || TEAM_INDEX[teamCode]?.name || teamCode,
+              teamLogo: r.team?.logo_url || TEAM_INDEX[teamCode]?.logo,
+              photoUrl: r.player?.photo_url || getPlayerPhoto(playerHandle, selectedRegion)
+            });
           });
 
           const matchMap = new Map<string, any>();
@@ -347,7 +416,7 @@ export default function PlayerScores({
 
           statsData.forEach((st: any) => {
             const info = rosterMap.get(st.player_id);
-            if (!info) return; // Skip players not in selected region
+            if (!info) return; // Skip players not verified in selected region
 
             const match = matchMap.get(st.match_id);
             const isHome = match?.home_team_id === st.team_id;
@@ -446,7 +515,7 @@ export default function PlayerScores({
     return playerScores
       .filter(item => {
         // Enforce region strictly
-        if (item.region !== selectedRegion) return false;
+        if (!isPlayerInRegion(selectedRegion, item.teamCode, item.handle, item.region)) return false;
         // Role filter
         if (selectedRole !== 'ALL' && item.role !== selectedRole) return false;
         // Bench filter: hide substitutes who have 0 pts
@@ -506,7 +575,7 @@ export default function PlayerScores({
           <div>
             <span className="seasonTag">● {REGION_META[selectedRegion].name.toUpperCase()} · PLAYER SCORES</span>
             <h1>Player Scores</h1>
-            <p>Official regional leaderboard ranking {REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.</p>
+            <p>Official regional leaderboard ranking ${REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.</p>
           </div>
           <div className="bannerSide">
             <small>TOP REGIONAL SCORER</small>
@@ -525,7 +594,7 @@ export default function PlayerScores({
         </button>
       </div>
 
-      {/* Requirement 4: Region Switcher Tabs (Strictly independent per region, no mixing!) */}
+      {/* Region Switcher Tabs: Modern Pill design with ZERO flags */}
       <div className="regionalTabsBar">
         {(['MY', 'ID', 'PH'] as Region[]).map(reg => (
           <button
@@ -533,8 +602,8 @@ export default function PlayerScores({
             className={`regionalTabBtn ${selectedRegion === reg ? 'active' : ''}`}
             onClick={() => setSelectedRegion(reg)}
           >
-            <img src={`/flags/${REGION_META[reg].flagFile}`} alt="" width={18} height={13} />
-            <span>{REGION_META[reg].name}</span>
+            <span className="regionalLeagueBadge">{reg}</span>
+            <span className="regionalTabName">{REGION_META[reg].name}</span>
           </button>
         ))}
       </div>
@@ -550,7 +619,7 @@ export default function PlayerScores({
         </span>
       </div>
 
-      {/* Podium Showcase (Top 3 Players in Region) */}
+      {/* Podium Showcase (Top 3 Players in Region) - Compact & Mobile-Responsive */}
       {podiumTop3.length >= 3 && (
         <section className="podiumGrid">
           {/* #2 Rank (Silver) */}
@@ -671,40 +740,42 @@ export default function PlayerScores({
             ))}
           </div>
 
-          {/* Search bar */}
-          <div className="scoresSearchWrap">
-            <span className="searchIcon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </span>
-            <input
-              className="scoresSearchInput"
-              type="text"
-              placeholder={`Search ${REGION_META[selectedRegion].name} player or team...`}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <div className="toolbarSecondary">
+            {/* Search bar */}
+            <div className="scoresSearchWrap">
+              <span className="searchIcon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
+              <input
+                className="scoresSearchInput"
+                type="text"
+                placeholder={`Search ${REGION_META[selectedRegion].name} player or team...`}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </div>
 
-          {/* Sort selector */}
-          <select
-            className="scoresSortSelect"
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as any)}
-            aria-label="Sort players by"
-          >
-            <option value="score">Sort by: Highest Fantasy Score</option>
-            <option value="kills">Sort by: Most Kills (+3 pts each)</option>
-            <option value="assists">Sort by: Most Assists (+1 pt each)</option>
-            <option value="kda">Sort by: Highest KDA Ratio</option>
-            <option value="matches">Sort by: Most Matches Played</option>
-          </select>
+            {/* Sort selector */}
+            <select
+              className="scoresSortSelect"
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as any)}
+              aria-label="Sort players by"
+            >
+              <option value="score">Sort by: Highest Fantasy Score</option>
+              <option value="kills">Sort by: Most Kills (+3 pts each)</option>
+              <option value="assists">Sort by: Most Assists (+1 pt each)</option>
+              <option value="kda">Sort by: Highest KDA Ratio</option>
+              <option value="matches">Sort by: Most Matches Played</option>
+            </select>
+          </div>
         </div>
       </section>
 
-      {/* Main Modern Leaderboard Table */}
+      {/* Main Leaderboard Table: Desktop Grid + Responsive Mobile Cards */}
       <section className="playerScoresTableWrap">
         <div className="playerScoresTableHead">
           <span>#</span>
@@ -743,75 +814,88 @@ export default function PlayerScores({
                 key={item.playerId}
                 onClick={() => setActiveModalPlayer(item)}
               >
-                {/* 1. Rank */}
-                <div className={`rowRank ${rankClass}`}>
-                  {rank}
-                </div>
+                {/* 1. Rank & Player Profile */}
+                <div className="rowMainGroup">
+                  <div className={`rowRank ${rankClass}`}>
+                    {rank}
+                  </div>
 
-                {/* 2. Player Profile Picture & Handle */}
-                <div className="rowPlayerCell">
-                  <div className="rowAvatarWrap">
-                    {item.photoUrl ? (
-                      <img className="rowAvatar" src={item.photoUrl} alt={item.handle} />
-                    ) : (
-                      <div className="rowAvatarPending">
-                        {item.handle.slice(0, 2).toUpperCase()}
+                  <div className="rowPlayerCell">
+                    <div className="rowAvatarWrap">
+                      {item.photoUrl ? (
+                        <img className="rowAvatar" src={item.photoUrl} alt={item.handle} />
+                      ) : (
+                        <div className="rowAvatarPending">
+                          {item.handle.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="rowPlayerInfo">
+                      <div className="rowPlayerNameLine">
+                        <b>{item.handle}</b>
+                        <span className={`mobileOnlyRolePill rolePill role-${item.role.toLowerCase()}`}>
+                          {item.role}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                  <div className="rowPlayerInfo">
-                    <b>{item.handle}</b>
-                    <small>{item.teamName}</small>
+                      <div className="rowPlayerSubline">
+                        {item.teamLogo && (
+                          <img className="mobileOnlyTeamLogo" src={item.teamLogo} alt="" />
+                        )}
+                        <span className="teamNameTxt">{item.teamName}</span>
+                        <span className="teamCodeBadge">({item.teamCode})</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* 3. Role Badge */}
-                <div>
+                {/* 2. Desktop Only: Role Badge */}
+                <div className="desktopCol colRole">
                   <span className={`rolePill role-${item.role.toLowerCase()}`}>
                     {item.role}
                   </span>
                 </div>
 
-                {/* 4. Team Logo and Code */}
-                <div className="rowTeamCell">
+                {/* 3. Desktop Only: Team Logo & Code */}
+                <div className="desktopCol rowTeamCell">
                   {item.teamLogo && (
                     <img className="rowTeamLogo" src={item.teamLogo} alt={item.teamCode} />
                   )}
                   <b>{item.teamCode}</b>
                 </div>
 
-                {/* 5. Matches Played */}
-                <div className="statCell">
+                {/* 4. Desktop Only: Matches */}
+                <div className="desktopCol statCell">
                   {item.matchesPlayed}
                 </div>
 
-                {/* 6. Kills */}
-                <div className="statCell kills">
+                {/* 5. Desktop Only: Kills */}
+                <div className="desktopCol statCell kills">
                   {item.kills}
                 </div>
 
-                {/* 7. Deaths */}
-                <div className="statCell deaths">
+                {/* 6. Desktop Only: Deaths */}
+                <div className="desktopCol statCell deaths">
                   {item.deaths}
                 </div>
 
-                {/* 8. Assists */}
-                <div className="statCell assists">
+                {/* 7. Desktop Only: Assists */}
+                <div className="desktopCol statCell assists">
                   {item.assists}
                 </div>
 
-                {/* 9. KDA Ratio */}
-                <div className="statCell kda">
+                {/* 8. Desktop Only: KDA Ratio */}
+                <div className="desktopCol statCell kda">
                   {item.kdaRatio}
                 </div>
 
-                {/* 10. Fantasy Score */}
+                {/* 9. Fantasy Score Pill */}
                 <div className="rowScorePill">
                   <strong>{item.fantasyScore} PTS</strong>
+                  <span className="mobileTapHint">STATS →</span>
                 </div>
 
-                {/* 11. Details button */}
-                <div>
+                {/* 10. Desktop Only: Details Button */}
+                <div className="desktopCol colAction">
                   <button
                     className="rowBreakdownBtn"
                     onClick={(e) => {
@@ -822,13 +906,37 @@ export default function PlayerScores({
                     DETAILS →
                   </button>
                 </div>
+
+                {/* 11. Mobile Only: Modern Tabular Stats Strip */}
+                <div className="mobileStatsStrip">
+                  <div className="mobileStatItem">
+                    <small>KILLS</small>
+                    <strong className="statKills">{item.kills}</strong>
+                  </div>
+                  <div className="mobileStatItem">
+                    <small>DEATHS</small>
+                    <strong className="statDeaths">{item.deaths}</strong>
+                  </div>
+                  <div className="mobileStatItem">
+                    <small>ASSISTS</small>
+                    <strong className="statAssists">{item.assists}</strong>
+                  </div>
+                  <div className="mobileStatItem">
+                    <small>KDA</small>
+                    <strong>{item.kdaRatio}</strong>
+                  </div>
+                  <div className="mobileStatItem">
+                    <small>SERIES</small>
+                    <strong>{item.matchesPlayed}M</strong>
+                  </div>
+                </div>
               </div>
             );
           })
         )}
       </section>
 
-      {/* Requirement 3: Detailed Match Breakdown Modal (Hardened Light & Dark Mode Contrast) */}
+      {/* Match Breakdown Modal (Hardened Contrast for Light & Dark Mode) */}
       {activeModalPlayer && (
         <div className="breakdownModalShade" onClick={() => setActiveModalPlayer(null)}>
           <div className="breakdownModalCard" onClick={e => e.stopPropagation()}>
@@ -947,7 +1055,7 @@ export default function PlayerScores({
 }
 
 // ---------------------------------------------------------------------------
-// Requirement 5: Featured Player Scores Widget on Command Center Dashboard
+// Featured Player Scores Widget on Command Center Dashboard
 // ---------------------------------------------------------------------------
 
 export function DashboardPlayerScores({
@@ -981,42 +1089,49 @@ export function DashboardPlayerScores({
         });
 
         if (Array.isArray(rpcRows) && rpcRows.length > 0) {
-          const items: PlayerScoreItem[] = rpcRows.slice(0, 4).map((r: any) => {
-            const role = normalizeRole(r.role || 'MID');
-            const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region };
-            const photo = r.photo_url || getPlayerPhoto(r.handle, region);
-            const deaths = Number(r.deaths || 0);
-            const kills = Number(r.kills || 0);
-            const assists = Number(r.assists || 0);
-            const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
-            const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
-            const score = Number(r.fantasy_score || (kills * 3 + assists));
+          // Strict regional filter
+          const filteredRpcRows = rpcRows.filter((r: any) =>
+            isPlayerInRegion(region, r.team_code, r.handle, r.region_code)
+          );
 
-            return {
-              playerId: r.player_id,
-              handle: r.handle,
-              role,
-              region,
-              teamCode: r.team_code,
-              teamName: teamMeta.name || r.team_code,
-              teamLogo: r.team_logo_url || teamMeta.logo,
-              photoUrl: photo,
-              matchesPlayed: Number(r.matches_played || 1),
-              kills,
-              deaths,
-              assists,
-              fantasyScore: score,
-              kdaRatio,
-              kdaNumber: kdaNum,
-              isStarter: true,
-              matchBreakdown: []
-            };
-          });
+          if (filteredRpcRows.length > 0) {
+            const items: PlayerScoreItem[] = filteredRpcRows.slice(0, 4).map((r: any) => {
+              const role = normalizeRole(r.role || 'MID');
+              const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region };
+              const photo = r.photo_url || getPlayerPhoto(r.handle, region);
+              const deaths = Number(r.deaths || 0);
+              const kills = Number(r.kills || 0);
+              const assists = Number(r.assists || 0);
+              const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
+              const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
+              const score = Number(r.fantasy_score || (kills * 3 + assists));
 
-          if (mounted) {
-            setTopPlayers(items);
-            setLoading(false);
-            return;
+              return {
+                playerId: r.player_id,
+                handle: r.handle,
+                role,
+                region,
+                teamCode: r.team_code,
+                teamName: teamMeta.name || r.team_code,
+                teamLogo: r.team_logo_url || teamMeta.logo,
+                photoUrl: photo,
+                matchesPlayed: Number(r.matches_played || 1),
+                kills,
+                deaths,
+                assists,
+                fantasyScore: score,
+                kdaRatio,
+                kdaNumber: kdaNum,
+                isStarter: true,
+                matchBreakdown: []
+              };
+            });
+
+            if (mounted) {
+              setTopPlayers(items);
+              setLoading(false);
+              return;
+            }
           }
         }
 

@@ -1,6 +1,7 @@
 -- Migration 035: Player Scores Leaderboard RPC
 -- Aggregates verified player statistics (KDA and games) to rank pro players by fantasy points.
 -- Official scoring rule: Kills * 3 + Assists * 1.
+-- Strict Regional Isolation: Only players belonging to the target region are included.
 -- Bench substitutes who Did Not Play (DNP) remain strictly at 0 fantasy points.
 
 drop function if exists public.get_player_scores_leaderboard(text, uuid);
@@ -40,7 +41,7 @@ as $func$
     t.code as team_code,
     t.name as team_name,
     t.logo_url as team_logo_url,
-    s.region_code,
+    t.region_code,
     count(distinct pms.match_id) as matches_played,
     coalesce(sum(pms.kills), 0)::bigint as kills,
     coalesce(sum(pms.deaths), 0)::bigint as deaths,
@@ -59,7 +60,7 @@ as $func$
   join public.teams t on t.id = pms.team_id
   left join public.season_rosters sr on sr.season_id = s.id and sr.player_id = p.id and sr.team_id = t.id
   where
-    (target_region is null or s.region_code = target_region)
+    (target_region is null or (upper(s.region_code) = upper(target_region) and upper(t.region_code) = upper(target_region)))
     and (target_week is null or m.week_id = target_week)
   group by
     p.id,
@@ -70,7 +71,7 @@ as $func$
     t.code,
     t.name,
     t.logo_url,
-    s.region_code
+    t.region_code
   having
     coalesce(sum((pms.kills * 3) + (pms.assists * 1)), 0) > 0 or count(distinct pms.match_id) > 0
   order by

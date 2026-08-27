@@ -53,7 +53,7 @@ export function CloudDashboard({
 }: {
   region: Region;
   userId: string;
-  countryOf: (code: string) => React.ReactNode;
+  countryOf?: (code: string) => React.ReactNode;
   onPredictions: () => void;
   onLeaderboard: () => void;
 }) {
@@ -146,7 +146,7 @@ export function CloudDashboard({
         <div className="panelHead"><div><h2>Regional leaderboard</h2><p>Official score ledger</p></div><button className="textBtn" onClick={onLeaderboard}>VIEW ALL</button></div>
         {leaders.length === 0
           ? <div className="realEmptyState leaderboardEmpty"><span>—</span><h3>NO SCORED RESULTS YET</h3><p>RANKINGS WILL APPEAR AFTER THE FIRST OFFICIAL RESULTS ARE VERIFIED.</p></div>
-          : <div className="realLeaderRows">{leaders.map((row, index) => <div className={row.user_id === userId ? 'you' : ''} key={row.user_id}><strong>#{index + 1}</strong><span>{row.avatar_url ? <img src={row.avatar_url} alt=""/> : <i>{row.manager_name.slice(0,2).toUpperCase()}</i>}<b>{countryOf(row.country_code)} {row.manager_name}{row.user_id === userId ? ' · YOU' : ''}</b></span><em>{Number(row.total_points).toLocaleString()} PTS</em></div>)}</div>}
+          : <div className="realLeaderRows">{leaders.map((row, index) => <div className={row.user_id === userId ? 'you' : ''} key={row.user_id}><strong>#{index + 1}</strong><span>{row.avatar_url ? <img src={row.avatar_url} alt=""/> : <i>{row.manager_name.slice(0,2).toUpperCase()}</i>}<b>{row.manager_name}{row.user_id === userId ? ' · YOU' : ''}</b></span><em>{Number(row.total_points).toLocaleString()} PTS</em></div>)}</div>}
         <footer>MY · ID · PH LEADERBOARDS REMAIN COMPLETELY SEPARATE</footer>
       </section>
     </div>
@@ -175,7 +175,7 @@ export function CloudLeaderboard({
 }: {
   region: Region;
   userId: string;
-  countryOf: (code: string) => React.ReactNode;
+  countryOf?: (code: string) => React.ReactNode;
 }) {
   const [rows, setRows] = useState<BoardRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -231,7 +231,6 @@ export function CloudLeaderboard({
               <div className={`standingsRow simpleBoardCols ${r.user_id === userId ? 'me' : ''}`} key={r.user_id}>
                 <span className={`standRank ${rankClass}`}>{rank}</span>
                 <div className="managerNameWrapper">
-                  {countryOf(r.country_code)}
                   <b>{r.manager_name}</b>
                   {r.user_id === userId && <small className="youBadge">YOU</small>}
                 </div>
