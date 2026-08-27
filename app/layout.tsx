@@ -24,6 +24,7 @@ import './dark-mode-hardening.css';
 import './admin-console-modern.css';
 import './draft-final-fixes.css';
 import './guest-entry.css';
+import './player-scores.css';
 import { SITE_URL } from '../lib/site';
 
 const jakarta = localFont({
