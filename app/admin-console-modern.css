@@ -53,3 +53,900 @@
 @media(max-width:720px){.adminPage{margin-top:13px;padding-bottom:10px}.adminCommandHero{min-height:0;padding:22px 18px;align-items:flex-start;flex-direction:column;gap:20px;border-radius:16px}.adminCommandCopy h1{font-size:31px}.adminCommandCopy>p{font-size:10px!important}.adminCommandMeta{margin-top:15px}.adminCommandMeta>b,.adminCommandMeta>span{font-size:7px}.adminOperator{width:100%;min-width:0;grid-template-columns:42px 1fr auto;padding:12px}.adminOperator>span{width:42px;height:42px}.adminMobileToolMenu{grid-template-columns:1fr}.adminMobileToolMenu>section+section{padding-top:6px;border-top:1px solid var(--admin-border)}.adminSectionHeader{min-height:0!important;padding:18px!important;align-items:flex-start!important;flex-direction:column}.adminSectionHeader h2{font-size:21px}.adminSectionHeader>aside{width:100%;min-width:0}.adminWorkflowGuide>header{align-items:flex-start!important;flex-direction:column}.adminWorkflowGuide header p{text-align:left}.adminWorkflowGuide>div{grid-template-columns:1fr}.adminWorkflowGuide>div>button{border-right:0;border-bottom:1px solid var(--admin-border)!important}.adminWorkflowGuide>div>button:last-child{border-bottom:0!important}.adminPage .adminStats,.adminPage .liveAdminStats,.adminPage .mvpLiveStats,.adminPage .pandaStats{grid-template-columns:1fr 1fr}.adminPage .adminGrid,.adminPage .adminFormGrid{grid-template-columns:1fr}.adminPage .adminAction{grid-template-columns:8px 1fr}.adminPage .adminAction button{grid-column:2;width:100%}.adminPage .auditRow{grid-template-columns:25px 1fr auto}.adminPage .auditRow p{display:none}.adminPage .resultTeams{grid-template-columns:1fr 19px 1fr}.adminPage .resultTeams>span{gap:5px}.adminPage .resultActions{align-items:stretch;flex-direction:column}.adminPage .resultActions button{width:100%}.adminPage .adminHeadActions{width:100%;margin-top:10px}.adminPage .adminHeadActions button{flex:1}.adminPage .adminHeadActions .secondary{display:block}.adminPage .playerAdminHead{display:none}.adminPage .playerAdminRow{min-height:72px;grid-template-columns:minmax(0,1fr) 54px 52px;grid-template-rows:auto auto;gap:4px 8px}.adminPage .playerAdminRow>span:first-child{grid-column:1;grid-row:1/3}.adminPage .playerAdminRow>span:nth-child(2){display:none}.adminPage .playerAdminRow>span:nth-child(3){display:block;grid-column:2;grid-row:1;color:var(--admin-muted);font-size:7px}.adminPage .playerAdminRow>strong{grid-column:2;grid-row:2}.adminPage .playerAdminRow>em{display:block;grid-column:3;grid-row:1;text-align:right}.adminPage .playerAdminRow>button{grid-column:3;grid-row:2}.adminPage .adminCloudPanel{padding:14px}.adminPage .liveMvpHero,.adminPage .pandaHero,.adminPage .operationsHero,.adminPage .intelligenceConsole .intelligenceHeader{border-radius:14px!important}.adminPage .intelligenceTabs{top:72px;grid-template-columns:repeat(5,minmax(115px,1fr));overflow-x:auto}.adminPage .intelligenceTabs button{min-width:115px}.adminPage .featureControls article{grid-template-columns:80px 1fr}.adminPage .featureMessage{grid-column:1/3}.adminPage .metaResultFields{padding:14px}.adminPage .sourceGovernanceSummary{grid-template-columns:1fr;padding:17px;gap:15px}.adminPage .sourceGovernanceStats{grid-template-columns:1fr 1fr}.adminPage .sourceGovernanceStats article{min-height:78px}.adminPage .sourceCards{padding:10px}.adminPage .sourceRightsGrid{grid-template-columns:1fr}.adminPage .sourceFormSteps{padding:8px}.adminPage .sourceFormSteps>span{padding:5px}.adminPage .sourceFormSteps b{font-size:7px}.adminPage .sourceFormSection{margin:10px}.adminPage .sourceFormSection .formGrid{padding:12px 11px 1px}.adminPage .sourceDecisionGrid{grid-template-columns:1fr;padding:11px}.adminPage .sourceReviewAction{align-items:stretch;flex-direction:column}.adminPage .sourceReviewAction button{width:100%;min-width:0}}
 
 @media(max-width:430px){.adminPage .adminStats,.adminPage .liveAdminStats,.adminPage .mvpLiveStats,.adminPage .pandaStats{grid-template-columns:1fr}.adminCommandMeta>span{display:none}.adminOperator>em{display:none}.adminPage .mvpPlayerGrid{grid-template-columns:1fr}.adminPage .adminMatchRow{padding:10px}.adminPage .adminMatchRow .secondary{width:100%}}
+
+/* ==========================================================================
+   Modern Results, KDA & Scoring Workspace Layout (Desktop & Mobile)
+   ========================================================================== */
+.adminPage .adminPanelModern {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 18px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+}
+
+.adminScoringHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--admin-border);
+  flex-wrap: wrap;
+}
+
+.adminScoringBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.adminSeasonPill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  background: rgba(var(--region-rgb), 0.1);
+  color: var(--region);
+  border: 1px solid rgba(var(--region-rgb), 0.25);
+}
+
+.adminScoringHead h2 {
+  margin: 4px 0 6px;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  color: var(--admin-text);
+}
+
+.adminScoringHead p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 10px !important;
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.adminWeekSelector label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adminWeekSelector small {
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  color: var(--admin-faint);
+}
+
+.adminWeekSelector select {
+  height: 42px;
+  min-width: 190px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--admin-border) !important;
+  background: var(--admin-soft) !important;
+  color: var(--admin-text) !important;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* KPI Summary Cards */
+.adminScoringKpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.scoringKpiCard {
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--admin-soft);
+  border: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scoringKpiCard small {
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+  color: var(--admin-faint);
+}
+
+.scoringKpiCard strong {
+  font-size: 22px;
+  color: var(--admin-text);
+  letter-spacing: -0.03em;
+}
+
+.scoringKpiCard span {
+  font-size: 8px;
+  color: var(--admin-muted);
+}
+
+.scoringKpiCard.ok strong {
+  color: var(--admin-success);
+}
+
+.scoringKpiCard.warn strong {
+  color: var(--admin-warning);
+}
+
+/* Match Fixtures Grid & Cards */
+.adminMatchesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adminMatchesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adminMatchesHeader h3 {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  color: var(--admin-faint);
+}
+
+.adminMatchesHeader span {
+  font-size: 8px;
+  color: var(--admin-muted);
+}
+
+.adminMatchCards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.matchScoringCard {
+  border-radius: 14px;
+  padding: 16px 20px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  display: grid;
+  grid-template-columns: 160px 1fr 180px;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.matchScoringCard.verified {
+  border-left: 4px solid var(--admin-success);
+  background: var(--admin-soft);
+}
+
+.matchScoringCard.pending {
+  border-left: 4px solid var(--admin-warning);
+}
+
+.matchCardTop {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matchTime {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--admin-text);
+}
+
+.matchBestOf {
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: var(--admin-faint);
+}
+
+.matchStatusPill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.matchStatusPill.verified {
+  background: rgba(20, 143, 112, 0.12);
+  color: var(--admin-success);
+  border: 1px solid rgba(20, 143, 112, 0.25);
+}
+
+.matchStatusPill.pending {
+  background: rgba(213, 166, 57, 0.12);
+  color: var(--admin-warning);
+  border: 1px solid rgba(213, 166, 57, 0.25);
+}
+
+.matchCardVersus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.teamBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.teamBlock.home {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.teamBlock.away {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.teamCodeBadge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: var(--admin-soft-strong);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+}
+
+.teamName {
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  color: var(--admin-text);
+}
+
+.scoreBlock strong {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--admin-soft-strong);
+  border: 1px solid var(--admin-border);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--admin-text);
+  min-width: 60px;
+  text-align: center;
+}
+
+.matchCardActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  padding: 10px 16px;
+  border-radius: 9px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-soft-strong);
+  color: var(--admin-text);
+  font-size: 10px;
+  font-weight: 850;
+  transition: 0.16s ease;
+  white-space: nowrap;
+}
+
+.actionBtn:hover {
+  border-color: var(--region);
+  background: var(--region-fill);
+  color: #fff;
+}
+
+/* MVP Section */
+.adminMvpSection {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--admin-soft);
+  border: 1px solid var(--admin-border);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.mvpSectionTitle b {
+  font-size: 10px;
+  letter-spacing: 0.7px;
+  color: var(--admin-text);
+}
+
+.mvpSectionTitle p {
+  margin: 3px 0 0;
+  color: var(--admin-muted);
+  font-size: 9px !important;
+}
+
+.mvpControls {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px;
+}
+
+.mvpControls input,
+.mvpControls select {
+  height: 42px;
+  border-radius: 8px;
+  padding: 0 10px;
+  border: 1px solid var(--admin-border) !important;
+  background: var(--admin-surface) !important;
+  color: var(--admin-text) !important;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Scoring Execution Bar */
+.adminScoringExecution {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.adminScoringExecution b {
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  color: var(--admin-text);
+}
+
+.adminScoringExecution p {
+  margin: 4px 0 0;
+  color: var(--admin-muted);
+  font-size: 9px !important;
+}
+
+.runScoringBtn {
+  padding: 14px 24px;
+  border-radius: 11px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  background: var(--region-fill) !important;
+  color: #fff !important;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Modern Result & KDA Modal (Deep Theme-Aware, Zero White Columns)
+   ========================================================================== */
+.adminResultModal.modernResultModal {
+  max-width: 880px !important;
+  width: min(880px, 96vw) !important;
+  max-height: 90vh !important;
+  padding: 24px !important;
+  border-radius: 18px !important;
+  background: var(--admin-surface) !important;
+  border: 1px solid var(--admin-border) !important;
+  color: var(--admin-text) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+  overflow-y: auto !important;
+}
+
+.modalTopBadge {
+  margin-bottom: 12px;
+}
+
+.modalMatchHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--admin-soft);
+  border: 1px solid var(--admin-border);
+}
+
+.modalTeamIdentity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalTeamIdentity.away {
+  justify-content: flex-end;
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+.teamPill {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  background: var(--admin-soft-strong);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.modalTeamIdentity h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  color: var(--admin-text);
+}
+
+.modalSeriesScore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalSeriesScore input {
+  width: 52px;
+  height: 48px;
+  border-radius: 10px;
+  border: 2px solid var(--admin-border) !important;
+  background: var(--admin-surface) !important;
+  color: var(--admin-text) !important;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.modalSeriesScore span {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--admin-faint);
+}
+
+/* Quick Score Presets */
+.quickScorePresets {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.quickScorePresets small {
+  font-size: 7px;
+  font-weight: 900;
+  color: var(--admin-faint);
+  margin-right: 4px;
+}
+
+.quickScorePresets button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-soft);
+  color: var(--admin-text);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.quickScorePresets button:hover {
+  border-color: var(--region);
+  color: var(--region);
+}
+
+/* Automation Toolbar */
+.modalAutomationBar {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--admin-soft);
+  border: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.automationLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.autoFillBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 0;
+  background: linear-gradient(135deg, var(--region), #2575fc);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(var(--region-rgb), 0.25);
+  transition: 0.16s ease;
+}
+
+.autoFillBtn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.pasteToggleBtn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.pasteToggleBtn:hover {
+  border-color: var(--admin-border-strong);
+}
+
+.automationHint {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--admin-muted);
+}
+
+/* Quick Paste Scoreboard Box */
+.quickPasteBox {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--admin-soft-strong);
+  border: 1px solid var(--admin-border);
+}
+
+.quickPasteBox p {
+  margin: 0 0 8px;
+  font-size: 9px !important;
+  color: var(--admin-muted);
+}
+
+.quickPasteBox textarea {
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid var(--admin-border) !important;
+  background: var(--admin-surface) !important;
+  color: var(--admin-text) !important;
+  font-size: 10px;
+  resize: vertical;
+}
+
+.quickPasteActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.applyPasteBtn {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--admin-success);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.cancelPasteBtn {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: transparent;
+  color: var(--admin-muted);
+  font-size: 9px;
+}
+
+/* Game Navigation Selector */
+.gameTabSelector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 18px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--admin-soft);
+  border: 1px solid var(--admin-border);
+}
+
+.gameTabSelector button {
+  padding: 9px 8px;
+  border-radius: 7px;
+  border: 0;
+  background: transparent;
+  color: var(--admin-muted);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  transition: 0.15s ease;
+}
+
+.gameTabSelector button.active {
+  background: var(--region-fill);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.tabExplanation {
+  margin: 6px 2px 14px;
+  font-size: 8px;
+  color: var(--admin-faint);
+}
+
+.tabExplanation b {
+  color: var(--admin-text);
+}
+
+/* Modal Teams Split (Home on Left, Away on Right) */
+.modalTeamsSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.teamColumnBlock {
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-soft);
+  overflow: hidden;
+}
+
+.teamColumnHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--admin-soft-strong);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.teamColumnHead b {
+  font-size: 11px;
+  color: var(--admin-text);
+}
+
+.teamColumnHead small {
+  margin-left: auto;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--admin-faint);
+}
+
+.kdaTableHeader {
+  display: grid;
+  grid-template-columns: 1fr 42px 42px 42px 54px;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--admin-soft);
+  border-bottom: 1px solid var(--admin-border);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: var(--admin-faint);
+  text-align: center;
+}
+
+.kdaTableHeader .colPlayer {
+  text-align: left;
+}
+
+.kdaRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.kdaRow {
+  display: grid;
+  grid-template-columns: 1fr 42px 42px 42px 54px;
+  gap: 6px;
+  padding: 8px 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+
+.kdaRow:last-child {
+  border-bottom: 0;
+}
+
+.playerMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.roleBadge {
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  background: var(--admin-soft-strong);
+  color: var(--admin-muted);
+  border: 1px solid var(--admin-border);
+  flex-shrink: 0;
+}
+
+.role-jungle {
+  background: rgba(213, 166, 57, 0.15);
+  color: var(--admin-warning);
+  border-color: rgba(213, 166, 57, 0.3);
+}
+
+.role-gold {
+  background: rgba(255, 183, 3, 0.15);
+  color: #ffb703;
+  border-color: rgba(255, 183, 3, 0.3);
+}
+
+.role-mid {
+  background: rgba(var(--region-rgb), 0.15);
+  color: var(--region);
+  border-color: rgba(var(--region-rgb), 0.3);
+}
+
+.role-roam {
+  background: rgba(20, 143, 112, 0.15);
+  color: var(--admin-success);
+  border-color: rgba(20, 143, 112, 0.3);
+}
+
+.role-exp {
+  background: rgba(157, 78, 221, 0.15);
+  color: #9d4edd;
+  border-color: rgba(157, 78, 221, 0.3);
+}
+
+.playerMeta b {
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--admin-text);
+}
+
+.kdaRow input {
+  width: 100%;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border) !important;
+  background: var(--admin-soft) !important;
+  color: var(--admin-text) !important;
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+  padding: 0 2px;
+}
+
+.kdaRow input:focus {
+  border-color: var(--region) !important;
+}
+
+.kdaRatioPill {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  color: var(--admin-muted);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Modal Bottom Save Bar */
+.modalSaveBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.modalSaveInfo span {
+  display: block;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: var(--admin-success);
+}
+
+.modalSaveInfo p {
+  margin: 2px 0 0;
+  font-size: 8px !important;
+  color: var(--admin-muted);
+}
+
+.saveConfirmBtn {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: var(--region-fill) !important;
+  color: #fff !important;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media(max-width: 900px) {
+  .matchScoringCard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .matchCardTop {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .matchCardActions {
+    justify-content: stretch;
+  }
+  .actionBtn {
+    width: 100%;
+    text-align: center;
+  }
+  .adminMvpSection {
+    grid-template-columns: 1fr;
+  }
+  .modalTeamsSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width: 600px) {
+  .adminScoringKpis {
+    grid-template-columns: 1fr 1fr;
+  }
+  .modalMatchHeader {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 10px;
+  }
+  .modalTeamIdentity {
+    justify-content: center !important;
+  }
+  .modalSeriesScore {
+    justify-content: center;
+  }
+  .gameTabSelector {
+    grid-template-columns: 1fr 1fr;
+  }
+  .adminScoringExecution {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .runScoringBtn {
+    width: 100%;
+  }
+  .modalSaveBar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .saveConfirmBtn {
+    width: 100%;
+  }
+}

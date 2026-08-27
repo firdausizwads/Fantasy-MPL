@@ -995,7 +995,9 @@ export type Database = {
         Row: {
           assists: number
           created_at: string
+          deaths?: number
           entered_by: string | null
+          games?: Json
           id: string
           kills: number
           match_id: string
@@ -1006,7 +1008,9 @@ export type Database = {
         Insert: {
           assists?: number
           created_at?: string
+          deaths?: number
           entered_by?: string | null
+          games?: Json
           id?: string
           kills?: number
           match_id: string
@@ -1017,7 +1021,9 @@ export type Database = {
         Update: {
           assists?: number
           created_at?: string
+          deaths?: number
           entered_by?: string | null
+          games?: Json
           id?: string
           kills?: number
           match_id?: string
@@ -1981,6 +1987,8 @@ export type Database = {
       admin_upsert_player_stat: {
         Args: {
           assist_count: number
+          death_count?: number
+          games_breakdown?: Json
           kill_count: number
           target_match: string
           target_player: string
@@ -1989,7 +1997,9 @@ export type Database = {
         Returns: {
           assists: number
           created_at: string
+          deaths?: number
           entered_by: string | null
+          games?: Json
           id: string
           kills: number
           match_id: string

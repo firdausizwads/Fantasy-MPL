@@ -84,3 +84,153 @@
   .releaseGrid{grid-template-columns:1fr!important}
 }
 
+
+/* ==========================================================================
+   Dark Mode Immunity: Admin Results & Scoring Console
+   Eliminates all white columns, white boxes, and mismatched light inputs
+   ========================================================================== */
+.shell.darkMode .adminPage,
+.shell.darkMode .adminPanelModern,
+.shell.darkMode .adminCloudPanel,
+.shell.darkMode .adminMatches,
+.shell.darkMode .adminResultModal,
+.shell.darkMode .modernResultModal {
+  --admin-surface: #0c1d2e !important;
+  --admin-surface-raised: #102438 !important;
+  --admin-soft: #0a1928 !important;
+  --admin-soft-strong: #162d43 !important;
+  --admin-border: #29445c !important;
+  --admin-border-strong: #365773 !important;
+  --admin-text: #f2f7fc !important;
+  --admin-muted: #9aafc1 !important;
+  --admin-faint: #748ba0 !important;
+  --admin-success: #82ddc2 !important;
+  --admin-warning: #e8ca70 !important;
+  --admin-danger: #ff94a3 !important;
+}
+
+/* Panel & Containers */
+.shell.darkMode .adminPanelModern,
+.shell.darkMode .adminPage .adminCloudPanel,
+.shell.darkMode .adminMatches {
+  background: #0c1d2e !important;
+  border-color: #29445c !important;
+  color: #f2f7fc !important;
+}
+
+.shell.darkMode .scoringKpiCard,
+.shell.darkMode .adminMvpSection,
+.shell.darkMode .matchScoringCard,
+.shell.darkMode .teamColumnBlock,
+.shell.darkMode .modalMatchHeader,
+.shell.darkMode .modalAutomationBar,
+.shell.darkMode .quickPasteBox,
+.shell.darkMode .gameTabSelector {
+  background: #0a1928 !important;
+  border-color: #29445c !important;
+  color: #f2f7fc !important;
+}
+
+.shell.darkMode .matchScoringCard.verified {
+  background: rgba(20, 143, 112, 0.1) !important;
+}
+
+.shell.darkMode .teamColumnHead,
+.shell.darkMode .kdaTableHeader,
+.shell.darkMode .teamCodeBadge,
+.shell.darkMode .scoreBlock strong,
+.shell.darkMode .teamPill {
+  background: #162d43 !important;
+  border-color: #29445c !important;
+  color: #f2f7fc !important;
+}
+
+.shell.darkMode .kdaRow {
+  background: #0c1d2e !important;
+  border-color: #223c56 !important;
+}
+
+/* INPUTS & SELECTS: NO WHITE COLUMNS IN DARK MODE */
+.shell.darkMode .adminPage input,
+.shell.darkMode .adminPage select,
+.shell.darkMode .adminPage textarea,
+.shell.darkMode .modernResultModal input,
+.shell.darkMode .modernResultModal select,
+.shell.darkMode .modernResultModal textarea,
+.shell.darkMode .kdaRow input,
+.shell.darkMode .modalSeriesScore input,
+.shell.darkMode .statRow input,
+.shell.darkMode .resultScoreRow input,
+.shell.darkMode .adminWeekSelector select,
+.shell.darkMode .mvpControls input,
+.shell.darkMode .mvpControls select,
+.shell.darkMode .adminWeekPick select,
+.shell.darkMode .adminMvpPick input,
+.shell.darkMode .adminMvpPick select {
+  background: #0a1928 !important;
+  border-color: #2e4b67 !important;
+  color: #ffffff !important;
+}
+
+.shell.darkMode .kdaRow input:focus,
+.shell.darkMode .modalSeriesScore input:focus,
+.shell.darkMode .statRow input:focus {
+  border-color: var(--region) !important;
+  box-shadow: 0 0 0 2px rgba(var(--region-rgb), 0.25) !important;
+}
+
+.shell.darkMode .adminPage input::placeholder,
+.shell.darkMode .modernResultModal textarea::placeholder,
+.shell.darkMode .mvpControls input::placeholder {
+  color: #647b92 !important;
+}
+
+/* Table player tags & buttons */
+.shell.darkMode .statRow > span {
+  background: #11263c !important;
+  border-color: #29445c !important;
+  color: #ffffff !important;
+}
+
+.shell.darkMode .kdaRatioPill {
+  color: #a3b8cc !important;
+}
+
+.shell.darkMode .quickScorePresets button,
+.shell.darkMode .pasteToggleBtn,
+.shell.darkMode .cancelPasteBtn,
+.shell.darkMode .actionBtn {
+  background: #132a40 !important;
+  border-color: #2d4863 !important;
+  color: #f2f7fc !important;
+}
+
+.shell.darkMode .quickScorePresets button:hover,
+.shell.darkMode .actionBtn:hover {
+  background: var(--region-fill) !important;
+  border-color: var(--region) !important;
+  color: #fff !important;
+}
+
+.shell.darkMode .gameTabSelector button {
+  color: #92a7bc !important;
+}
+
+.shell.darkMode .gameTabSelector button.active {
+  background: var(--region-fill) !important;
+  color: #ffffff !important;
+}
+
+.shell.darkMode .adminScoringExecution {
+  border-color: #29445c !important;
+}
+
+.shell.darkMode .modalSaveBar {
+  border-color: #29445c !important;
+}
+
+.shell.darkMode .resultTeams input {
+  background: #0a1928 !important;
+  border-color: #2e4b67 !important;
+  color: #ffffff !important;
+}

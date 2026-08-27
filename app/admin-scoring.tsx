@@ -24,7 +24,16 @@ type MatchRow = {
 
 type RosterPlayer = { id: string; handle: string; role: string; teamId: string };
 
-type StatDraft = { kills: string; assists: string };
+type StatValues = { kills: string; deaths: string; assists: string };
+
+type PlayerStatsState = {
+  [playerId: string]: {
+    total: StatValues;
+    games: Record<number, StatValues>;
+  };
+};
+
+type ActiveViewTab = 'totals' | 'game1' | 'game2' | 'game3';
 
 export default function AdminScoring({ region, notify }: { region: Region; notify: (message: string) => void }) {
   const [weeks, setWeeks] = useState<WeekOption[]>([]);
@@ -33,13 +42,18 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   const [roster, setRoster] = useState<RosterPlayer[]>([]);
   const [openMatch, setOpenMatch] = useState<MatchRow | null>(null);
   const [scores, setScores] = useState<{ home: string; away: string }>({ home: '', away: '' });
-  const [stats, setStats] = useState<Record<string, StatDraft>>({});
+  const [stats, setStats] = useState<PlayerStatsState>({});
+  const [activeTab, setActiveTab] = useState<ActiveViewTab>('totals');
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [autoFilling, setAutoFilling] = useState(false);
+  const [showPasteBox, setShowPasteBox] = useState(false);
+  const [pasteText, setPasteText] = useState('');
   const [lastRun, setLastRun] = useState<{ lineups: number; transactions: number } | null>(null);
   const [mvpPick, setMvpPick] = useState('');
   const [mvpSearch, setMvpSearch] = useState('');
 
+  // 1. Initial Load: Seasons, Weeks, Roster
   useEffect(() => {
     let mounted = true;
     async function load() {
@@ -74,6 +88,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     return () => { mounted = false; };
   }, [region]);
 
+  // 2. Load Matches for Selected Week
   useEffect(() => {
     let mounted = true;
     async function load() {
@@ -101,48 +116,350 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     return () => { mounted = false; };
   }, [weekId]);
 
-  const matchPlayers = useMemo(() => {
+  // Match Players split into Home & Away
+  const homePlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
+    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
     return roster
-      .filter(p => p.teamId === openMatch.homeTeamId || p.teamId === openMatch.awayTeamId)
-      .sort((a, b) => a.teamId.localeCompare(b.teamId) || a.role.localeCompare(b.role));
+      .filter(p => p.teamId === openMatch.homeTeamId)
+      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
   }, [openMatch, roster]);
 
+  const awayPlayers = useMemo(() => {
+    if (!openMatch) return [] as RosterPlayer[];
+    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+    return roster
+      .filter(p => p.teamId === openMatch.awayTeamId)
+      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
+  }, [openMatch, roster]);
+
+  const matchPlayers = useMemo(() => {
+    return [...homePlayers, ...awayPlayers];
+  }, [homePlayers, awayPlayers]);
+
+  // Open Result Editor Modal
   async function openResultEditor(match: MatchRow) {
     setOpenMatch(match);
-    setScores({ home: match.homeScore?.toString() || '', away: match.awayScore?.toString() || '' });
+    setScores({
+      home: match.homeScore !== null ? String(match.homeScore) : '',
+      away: match.awayScore !== null ? String(match.awayScore) : ''
+    });
+    setActiveTab('totals');
+    setShowPasteBox(false);
+    setPasteText('');
+
     if (!supabase) return;
-    const { data } = await supabase.from('player_match_stats')
-      .select('player_id,kills,assists').eq('match_id', match.id);
-    const draft: Record<string, StatDraft> = {};
-    (data || []).forEach((s) => { draft[s.player_id] = { kills: String(s.kills), assists: String(s.assists) }; });
+
+    // Fetch existing stats with deaths & games (graceful fallback if column not yet added)
+    let data: any[] | null = null;
+    const res1 = await supabase.from('player_match_stats')
+      .select('player_id,kills,assists,deaths,games')
+      .eq('match_id', match.id);
+
+    if (!res1.error && res1.data) {
+      data = res1.data;
+    } else {
+      const res2 = await supabase.from('player_match_stats')
+        .select('player_id,kills,assists')
+        .eq('match_id', match.id);
+      data = res2.data;
+    }
+
+    const draft: PlayerStatsState = {};
+    (data || []).forEach((s) => {
+      const gamesObj: Record<number, StatValues> = {};
+      if (Array.isArray(s.games)) {
+        s.games.forEach((g: any) => {
+          if (g && g.game) {
+            gamesObj[g.game] = {
+              kills: String(g.kills ?? ''),
+              deaths: String(g.deaths ?? ''),
+              assists: String(g.assists ?? '')
+            };
+          }
+        });
+      }
+      draft[s.player_id] = {
+        total: {
+          kills: String(s.kills ?? '0'),
+          deaths: String(s.deaths ?? '0'),
+          assists: String(s.assists ?? '0')
+        },
+        games: gamesObj
+      };
+    });
+
     setStats(draft);
   }
 
+  // Update stat value in state (handles per-game and series totals)
+  function updateStat(playerId: string, field: 'kills' | 'deaths' | 'assists', value: string) {
+    setStats(prev => {
+      const current = prev[playerId] || {
+        total: { kills: '0', deaths: '0', assists: '0' },
+        games: {}
+      };
+
+      if (activeTab === 'totals') {
+        // Direct series total edit
+        return {
+          ...prev,
+          [playerId]: {
+            ...current,
+            total: {
+              ...current.total,
+              [field]: value
+            }
+          }
+        };
+      }
+
+      // Game-specific edit (Game 1, Game 2, Game 3)
+      const gNum = activeTab === 'game1' ? 1 : activeTab === 'game2' ? 2 : 3;
+      const gameStat = current.games[gNum] || { kills: '', deaths: '', assists: '' };
+      const updatedGames = {
+        ...current.games,
+        [gNum]: {
+          ...gameStat,
+          [field]: value
+        }
+      };
+
+      // Automatically recalculate series totals from game breakdown
+      let sumK = 0, sumD = 0, sumA = 0;
+      let hasAnyGameInput = false;
+      for (let g = 1; g <= 3; g++) {
+        const item = updatedGames[g];
+        if (item) {
+          if (item.kills !== '' || item.deaths !== '' || item.assists !== '') {
+            hasAnyGameInput = true;
+          }
+          sumK += parseInt(item.kills || '0', 10) || 0;
+          sumD += parseInt(item.deaths || '0', 10) || 0;
+          sumA += parseInt(item.assists || '0', 10) || 0;
+        }
+      }
+
+      return {
+        ...prev,
+        [playerId]: {
+          games: updatedGames,
+          total: hasAnyGameInput
+            ? { kills: String(sumK), deaths: String(sumD), assists: String(sumA) }
+            : current.total
+        }
+      };
+    });
+  }
+
+  // Helper to get stat value for currently active tab
+  function getStatValue(playerId: string, field: 'kills' | 'deaths' | 'assists'): string {
+    const current = stats[playerId];
+    if (!current) return '';
+    if (activeTab === 'totals') {
+      return current.total[field] || '';
+    }
+    const gNum = activeTab === 'game1' ? 1 : activeTab === 'game2' ? 2 : 3;
+    return current.games[gNum]?.[field] || '';
+  }
+
+  // Helper to compute KDA ratio
+  function calculateKda(kStr: string, dStr: string, aStr: string): string {
+    const k = parseInt(kStr || '0', 10) || 0;
+    const d = parseInt(dStr || '0', 10) || 0;
+    const a = parseInt(aStr || '0', 10) || 0;
+    if (k === 0 && d === 0 && a === 0) return '—';
+    if (d === 0) return `${(k + a).toFixed(1)} (Perfect)`;
+    return ((k + a) / d).toFixed(2);
+  }
+
+  // 1-Click Automated Ingestion from API
+  async function autoFillFromApi() {
+    if (!openMatch) return;
+    setAutoFilling(true);
+    try {
+      const res = await fetch('/api/integrations/player-stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_id: openMatch.id })
+      });
+      const result = await res.json();
+      if (!res.ok || result.error) {
+        notify(result.error || 'Failed to auto-fetch stats.');
+        setAutoFilling(false);
+        return;
+      }
+
+      if (result.home_score !== undefined && result.away_score !== undefined) {
+        setScores({
+          home: String(result.home_score),
+          away: String(result.away_score)
+        });
+      }
+
+      const draft: PlayerStatsState = { ...stats };
+      (result.players || []).forEach((p: any) => {
+        const gamesObj: Record<number, StatValues> = {};
+        (p.games || []).forEach((g: any) => {
+          gamesObj[g.game] = {
+            kills: String(g.kills),
+            deaths: String(g.deaths),
+            assists: String(g.assists)
+          };
+        });
+
+        draft[p.player_id] = {
+          total: {
+            kills: String(p.kills),
+            deaths: String(p.deaths),
+            assists: String(p.assists)
+          },
+          games: gamesObj
+        };
+      });
+
+      setStats(draft);
+      notify('⚡ Stats auto-filled from official match center! Verify numbers and save.');
+    } catch (err) {
+      notify('Failed to connect to stats ingestion endpoint.');
+    } finally {
+      setAutoFilling(false);
+    }
+  }
+
+  // Smart Paste Parser
+  function parseAndApplyPaste() {
+    if (!pasteText.trim() || !openMatch) return;
+    const lines = pasteText.split(/[\n,;]+/);
+    let matched = 0;
+    const draft = { ...stats };
+
+    matchPlayers.forEach(p => {
+      const handleLower = p.handle.toLowerCase();
+      for (const line of lines) {
+        if (line.toLowerCase().includes(handleLower)) {
+          // Look for 3 numbers separated by /, -, or spaces (K/D/A)
+          const numMatch = line.match(/(\d+)\s*[/:-]\s*(\d+)\s*[/:-]\s*(\d+)/) ||
+                           line.match(/(\d+)\s+(\d+)\s+(\d+)/);
+          if (numMatch) {
+            const k = numMatch[1];
+            const d = numMatch[2];
+            const a = numMatch[3];
+
+            const current = draft[p.id] || {
+              total: { kills: '0', deaths: '0', assists: '0' },
+              games: {}
+            };
+
+            if (activeTab !== 'totals') {
+              const gNum = activeTab === 'game1' ? 1 : activeTab === 'game2' ? 2 : 3;
+              const updatedGames = {
+                ...current.games,
+                [gNum]: { kills: k, deaths: d, assists: a }
+              };
+              let sumK = 0, sumD = 0, sumA = 0;
+              Object.values(updatedGames).forEach(g => {
+                sumK += parseInt(g.kills || '0', 10) || 0;
+                sumD += parseInt(g.deaths || '0', 10) || 0;
+                sumA += parseInt(g.assists || '0', 10) || 0;
+              });
+              draft[p.id] = {
+                games: updatedGames,
+                total: { kills: String(sumK), deaths: String(sumD), assists: String(sumA) }
+              };
+            } else {
+              draft[p.id] = {
+                ...current,
+                total: { kills: k, deaths: d, assists: a }
+              };
+            }
+            matched++;
+            break;
+          }
+        }
+      }
+    });
+
+    if (matched > 0) {
+      setStats(draft);
+      notify(`Parsed and matched ${matched} player KDA records.`);
+      setShowPasteBox(false);
+      setPasteText('');
+    } else {
+      notify('No matching player names found in text. Check handles and try again.');
+    }
+  }
+
+  // Save Verified Result and Stats
   async function saveResult() {
     if (!supabase || !openMatch) return;
     const home = parseInt(scores.home, 10);
     const away = parseInt(scores.away, 10);
-    if (isNaN(home) || isNaN(away)) { notify('Enter both series scores.'); return; }
+    if (isNaN(home) || isNaN(away)) {
+      notify('Please enter both series scores (e.g. 2 - 1).');
+      return;
+    }
     setBusy(true);
 
     const { error: resultError } = await supabase.rpc('admin_set_match_result', {
-      target_match: openMatch.id, home_score: home, away_score: away
+      target_match: openMatch.id,
+      home_score: home,
+      away_score: away
     });
-    if (resultError) { notify(resultError.message); setBusy(false); return; }
+    if (resultError) {
+      notify(resultError.message);
+      setBusy(false);
+      return;
+    }
 
     let statErrors = 0;
     for (const player of matchPlayers) {
-      const draft = stats[player.id];
-      if (!draft || (draft.kills === '' && draft.assists === '')) continue;
-      const { error } = await supabase.rpc('admin_upsert_player_stat', {
+      const pStat = stats[player.id];
+      if (!pStat) continue;
+
+      const killCount = parseInt(pStat.total.kills || '0', 10) || 0;
+      const deathCount = parseInt(pStat.total.deaths || '0', 10) || 0;
+      const assistCount = parseInt(pStat.total.assists || '0', 10) || 0;
+
+      // Skip completely empty draft rows
+      if (pStat.total.kills === '' && pStat.total.deaths === '' && pStat.total.assists === '') {
+        continue;
+      }
+
+      // Convert games to structured JSON
+      const gamesBreakdown = Object.entries(pStat.games || {})
+        .map(([gNum, g]) => ({
+          game: parseInt(gNum, 10),
+          kills: parseInt(g.kills || '0', 10) || 0,
+          deaths: parseInt(g.deaths || '0', 10) || 0,
+          assists: parseInt(g.assists || '0', 10) || 0
+        }))
+        .sort((a, b) => a.game - b.game);
+
+      // Attempt enhanced RPC with death_count and games_breakdown
+      const { error: upsertError } = await supabase.rpc('admin_upsert_player_stat', {
         target_match: openMatch.id,
         target_player: player.id,
         target_team: player.teamId,
-        kill_count: parseInt(draft.kills || '0', 10) || 0,
-        assist_count: parseInt(draft.assists || '0', 10) || 0
+        kill_count: killCount,
+        assist_count: assistCount,
+        death_count: deathCount,
+        games_breakdown: gamesBreakdown
       });
-      if (error) { statErrors += 1; }
+
+      if (upsertError) {
+        // Fallback for older database versions without migration 034 applied yet
+        const { error: fallbackError } = await supabase.rpc('admin_upsert_player_stat', {
+          target_match: openMatch.id,
+          target_player: player.id,
+          target_team: player.teamId,
+          kill_count: killCount,
+          assist_count: assistCount
+        });
+        if (fallbackError) {
+          statErrors += 1;
+        }
+      }
     }
 
     setBusy(false);
@@ -150,9 +467,10 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     setMatches(prev => prev.map(m => m.id === openMatch.id
       ? { ...m, homeScore: home, awayScore: away, status: 'completed', resultState: 'verified' }
       : m));
-    notify(statErrors ? `Result saved · ${statErrors} stat rows failed.` : 'Result and player statistics saved.');
+    notify(statErrors ? `Match saved · ${statErrors} player stat rows had issues.` : '✓ Match result & player KDAs verified and saved!');
   }
 
+  // Fantasy Scoring Calculation Engine
   async function runScoring() {
     if (!supabase || !weekId) return;
     setBusy(true);
@@ -185,96 +503,476 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     const rf = Array.isArray(regionalFantasyRes.data) ? regionalFantasyRes.data[0] : regionalFantasyRes.data;
     const p = Array.isArray(predictionRes.data) ? predictionRes.data[0] : predictionRes.data;
     const mt = Array.isArray(metaRes.data) ? metaRes.data[0] : metaRes.data;
-    const lineupTotal=(f?.lineups_scored??0)+(rf?.lineups_scored??0);const transactionTotal=(f?.transactions_created??0)+(rf?.transactions_created??0)+(p?.transactions_created??0)+(mt?.transactions_created??0);
-    setLastRun({lineups:lineupTotal,transactions:transactionTotal});
+    const lineupTotal = (f?.lineups_scored ?? 0) + (rf?.lineups_scored ?? 0);
+    const transactionTotal = (f?.transactions_created ?? 0) + (rf?.transactions_created ?? 0) + (p?.transactions_created ?? 0) + (mt?.transactions_created ?? 0);
+    setLastRun({ lineups: lineupTotal, transactions: transactionTotal });
     notify(`Scoring complete — ${lineupTotal} lineups, ${p?.predictions_scored ?? 0} predictions, ${transactionTotal} transactions.`);
   }
 
-  if (loading) return <section className="panel adminCloudPanel"><div className="cloudLoading">LOADING VERIFIED COMPETITION DATA…</div></section>;
+  if (loading) {
+    return (
+      <section className="panel adminCloudPanel adminPanelModern">
+        <div className="cloudLoading">LOADING VERIFIED COMPETITION DATA…</div>
+      </section>
+    );
+  }
 
   const verified = matches.filter(m => m.resultState === 'verified' || m.resultState === 'finalized').length;
+  const pending = matches.length - verified;
   const week = weeks.find(w => w.id === weekId);
 
-  return <section className="panel adminCloudPanel">
-    <div className="adminCloudHead">
-      <div>
-        <span className="adminCloudTag">● LIVE CLOUD SCORING · SUPABASE</span>
-        <h2>Official results & fantasy scoring</h2>
-        <p>Enter verified series scores and player statistics, then run the scoring engine.</p>
-      </div>
-      <label className="adminWeekPick"><small>WEEK</small>
-        <select value={weekId} onChange={e => setWeekId(e.target.value)}>
-          {weeks.map(w => <option key={w.id} value={w.id}>WEEK {w.number}{w.finalized ? ' · FINAL' : ''}</option>)}
-        </select>
-      </label>
-    </div>
+  return (
+    <section className="panel adminCloudPanel adminPanelModern">
+      {/* 1. Header & Quick Controls */}
+      <div className="adminScoringHead">
+        <div>
+          <div className="adminScoringBadges">
+            <span className="adminCloudTag">● REGIONAL SCORING ENGINE</span>
+            <span className="adminSeasonPill">{region} · SEASON 18</span>
+          </div>
+          <h2>Official Results & Player KDA Verification</h2>
+          <p>
+            Verify match series scores, auto-fill official player KDAs (Game 1, Game 2, Game 3), and calculate fantasy ledgers.
+          </p>
+        </div>
 
-    <div className="adminMatchList">
-      {matches.length === 0 && <p className="adminEmptyNote">No matches found for this week.</p>}
-      {matches.map(m => <div className={`adminMatchRow ${m.resultState}`} key={m.id}>
-        <span className="adminMatchTime">{new Date(m.scheduledAt).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-        <b>{m.homeCode}</b>
-        <strong>{m.homeScore !== null && m.awayScore !== null ? `${m.homeScore} – ${m.awayScore}` : 'VS'}</strong>
-        <b>{m.awayCode}</b>
-        <em className={m.resultState === 'verified' || m.resultState === 'finalized' ? 'ok' : ''}>
-          {m.resultState === 'verified' || m.resultState === 'finalized' ? '✓ VERIFIED' : 'PENDING'}
-        </em>
-        <button className="secondary" onClick={() => openResultEditor(m)}>{m.homeScore !== null ? 'Edit result' : 'Enter result'}</button>
-      </div>)}
-    </div>
-
-    <div className="adminMvpPick">
-      <div>
-        <b>OFFICIAL WEEKLY MVP</b>
-        <p>Verify the league's official MVP before scoring — correct picks earn +100.</p>
-      </div>
-      <input value={mvpSearch} onChange={e => setMvpSearch(e.target.value)} placeholder="SEARCH PLAYER…" />
-      <select value={mvpPick} onChange={e => setMvpPick(e.target.value)}>
-        <option value="">NOT SET</option>
-        {roster
-          .filter(p => !mvpSearch || p.handle.toLowerCase().includes(mvpSearch.toLowerCase()))
-          .slice(0, 40)
-          .map(p => <option key={p.id} value={p.id}>{p.handle} · {p.role}</option>)}
-      </select>
-    </div>
-
-    <div className="adminScoreBar">
-      <div>
-        <b>{verified} / {matches.length} MATCH RESULTS VERIFIED</b>
-        <p>{lastRun
-          ? `Last run · ${lastRun.lineups} lineups scored · ${lastRun.transactions} transactions`
-          : 'Kill +3 · Assist +1 · Captain 2× — recorded in the append-only score ledger.'}</p>
-      </div>
-      <button className="primary" disabled={busy || verified === 0} onClick={runScoring}>
-        {busy ? 'WORKING…' : `RUN WEEK ${week?.number ?? ''} FANTASY SCORING`}
-      </button>
-    </div>
-
-    {openMatch && <div className="modalShade" onClick={() => setOpenMatch(null)}>
-      <div className="modalCard adminResultModal" onClick={e => e.stopPropagation()}>
-        <button className="close" onClick={() => setOpenMatch(null)}>×</button>
-        <span className="seasonTag"><i /> OFFICIAL RESULT ENTRY</span>
-        <h2>{openMatch.homeName} vs {openMatch.awayName}</h2>
-        <div className="resultScoreRow">
-          <label>{openMatch.homeCode}
-            <input type="number" min={0} max={3} value={scores.home} onChange={e => setScores(s => ({ ...s, home: e.target.value }))} />
-          </label>
-          <b>SERIES</b>
-          <label>{openMatch.awayCode}
-            <input type="number" min={0} max={3} value={scores.away} onChange={e => setScores(s => ({ ...s, away: e.target.value }))} />
+        <div className="adminWeekSelector">
+          <label htmlFor="weekSelector">
+            <small>COMPETITION WEEK</small>
+            <select
+              id="weekSelector"
+              value={weekId}
+              onChange={e => setWeekId(e.target.value)}
+            >
+              {weeks.map(w => (
+                <option key={w.id} value={w.id}>
+                  WEEK {w.number}{w.finalized ? ' · FINALIZED' : ''}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
-        <h3>Player statistics · kills & assists</h3>
-        <div className="statTable">
-          <div className="statHead"><span>PLAYER</span><span>K</span><span>A</span></div>
-          {matchPlayers.map(p => <div className="statRow" key={p.id}>
-            <span><b>{p.handle}</b><small>{p.role} · {p.teamId === openMatch.homeTeamId ? openMatch.homeCode : openMatch.awayCode}</small></span>
-            <input type="number" min={0} placeholder="0" value={stats[p.id]?.kills || ''} onChange={e => setStats(s => ({ ...s, [p.id]: { kills: e.target.value, assists: s[p.id]?.assists || '' } }))} />
-            <input type="number" min={0} placeholder="0" value={stats[p.id]?.assists || ''} onChange={e => setStats(s => ({ ...s, [p.id]: { kills: s[p.id]?.kills || '', assists: e.target.value } }))} />
-          </div>)}
-        </div>
-        <button className="primary wide" disabled={busy} onClick={saveResult}>{busy ? 'SAVING…' : 'SAVE VERIFIED RESULT & STATS'}</button>
       </div>
-    </div>}
-  </section>;
+
+      {/* 2. Top Summary KPI Cards */}
+      <div className="adminScoringKpis">
+        <div className="scoringKpiCard">
+          <small>FIXTURES SCHEDULED</small>
+          <strong>{matches.length}</strong>
+          <span>Week {week?.number ?? '1'} Matches</span>
+        </div>
+        <div className="scoringKpiCard ok">
+          <small>RESULTS VERIFIED</small>
+          <strong>{verified}</strong>
+          <span>Ready for Scoring</span>
+        </div>
+        <div className={`scoringKpiCard ${pending > 0 ? 'warn' : ''}`}>
+          <small>PENDING VERIFICATION</small>
+          <strong>{pending}</strong>
+          <span>{pending === 0 ? 'All Matches Complete' : 'Action Required'}</span>
+        </div>
+        <div className="scoringKpiCard">
+          <small>OFFICIAL WEEKLY MVP</small>
+          <strong>{mvpPick ? roster.find(p => p.id === mvpPick)?.handle || 'SELECTED' : 'NOT SET'}</strong>
+          <span>{mvpPick ? 'Ready to Award' : 'Pending Selection'}</span>
+        </div>
+      </div>
+
+      {/* 3. Match List Cards */}
+      <div className="adminMatchesGrid">
+        <div className="adminMatchesHeader">
+          <h3>MATCH FIXTURES & RESULTS</h3>
+          <span>Click &apos;Enter Result&apos; to view or auto-populate Game 1 / Game 2 KDAs</span>
+        </div>
+
+        {matches.length === 0 && (
+          <div className="adminEmptyNote">No matches found for this competition week.</div>
+        )}
+
+        <div className="adminMatchCards">
+          {matches.map(m => {
+            const isVerified = m.resultState === 'verified' || m.resultState === 'finalized';
+            return (
+              <div className={`matchScoringCard ${isVerified ? 'verified' : 'pending'}`} key={m.id}>
+                <div className="matchCardTop">
+                  <span className="matchTime">
+                    {new Date(m.scheduledAt).toLocaleString(undefined, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                  <span className="matchBestOf">BEST OF 3</span>
+                  <span className={`matchStatusPill ${isVerified ? 'verified' : 'pending'}`}>
+                    {isVerified ? '✓ VERIFIED' : '⏳ PENDING REVIEW'}
+                  </span>
+                </div>
+
+                <div className="matchCardVersus">
+                  <div className="teamBlock home">
+                    <span className="teamCodeBadge">{m.homeCode}</span>
+                    <b className="teamName">{m.homeName}</b>
+                  </div>
+
+                  <div className="scoreBlock">
+                    <strong>
+                      {m.homeScore !== null && m.awayScore !== null
+                        ? `${m.homeScore} – ${m.awayScore}`
+                        : 'VS'}
+                    </strong>
+                  </div>
+
+                  <div className="teamBlock away">
+                    <span className="teamCodeBadge">{m.awayCode}</span>
+                    <b className="teamName">{m.awayName}</b>
+                  </div>
+                </div>
+
+                <div className="matchCardActions">
+                  <button
+                    type="button"
+                    className="actionBtn"
+                    onClick={() => openResultEditor(m)}
+                  >
+                    {m.homeScore !== null ? '⚡ Edit Result & KDA' : '⚡ Enter Result & KDA'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 4. Weekly MVP Picker */}
+      <div className="adminMvpSection">
+        <div className="mvpSectionTitle">
+          <b>OFFICIAL WEEKLY MVP SELECTION</b>
+          <p>Confirm the regional league&apos;s official MVP before executing scoring — correct user predictions earn +100.</p>
+        </div>
+        <div className="mvpControls">
+          <input
+            value={mvpSearch}
+            onChange={e => setMvpSearch(e.target.value)}
+            placeholder="Search player handle…"
+          />
+          <select value={mvpPick} onChange={e => setMvpPick(e.target.value)}>
+            <option value="">-- SELECT OFFICIAL MVP --</option>
+            {roster
+              .filter(p => !mvpSearch || p.handle.toLowerCase().includes(mvpSearch.toLowerCase()))
+              .slice(0, 40)
+              .map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.handle} · {p.role}
+                </option>
+              ))}
+          </select>
+        </div>
+      </div>
+
+      {/* 5. Bottom Scoring Execution Bar */}
+      <div className="adminScoringExecution">
+        <div>
+          <b>{verified} / {matches.length} MATCHES VERIFIED</b>
+          <p>
+            {lastRun
+              ? `Last run: ${lastRun.lineups} lineups scored · ${lastRun.transactions} transactions recorded in ledger.`
+              : 'Official Scoring: Kills +3 · Assists +1 · Captain 2× multiplier. Immutable transaction ledger.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="primary runScoringBtn"
+          disabled={busy || verified === 0}
+          onClick={runScoring}
+        >
+          {busy ? 'PROCESSING SCORES…' : `RUN WEEK ${week?.number ?? ''} FANTASY SCORING`}
+        </button>
+      </div>
+
+      {/* =========================================================================
+          6. MODAL: Match Result & Divided Game KDAs (Game 1, Game 2, Game 3, Totals)
+         ========================================================================= */}
+      {openMatch && (
+        <div className="modalShade" onClick={() => setOpenMatch(null)}>
+          <div
+            className="modalCard adminResultModal modernResultModal"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="close"
+              onClick={() => setOpenMatch(null)}
+              aria-label="Close modal"
+            >
+              ×
+            </button>
+
+            <div className="modalTopBadge">
+              <span className="seasonTag"><i /> OFFICIAL MATCH RESULT & KDA VERIFICATION</span>
+            </div>
+
+            {/* Modal Matchup & Series Score */}
+            <div className="modalMatchHeader">
+              <div className="modalTeamIdentity">
+                <span className="teamPill">{openMatch.homeCode}</span>
+                <h2>{openMatch.homeName}</h2>
+              </div>
+              <div className="modalSeriesScore">
+                <input
+                  type="number"
+                  min={0}
+                  max={3}
+                  value={scores.home}
+                  placeholder="0"
+                  onChange={e => setScores(s => ({ ...s, home: e.target.value }))}
+                />
+                <span>:</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={3}
+                  value={scores.away}
+                  placeholder="0"
+                  onChange={e => setScores(s => ({ ...s, away: e.target.value }))}
+                />
+              </div>
+              <div className="modalTeamIdentity away">
+                <span className="teamPill">{openMatch.awayCode}</span>
+                <h2>{openMatch.awayName}</h2>
+              </div>
+            </div>
+
+            {/* Quick Score Presets */}
+            <div className="quickScorePresets">
+              <small>QUICK PRESETS:</small>
+              <button type="button" onClick={() => setScores({ home: '2', away: '0' })}>2 – 0</button>
+              <button type="button" onClick={() => setScores({ home: '2', away: '1' })}>2 – 1</button>
+              <button type="button" onClick={() => setScores({ home: '1', away: '2' })}>1 – 2</button>
+              <button type="button" onClick={() => setScores({ home: '0', away: '2' })}>0 – 2</button>
+            </div>
+
+            {/* Automation Toolbar: Auto-Fill & Quick Paste */}
+            <div className="modalAutomationBar">
+              <div className="automationLeft">
+                <button
+                  type="button"
+                  className="autoFillBtn"
+                  disabled={autoFilling || busy}
+                  onClick={autoFillFromApi}
+                >
+                  {autoFilling ? '⚡ FETCHING OFFICIAL STATS…' : '⚡ AUTO-FILL STATS FROM MATCH CENTER'}
+                </button>
+                <button
+                  type="button"
+                  className="pasteToggleBtn"
+                  onClick={() => setShowPasteBox(!showPasteBox)}
+                >
+                  📋 {showPasteBox ? 'Hide Paste Tool' : 'Quick Paste Scoreboard'}
+                </button>
+              </div>
+              <span className="automationHint">Official S18 Match Verification</span>
+            </div>
+
+            {/* Quick Paste Scoreboard Box */}
+            {showPasteBox && (
+              <div className="quickPasteBox">
+                <p>
+                  Paste scoreboard text from broadcast, stream recap, or Liquipedia (e.g. <i>Alberttt 8/1/6, Sanz 4/0/11</i>):
+                </p>
+                <textarea
+                  rows={3}
+                  value={pasteText}
+                  onChange={e => setPasteText(e.target.value)}
+                  placeholder="Paste player KDAs here (e.g. Sekys 6/1/5, Innocent 7/0/8)..."
+                />
+                <div className="quickPasteActions">
+                  <button type="button" className="applyPasteBtn" onClick={parseAndApplyPaste}>
+                    Parse & Apply to Current Tab
+                  </button>
+                  <button type="button" className="cancelPasteBtn" onClick={() => setShowPasteBox(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Game Navigation Tabs: Game 1, Game 2, Game 3, Series Totals */}
+            <div className="gameTabSelector">
+              <button
+                type="button"
+                className={activeTab === 'totals' ? 'active' : ''}
+                onClick={() => setActiveTab('totals')}
+              >
+                📊 SERIES TOTALS (SUM)
+              </button>
+              <button
+                type="button"
+                className={activeTab === 'game1' ? 'active' : ''}
+                onClick={() => setActiveTab('game1')}
+              >
+                🎮 GAME 1
+              </button>
+              <button
+                type="button"
+                className={activeTab === 'game2' ? 'active' : ''}
+                onClick={() => setActiveTab('game2')}
+              >
+                🎮 GAME 2
+              </button>
+              <button
+                type="button"
+                className={activeTab === 'game3' ? 'active' : ''}
+                onClick={() => setActiveTab('game3')}
+              >
+                🎮 GAME 3
+              </button>
+            </div>
+
+            <div className="tabExplanation">
+              {activeTab === 'totals' ? (
+                <span>Aggregated Series Totals (Sum of all games played). You can also edit totals directly.</span>
+              ) : (
+                <span>
+                  Editing <b>{activeTab.toUpperCase()}</b> stats. Entering kills/deaths/assists here automatically sums into Series Totals!
+                </span>
+              )}
+            </div>
+
+            {/* Divided Teams Table: Home Team & Away Team */}
+            <div className="modalTeamsSplit">
+              {/* HOME TEAM */}
+              <div className="teamColumnBlock">
+                <div className="teamColumnHead">
+                  <span className="teamCodeBadge">{openMatch.homeCode}</span>
+                  <b>{openMatch.homeName}</b>
+                  <small>5 ROSTER STARTERS</small>
+                </div>
+
+                <div className="kdaTableHeader">
+                  <span className="colPlayer">PLAYER & ROLE</span>
+                  <span className="colStat">K</span>
+                  <span className="colStat">D</span>
+                  <span className="colStat">A</span>
+                  <span className="colKda">KDA</span>
+                </div>
+
+                <div className="kdaRows">
+                  {homePlayers.map(p => {
+                    const k = getStatValue(p.id, 'kills');
+                    const d = getStatValue(p.id, 'deaths');
+                    const a = getStatValue(p.id, 'assists');
+                    const kdaStr = calculateKda(k, d, a);
+                    return (
+                      <div className="kdaRow" key={p.id}>
+                        <div className="playerMeta">
+                          <span className={`roleBadge role-${p.role.toLowerCase()}`}>{p.role}</span>
+                          <b>{p.handle}</b>
+                        </div>
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={k}
+                          onChange={e => updateStat(p.id, 'kills', e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={d}
+                          onChange={e => updateStat(p.id, 'deaths', e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={a}
+                          onChange={e => updateStat(p.id, 'assists', e.target.value)}
+                        />
+                        <span className="kdaRatioPill">{kdaStr}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* AWAY TEAM */}
+              <div className="teamColumnBlock">
+                <div className="teamColumnHead">
+                  <span className="teamCodeBadge">{openMatch.awayCode}</span>
+                  <b>{openMatch.awayName}</b>
+                  <small>5 ROSTER STARTERS</small>
+                </div>
+
+                <div className="kdaTableHeader">
+                  <span className="colPlayer">PLAYER & ROLE</span>
+                  <span className="colStat">K</span>
+                  <span className="colStat">D</span>
+                  <span className="colStat">A</span>
+                  <span className="colKda">KDA</span>
+                </div>
+
+                <div className="kdaRows">
+                  {awayPlayers.map(p => {
+                    const k = getStatValue(p.id, 'kills');
+                    const d = getStatValue(p.id, 'deaths');
+                    const a = getStatValue(p.id, 'assists');
+                    const kdaStr = calculateKda(k, d, a);
+                    return (
+                      <div className="kdaRow" key={p.id}>
+                        <div className="playerMeta">
+                          <span className={`roleBadge role-${p.role.toLowerCase()}`}>{p.role}</span>
+                          <b>{p.handle}</b>
+                        </div>
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={k}
+                          onChange={e => updateStat(p.id, 'kills', e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={d}
+                          onChange={e => updateStat(p.id, 'deaths', e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          value={a}
+                          onChange={e => updateStat(p.id, 'assists', e.target.value)}
+                        />
+                        <span className="kdaRatioPill">{kdaStr}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Bottom Save Bar */}
+            <div className="modalSaveBar">
+              <div className="modalSaveInfo">
+                <span>VERIFICATION CHECKLIST</span>
+                <p>Series score and 10 player K/D/A stats will be committed to the official database.</p>
+              </div>
+              <button
+                type="button"
+                className="primary saveConfirmBtn"
+                disabled={busy}
+                onClick={saveResult}
+              >
+                {busy ? 'SAVING VERIFIED STATS…' : '✓ VERIFY & SAVE RESULT'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }
