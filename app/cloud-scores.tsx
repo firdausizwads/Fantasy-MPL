@@ -203,25 +203,52 @@ export function CloudLeaderboard({
 
   const myIndex = rows.findIndex(r => r.user_id === userId);
 
-  return <section className="panel standingsPanel">
-    <div className="standingsHead">
+  return <section className="panel standingsPanel modernLeaderboardPanel">
+    <div className="standingsHead modernStandingsHead">
       <div>
-        <span className="adminCloudTag">● OFFICIAL LEDGER · EVERY POINT TRACEABLE</span>
-        <h2>Regional leaderboard</h2>
+        <span className="adminCloudTag">● OFFICIAL REGIONAL LEDGER</span>
+        <h2>Regional Leaderboard</h2>
+        <p className="modernStandingsSub">Official standings for {region} fantasy managers.</p>
       </div>
       {myIndex >= 0 && <span className="myRankPill">YOUR RANK · #{myIndex + 1}</span>}
     </div>
     {rows.length === 0
-      ? <p className="adminEmptyNote">No scored results yet. The board fills after the first admin scoring run.</p>
-      : <div className="standingsTable">
-          <div className="standingsHeader boardCols"><span>#</span><span>MANAGER</span><span>PRED</span><span>FANTASY</span><span>TOTAL</span></div>
-          {rows.map((r, i) => <div className={`standingsRow boardCols ${r.user_id === userId ? 'me' : ''}`} key={r.user_id}>
-            <span className={`standRank r${i + 1}`}>{i + 1}</span>
-            <b>{countryOf(r.country_code)} {r.manager_name}{r.user_id === userId ? ' · YOU' : ''}</b>
-            <em>{Number(r.prediction_points || 0).toLocaleString()}</em>
-            <em>{Number(r.fantasy_points || 0).toLocaleString()}</em>
-            <strong>{Number(r.total_points).toLocaleString()}</strong>
-          </div>)}
+      ? <div className="adminEmptyNote" style={{ padding: '24px', textAlign: 'center' }}>
+          <p>No scored results yet. The leaderboard fills after official match scoring.</p>
+        </div>
+      : <div className="standingsTable modernSimpleTable">
+          <div className="standingsHeader simpleBoardCols">
+            <span>#</span>
+            <span>MANAGER</span>
+            <span style={{ textAlign: 'center' }}>FANTASY SCORES</span>
+            <span style={{ textAlign: 'center' }}>PREDICTION SCORES</span>
+            <span style={{ textAlign: 'right' }}>TOTAL SCORES</span>
+          </div>
+          {rows.map((r, i) => {
+            const rank = i + 1;
+            const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
+            return (
+              <div className={`standingsRow simpleBoardCols ${r.user_id === userId ? 'me' : ''}`} key={r.user_id}>
+                <span className={`standRank ${rankClass}`}>{rank}</span>
+                <div className="managerNameWrapper">
+                  {countryOf(r.country_code)}
+                  <b>{r.manager_name}</b>
+                  {r.user_id === userId && <small className="youBadge">YOU</small>}
+                </div>
+                <span className="simpleScoreCol fantasy">
+                  {Number(r.fantasy_points || 0).toLocaleString()} <small>PTS</small>
+                </span>
+                <span className="simpleScoreCol pred">
+                  {Number(r.prediction_points || 0).toLocaleString()} <small>PTS</small>
+                </span>
+                <div className="simpleTotalScoreWrapper">
+                  <strong className="simpleTotalPill">
+                    {Number(r.total_points).toLocaleString()} <small>PTS</small>
+                  </strong>
+                </div>
+              </div>
+            );
+          })}
         </div>}
   </section>;
 }

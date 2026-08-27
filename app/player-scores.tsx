@@ -46,13 +46,13 @@ export interface PlayerScoreItem {
   matchBreakdown: MatchBreakdownItem[];
 }
 
-const REGION_META: Record<Region, { name: string; flagFile: string; timezone: string }> = {
+export const REGION_META: Record<Region, { name: string; flagFile: string; timezone: string }> = {
   MY: { name: 'MPL Malaysia', flagFile: 'my.svg', timezone: 'MYT' },
   ID: { name: 'MPL Indonesia', flagFile: 'id.svg', timezone: 'WIB' },
   PH: { name: 'MPL Philippines', flagFile: 'ph.svg', timezone: 'PHT' }
 };
 
-function normalizeRole(role: string): Role {
+export function normalizeRole(role: string): Role {
   const r = role.toLowerCase();
   if (r.includes('gold')) return 'GOLD';
   if (r.includes('roam')) return 'ROAM';
@@ -69,160 +69,158 @@ const TEAM_INDEX: Record<string, { name: string; logo: string; region: Region }>
   });
 });
 
-function getPlayerPhoto(handle: string, region?: Region): string | undefined {
+export function getPlayerPhoto(handle: string, region?: Region): string | undefined {
   const match = officialPlayers.find(p =>
     (!region || p.region === region) && p.name.toLowerCase() === handle.toLowerCase()
   ) || officialPlayers.find(p => p.name.toLowerCase() === handle.toLowerCase());
   return match?.photo || undefined;
 }
 
-// Generate realistic starter stats for preview/fallback mode
-function generatePreviewStats(): PlayerScoreItem[] {
+// Generate realistic starter stats strictly for a given region (no mixing)
+export function generateRegionalPreviewStats(region: Region): PlayerScoreItem[] {
   const items: PlayerScoreItem[] = [];
+  const teams = officialTeams[region];
+  const regionPlayers = officialPlayers.filter(p => p.region === region);
 
-  const REGIONS_LIST: Region[] = ['MY', 'ID', 'PH'];
+  teams.forEach(team => {
+    const roster = regionPlayers.filter(p => p.team === team.code);
+    const assignedRoles = new Set<Role>();
 
-  REGIONS_LIST.forEach(region => {
-    const teams = officialTeams[region];
-    const regionPlayers = officialPlayers.filter(p => p.region === region);
+    // Sort by broadcast role order: GOLD, ROAM, MID, JUNGLE, EXP
+    const sortedRoster = [...roster].sort((a, b) => {
+      const rA = BROADCAST_ROLE_ORDER.indexOf(normalizeRole(a.role));
+      const rB = BROADCAST_ROLE_ORDER.indexOf(normalizeRole(b.role));
+      return (rA === -1 ? 99 : rA) - (rB === -1 ? 99 : rB);
+    });
 
-    teams.forEach(team => {
-      const roster = regionPlayers.filter(p => p.team === team.code);
-      const assignedRoles = new Set<Role>();
+    sortedRoster.forEach(p => {
+      const normRole = normalizeRole(p.role);
+      const isStarter = !assignedRoles.has(normRole);
+      if (isStarter) assignedRoles.add(normRole);
 
-      // Sort by broadcast role order: GOLD, ROAM, MID, JUNGLE, EXP
-      const sortedRoster = [...roster].sort((a, b) => {
-        const rA = BROADCAST_ROLE_ORDER.indexOf(normalizeRole(a.role));
-        const rB = BROADCAST_ROLE_ORDER.indexOf(normalizeRole(b.role));
-        return (rA === -1 ? 99 : rA) - (rB === -1 ? 99 : rB);
-      });
-
-      sortedRoster.forEach((p, idx) => {
-        const normRole = normalizeRole(p.role);
-        const isStarter = !assignedRoles.has(normRole);
-        if (isStarter) assignedRoles.add(normRole);
-
-        if (isStarter) {
-          // Starter earns points based on role and hash
-          let hash = 0;
-          for (let i = 0; i < p.name.length; i++) {
-            hash = (hash * 31 + p.name.charCodeAt(i)) % 1000;
-          }
-
-          let kills = 0;
-          let deaths = 0;
-          let assists = 0;
-
-          if (normRole === 'JUNGLE') {
-            kills = 8 + (hash % 8);
-            deaths = 2 + (hash % 4);
-            assists = 9 + (hash % 7);
-          } else if (normRole === 'GOLD') {
-            kills = 9 + (hash % 9);
-            deaths = 2 + (hash % 3);
-            assists = 7 + (hash % 6);
-          } else if (normRole === 'MID') {
-            kills = 5 + (hash % 5);
-            deaths = 3 + (hash % 3);
-            assists = 14 + (hash % 10);
-          } else if (normRole === 'ROAM') {
-            kills = 1 + (hash % 3);
-            deaths = 3 + (hash % 4);
-            assists = 18 + (hash % 12);
-          } else {
-            // EXP
-            kills = 6 + (hash % 6);
-            deaths = 3 + (hash % 4);
-            assists = 10 + (hash % 8);
-          }
-
-          // Formula: Kills * 3 + Assists * 1
-          const fantasyScore = (kills * 3) + (assists * 1);
-          const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
-          const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
-
-          const breakdown: MatchBreakdownItem[] = [
-            {
-              matchId: `prev-${region}-${team.code}-1`,
-              opponentCode: 'OPP',
-              opponentName: 'MPL Opponent',
-              opponentLogo: '/leagues/thumb/mpl-my.webp',
-              date: '16 Aug 2026',
-              seriesScore: '2–1',
-              kills: Math.round(kills * 0.55),
-              deaths: Math.max(1, Math.round(deaths * 0.5)),
-              assists: Math.round(assists * 0.52),
-              score: Math.round(fantasyScore * 0.54),
-              games: [
-                { game: 1, kills: Math.round(kills * 0.3), deaths: 1, assists: Math.round(assists * 0.3) },
-                { game: 2, kills: Math.round(kills * 0.25), deaths: 1, assists: Math.round(assists * 0.22) }
-              ]
-            },
-            {
-              matchId: `prev-${region}-${team.code}-2`,
-              opponentCode: 'RIV',
-              opponentName: 'MPL Rival',
-              opponentLogo: '/leagues/thumb/mpl-id.webp',
-              date: '17 Aug 2026',
-              seriesScore: '2–0',
-              kills: Math.round(kills * 0.45),
-              deaths: Math.max(1, Math.round(deaths * 0.5)),
-              assists: Math.round(assists * 0.48),
-              score: Math.round(fantasyScore * 0.46),
-              games: [
-                { game: 1, kills: Math.round(kills * 0.25), deaths: 1, assists: Math.round(assists * 0.25) },
-                { game: 2, kills: Math.round(kills * 0.2), deaths: 0, assists: Math.round(assists * 0.23) }
-              ]
-            }
-          ];
-
-          items.push({
-            playerId: `player-${region}-${team.code}-${p.name}`,
-            handle: p.name,
-            role: normRole,
-            region,
-            teamCode: team.code,
-            teamName: team.name,
-            teamLogo: team.logo || undefined,
-            photoUrl: p.photo || undefined,
-            matchesPlayed: 2,
-            kills,
-            deaths,
-            assists,
-            fantasyScore,
-            kdaRatio,
-            kdaNumber: kdaNum,
-            isStarter: true,
-            matchBreakdown: breakdown
-          });
-        } else {
-          // Substitute / Bench player: Strictly 0 stats / DNP!
-          items.push({
-            playerId: `player-${region}-${team.code}-${p.name}`,
-            handle: p.name,
-            role: normRole,
-            region,
-            teamCode: team.code,
-            teamName: team.name,
-            teamLogo: team.logo || undefined,
-            photoUrl: p.photo || undefined,
-            matchesPlayed: 0,
-            kills: 0,
-            deaths: 0,
-            assists: 0,
-            fantasyScore: 0,
-            kdaRatio: '0.00',
-            kdaNumber: 0,
-            isStarter: false,
-            matchBreakdown: []
-          });
+      if (isStarter) {
+        let hash = 0;
+        for (let i = 0; i < p.name.length; i++) {
+          hash = (hash * 31 + p.name.charCodeAt(i)) % 1000;
         }
-      });
+
+        let kills = 0;
+        let deaths = 0;
+        let assists = 0;
+
+        if (normRole === 'JUNGLE') {
+          kills = 8 + (hash % 8);
+          deaths = 2 + (hash % 4);
+          assists = 9 + (hash % 7);
+        } else if (normRole === 'GOLD') {
+          kills = 9 + (hash % 9);
+          deaths = 2 + (hash % 3);
+          assists = 7 + (hash % 6);
+        } else if (normRole === 'MID') {
+          kills = 5 + (hash % 5);
+          deaths = 3 + (hash % 3);
+          assists = 14 + (hash % 10);
+        } else if (normRole === 'ROAM') {
+          kills = 1 + (hash % 3);
+          deaths = 3 + (hash % 4);
+          assists = 18 + (hash % 12);
+        } else {
+          // EXP
+          kills = 6 + (hash % 6);
+          deaths = 3 + (hash % 4);
+          assists = 10 + (hash % 8);
+        }
+
+        // Official fantasy formula: Kills * 3 + Assists * 1
+        const fantasyScore = (kills * 3) + (assists * 1);
+        const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
+        const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
+
+        const breakdown: MatchBreakdownItem[] = [
+          {
+            matchId: `prev-${region}-${team.code}-1`,
+            opponentCode: 'OPP',
+            opponentName: `${region} Opponent`,
+            opponentLogo: '/leagues/thumb/mpl-my.webp',
+            date: 'Week 1',
+            seriesScore: '2–1',
+            kills: Math.round(kills * 0.55),
+            deaths: Math.max(1, Math.round(deaths * 0.5)),
+            assists: Math.round(assists * 0.52),
+            score: Math.round(fantasyScore * 0.54),
+            games: [
+              { game: 1, kills: Math.round(kills * 0.3), deaths: 1, assists: Math.round(assists * 0.3) },
+              { game: 2, kills: Math.round(kills * 0.25), deaths: 1, assists: Math.round(assists * 0.22) }
+            ]
+          },
+          {
+            matchId: `prev-${region}-${team.code}-2`,
+            opponentCode: 'RIV',
+            opponentName: `${region} Rival`,
+            opponentLogo: '/leagues/thumb/mpl-id.webp',
+            date: 'Week 1',
+            seriesScore: '2–0',
+            kills: Math.round(kills * 0.45),
+            deaths: Math.max(1, Math.round(deaths * 0.5)),
+            assists: Math.round(assists * 0.48),
+            score: Math.round(fantasyScore * 0.46),
+            games: [
+              { game: 1, kills: Math.round(kills * 0.25), deaths: 1, assists: Math.round(assists * 0.25) },
+              { game: 2, kills: Math.round(kills * 0.2), deaths: 0, assists: Math.round(assists * 0.23) }
+            ]
+          }
+        ];
+
+        items.push({
+          playerId: `player-${region}-${team.code}-${p.name}`,
+          handle: p.name,
+          role: normRole,
+          region,
+          teamCode: team.code,
+          teamName: team.name,
+          teamLogo: team.logo || undefined,
+          photoUrl: p.photo || undefined,
+          matchesPlayed: 2,
+          kills,
+          deaths,
+          assists,
+          fantasyScore,
+          kdaRatio,
+          kdaNumber: kdaNum,
+          isStarter: true,
+          matchBreakdown: breakdown
+        });
+      } else {
+        // Substitute / Bench player: Strictly 0 stats / DNP!
+        items.push({
+          playerId: `player-${region}-${team.code}-${p.name}`,
+          handle: p.name,
+          role: normRole,
+          region,
+          teamCode: team.code,
+          teamName: team.name,
+          teamLogo: team.logo || undefined,
+          photoUrl: p.photo || undefined,
+          matchesPlayed: 0,
+          kills: 0,
+          deaths: 0,
+          assists: 0,
+          fantasyScore: 0,
+          kdaRatio: '0.00',
+          kdaNumber: 0,
+          isStarter: false,
+          matchBreakdown: []
+        });
+      }
     });
   });
 
   return items;
 }
+
+// ---------------------------------------------------------------------------
+// Main Player Scores Leaderboard Component
+// ---------------------------------------------------------------------------
 
 export default function PlayerScores({
   region: initialRegion,
@@ -233,23 +231,22 @@ export default function PlayerScores({
   PageBanner?: React.ComponentType<{ tag: string; title: string; copy: string; side: React.ReactNode; sideLabel: string }>;
   onNavigate?: (view: any) => void;
 }) {
-  const [selectedRegion, setSelectedRegion] = useState<Region | 'ALL'>(initialRegion);
-  const [selectedWeek, setSelectedWeek] = useState<string>('ALL');
+  // Requirement 4: Strictly region-based (Malaysia shows Malaysia, ID shows ID, PH shows PH) - NO "ALL" combination!
+  const [selectedRegion, setSelectedRegion] = useState<Region>(initialRegion);
   const [selectedRole, setSelectedRole] = useState<Role | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'score' | 'kills' | 'assists' | 'kda' | 'matches'>('score');
-  const [hideBench, setHideBench] = useState(true);
   const [loading, setLoading] = useState(true);
   const [isLiveCloud, setIsLiveCloud] = useState(false);
   const [playerScores, setPlayerScores] = useState<PlayerScoreItem[]>([]);
   const [activeModalPlayer, setActiveModalPlayer] = useState<PlayerScoreItem | null>(null);
 
-  // Sync if initialRegion changes
+  // Sync when initialRegion changes
   useEffect(() => {
     setSelectedRegion(initialRegion);
   }, [initialRegion]);
 
-  // Load data from Supabase or generate realistic fallback
+  // Load data for the selected region strictly
   useEffect(() => {
     let mounted = true;
 
@@ -258,7 +255,7 @@ export default function PlayerScores({
 
       if (!supabase) {
         if (mounted) {
-          setPlayerScores(generatePreviewStats());
+          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
           setIsLiveCloud(false);
           setLoading(false);
         }
@@ -266,19 +263,17 @@ export default function PlayerScores({
       }
 
       try {
-        // 1. Try get_player_scores_leaderboard RPC if available
-        const targetRegionParam = selectedRegion === 'ALL' ? null : selectedRegion;
+        // 1. Try get_player_scores_leaderboard RPC
         const { data: rpcRows, error: rpcErr } = await (supabase as any).rpc('get_player_scores_leaderboard', {
-          target_region: targetRegionParam,
+          target_region: selectedRegion,
           target_week: null
         });
 
         if (!rpcErr && Array.isArray(rpcRows) && rpcRows.length > 0) {
-          // Format RPC rows
           const formatted: PlayerScoreItem[] = rpcRows.map((r: any) => {
             const role = normalizeRole(r.role || 'MID');
-            const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region: r.region_code as Region };
-            const photo = r.photo_url || getPlayerPhoto(r.handle, r.region_code);
+            const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region: selectedRegion };
+            const photo = r.photo_url || getPlayerPhoto(r.handle, selectedRegion);
             const deaths = Number(r.deaths || 0);
             const kills = Number(r.kills || 0);
             const assists = Number(r.assists || 0);
@@ -290,7 +285,7 @@ export default function PlayerScores({
               playerId: r.player_id,
               handle: r.handle,
               role,
-              region: (r.region_code as Region) || 'MY',
+              region: selectedRegion,
               teamCode: r.team_code,
               teamName: teamMeta.name || r.team_code,
               teamLogo: r.team_logo_url || teamMeta.logo,
@@ -315,7 +310,7 @@ export default function PlayerScores({
           return;
         }
 
-        // 2. Direct Supabase Table Query Fallback
+        // 2. Direct Supabase Table Fallback
         const [
           { data: statsData, error: statsErr },
           { data: matchesData },
@@ -327,14 +322,12 @@ export default function PlayerScores({
         ]);
 
         if (!statsErr && Array.isArray(statsData) && statsData.length > 0) {
-          // Aggregate by player_id
           const playerMap = new Map<string, PlayerScoreItem>();
 
-          // Build roster lookup
           const rosterMap = new Map<string, any>();
           (rostersData || []).forEach((r: any) => {
-            if (r.player_id) {
-              const reg = r.season?.region_code as Region || 'MY';
+            const reg = r.season?.region_code as Region || 'MY';
+            if (r.player_id && reg === selectedRegion) {
               rosterMap.set(r.player_id, {
                 handle: r.player?.handle || 'PLAYER',
                 role: normalizeRole(r.role || 'MID'),
@@ -347,22 +340,14 @@ export default function PlayerScores({
             }
           });
 
-          // Match lookup
           const matchMap = new Map<string, any>();
           (matchesData || []).forEach((m: any) => {
             matchMap.set(m.id, m);
           });
 
           statsData.forEach((st: any) => {
-            const info = rosterMap.get(st.player_id) || {
-              handle: 'PLAYER',
-              role: 'MID' as Role,
-              region: 'MY' as Region,
-              teamCode: '',
-              teamName: '',
-              teamLogo: undefined,
-              photoUrl: undefined
-            };
+            const info = rosterMap.get(st.player_id);
+            if (!info) return; // Skip players not in selected region
 
             const match = matchMap.get(st.match_id);
             const isHome = match?.home_team_id === st.team_id;
@@ -395,7 +380,7 @@ export default function PlayerScores({
                 playerId: st.player_id,
                 handle: info.handle,
                 role: info.role,
-                region: info.region,
+                region: selectedRegion,
                 teamCode: info.teamCode,
                 teamName: info.teamName,
                 teamLogo: info.teamLogo,
@@ -421,34 +406,31 @@ export default function PlayerScores({
             }
           });
 
-          // Finalize KDA ratios
-          const finalRows = Array.from(playerMap.values()).map(p => {
-            const kdaNum = p.deaths === 0 ? (p.kills + p.assists) : Number(((p.kills + p.assists) / p.deaths).toFixed(2));
-            const kdaRatio = p.deaths === 0 ? `${p.kills + p.assists}.0 (Perfect)` : kdaNum.toFixed(2);
-            return {
-              ...p,
-              kdaNumber: kdaNum,
-              kdaRatio
-            };
-          });
+          if (playerMap.size > 0) {
+            const finalRows = Array.from(playerMap.values()).map(p => {
+              const kdaNum = p.deaths === 0 ? (p.kills + p.assists) : Number(((p.kills + p.assists) / p.deaths).toFixed(2));
+              const kdaRatio = p.deaths === 0 ? `${p.kills + p.assists}.0 (Perfect)` : kdaNum.toFixed(2);
+              return { ...p, kdaNumber: kdaNum, kdaRatio };
+            });
 
-          if (mounted) {
-            setPlayerScores(finalRows);
-            setIsLiveCloud(true);
-            setLoading(false);
+            if (mounted) {
+              setPlayerScores(finalRows);
+              setIsLiveCloud(true);
+              setLoading(false);
+            }
+            return;
           }
-          return;
         }
 
-        // 3. Fallback to preview stats if database has no rows
+        // 3. Fallback to regional preview
         if (mounted) {
-          setPlayerScores(generatePreviewStats());
+          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
           setIsLiveCloud(false);
           setLoading(false);
         }
-      } catch (e) {
+      } catch {
         if (mounted) {
-          setPlayerScores(generatePreviewStats());
+          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
           setIsLiveCloud(false);
           setLoading(false);
         }
@@ -459,16 +441,16 @@ export default function PlayerScores({
     return () => { mounted = false; };
   }, [selectedRegion]);
 
-  // Filter and sort items
+  // Filter and sort items strictly for the selected region
   const filteredItems = useMemo(() => {
     return playerScores
       .filter(item => {
-        // Region filter
-        if (selectedRegion !== 'ALL' && item.region !== selectedRegion) return false;
+        // Enforce region strictly
+        if (item.region !== selectedRegion) return false;
         // Role filter
         if (selectedRole !== 'ALL' && item.role !== selectedRole) return false;
-        // Bench filter
-        if (hideBench && !item.isStarter && item.fantasyScore === 0) return false;
+        // Bench filter: hide substitutes who have 0 pts
+        if (!item.isStarter && item.fantasyScore === 0) return false;
         // Search query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
@@ -503,37 +485,31 @@ export default function PlayerScores({
         }
         return 0;
       });
-  }, [playerScores, selectedRegion, selectedRole, hideBench, searchQuery, sortBy]);
+  }, [playerScores, selectedRegion, selectedRole, searchQuery, sortBy]);
 
-  // Top 3 Podium standouts
-  const podiumTop3 = useMemo(() => {
-    return filteredItems.slice(0, 3);
-  }, [filteredItems]);
-
+  // Top 3 Podium standouts for this region
+  const podiumTop3 = useMemo(() => filteredItems.slice(0, 3), [filteredItems]);
   const topScorer = filteredItems[0];
-  const totalScoredPoints = useMemo(() => {
-    return filteredItems.reduce((acc, p) => acc + p.fantasyScore, 0);
-  }, [filteredItems]);
 
   return (
     <div className="page playerScoresWrap">
       {PageBanner ? (
         <PageBanner
-          tag="VERIFIED KDA · FANTASY LEADERBOARD"
+          tag={`${REGION_META[selectedRegion].name.toUpperCase()} · PLAYER SCORES`}
           title="Player Scores"
-          copy="Leaderboard ranking official pro players by fantasy points earned: +3 pts per Kill, +1 pt per Assist. Bench substitutes receive 0 pts."
+          copy={`Official regional leaderboard ranking ${REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.`}
           side={topScorer ? `${topScorer.handle} · ${topScorer.fantasyScore} PTS` : '—'}
-          sideLabel="CURRENT TOP SCORER"
+          sideLabel="TOP REGIONAL SCORER"
         />
       ) : (
         <section className="pageBanner">
           <div>
-            <span className="seasonTag">● VERIFIED KDA · FANTASY LEADERBOARD</span>
+            <span className="seasonTag">● {REGION_META[selectedRegion].name.toUpperCase()} · PLAYER SCORES</span>
             <h1>Player Scores</h1>
-            <p>Leaderboard ranking official pro players by fantasy points earned: +3 pts per Kill, +1 pt per Assist. Bench substitutes receive 0 pts.</p>
+            <p>Official regional leaderboard ranking {REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.</p>
           </div>
           <div className="bannerSide">
-            <small>CURRENT TOP SCORER</small>
+            <small>TOP REGIONAL SCORER</small>
             <strong>{topScorer ? `${topScorer.handle} · ${topScorer.fantasyScore} PTS` : '—'}</strong>
           </div>
         </section>
@@ -541,9 +517,7 @@ export default function PlayerScores({
 
       {/* Tabs between Manager Leaderboard and Player Scores */}
       <div className="leaderboardTypeTabs">
-        <button
-          onClick={() => onNavigate && onNavigate('leaderboard')}
-        >
+        <button onClick={() => onNavigate && onNavigate('leaderboard')}>
           MANAGER RANKINGS
         </button>
         <button className="active">
@@ -551,28 +525,42 @@ export default function PlayerScores({
         </button>
       </div>
 
-      {/* Live Ledger Status Bar */}
+      {/* Requirement 4: Region Switcher Tabs (Strictly independent per region, no mixing!) */}
+      <div className="regionalTabsBar">
+        {(['MY', 'ID', 'PH'] as Region[]).map(reg => (
+          <button
+            key={reg}
+            className={`regionalTabBtn ${selectedRegion === reg ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(reg)}
+          >
+            <img src={`/flags/${REGION_META[reg].flagFile}`} alt="" width={18} height={13} />
+            <span>{REGION_META[reg].name}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Status Bar */}
       <div className="scoresSourceBar">
         <span className={`sourcePill ${isLiveCloud ? 'live' : 'preview'}`}>
           <i className="pulseDot" />
-          {isLiveCloud ? 'OFFICIAL VERIFIED LEDGER · REAL POST-MATCH DATA' : 'LOCAL VERIFIED STARTERS PREVIEW'}
+          {isLiveCloud ? `OFFICIAL VERIFIED LEDGER · ${REGION_META[selectedRegion].name.toUpperCase()}` : `VERIFIED STARTERS PREVIEW · ${REGION_META[selectedRegion].name.toUpperCase()}`}
         </span>
         <span className="scoresFormulaNote">
           SCORING RULE: KILLS × 3 + ASSISTS × 1 · BENCH PLAYERS DNP (0 PTS)
         </span>
       </div>
 
-      {/* Podium Showcase (Top 3 Players) */}
+      {/* Podium Showcase (Top 3 Players in Region) */}
       {podiumTop3.length >= 3 && (
         <section className="podiumGrid">
-          {/* #2 Rank Card */}
+          {/* #2 Rank (Silver) */}
           <div className="podiumCard rank2" onClick={() => setActiveModalPlayer(podiumTop3[1])}>
             <span className="podiumRankBadge">#2 SILVER</span>
             <div className="podiumAvatarWrap">
               {podiumTop3[1].photoUrl ? (
                 <img className="podiumAvatar" src={podiumTop3[1].photoUrl} alt={podiumTop3[1].handle} />
               ) : (
-                <div className="podiumAvatar" style={{ display: 'grid', placeItems: 'center', fontWeight: 900, color: 'var(--muted)' }}>
+                <div className="podiumAvatar fallback">
                   {podiumTop3[1].handle.slice(0, 2).toUpperCase()}
                 </div>
               )}
@@ -585,7 +573,7 @@ export default function PlayerScores({
             <h3 className="podiumHandle">{podiumTop3[1].handle}</h3>
             <div className="podiumMeta">
               <span className={`rolePill role-${podiumTop3[1].role.toLowerCase()}`}>{podiumTop3[1].role}</span>
-              <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--muted)' }}>{podiumTop3[1].teamCode}</span>
+              <span className="podiumTeamCode">{podiumTop3[1].teamCode}</span>
             </div>
             <div className="podiumScorePill">
               <strong>{podiumTop3[1].fantasyScore}</strong>
@@ -596,14 +584,14 @@ export default function PlayerScores({
             </div>
           </div>
 
-          {/* #1 Rank Card (Gold) */}
+          {/* #1 Rank (Gold) */}
           <div className="podiumCard rank1" onClick={() => setActiveModalPlayer(podiumTop3[0])}>
             <span className="podiumRankBadge">#1 GOLD · MVP</span>
             <div className="podiumAvatarWrap">
               {podiumTop3[0].photoUrl ? (
                 <img className="podiumAvatar" src={podiumTop3[0].photoUrl} alt={podiumTop3[0].handle} />
               ) : (
-                <div className="podiumAvatar" style={{ display: 'grid', placeItems: 'center', fontWeight: 900, color: 'var(--muted)' }}>
+                <div className="podiumAvatar fallback">
                   {podiumTop3[0].handle.slice(0, 2).toUpperCase()}
                 </div>
               )}
@@ -616,10 +604,10 @@ export default function PlayerScores({
             <h3 className="podiumHandle">{podiumTop3[0].handle}</h3>
             <div className="podiumMeta">
               <span className={`rolePill role-${podiumTop3[0].role.toLowerCase()}`}>{podiumTop3[0].role}</span>
-              <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--muted)' }}>{podiumTop3[0].teamCode}</span>
+              <span className="podiumTeamCode">{podiumTop3[0].teamCode}</span>
             </div>
-            <div className="podiumScorePill">
-              <strong style={{ color: '#e5b325', fontSize: '22px' }}>{podiumTop3[0].fantasyScore}</strong>
+            <div className="podiumScorePill gold">
+              <strong style={{ color: '#e5b325' }}>{podiumTop3[0].fantasyScore}</strong>
               <small>FANTASY PTS</small>
             </div>
             <div className="podiumKDA">
@@ -627,14 +615,14 @@ export default function PlayerScores({
             </div>
           </div>
 
-          {/* #3 Rank Card */}
+          {/* #3 Rank (Bronze) */}
           <div className="podiumCard rank3" onClick={() => setActiveModalPlayer(podiumTop3[2])}>
             <span className="podiumRankBadge">#3 BRONZE</span>
             <div className="podiumAvatarWrap">
               {podiumTop3[2].photoUrl ? (
                 <img className="podiumAvatar" src={podiumTop3[2].photoUrl} alt={podiumTop3[2].handle} />
               ) : (
-                <div className="podiumAvatar" style={{ display: 'grid', placeItems: 'center', fontWeight: 900, color: 'var(--muted)' }}>
+                <div className="podiumAvatar fallback">
                   {podiumTop3[2].handle.slice(0, 2).toUpperCase()}
                 </div>
               )}
@@ -647,7 +635,7 @@ export default function PlayerScores({
             <h3 className="podiumHandle">{podiumTop3[2].handle}</h3>
             <div className="podiumMeta">
               <span className={`rolePill role-${podiumTop3[2].role.toLowerCase()}`}>{podiumTop3[2].role}</span>
-              <span style={{ fontSize: '9px', fontWeight: 800, color: 'var(--muted)' }}>{podiumTop3[2].teamCode}</span>
+              <span className="podiumTeamCode">{podiumTop3[2].teamCode}</span>
             </div>
             <div className="podiumScorePill">
               <strong>{podiumTop3[2].fantasyScore}</strong>
@@ -660,32 +648,10 @@ export default function PlayerScores({
         </section>
       )}
 
-      {/* Interactive Controls & Filters */}
+      {/* Modern Filter Toolbar */}
       <section className="scoresToolbar">
-        {/* Top Row: Region & Role Filters */}
         <div className="toolbarRow">
-          {/* Region selector */}
-          <div className="filterGroup">
-            <span className="filterGroupLabel">REGION</span>
-            <button
-              className={`filterPill ${selectedRegion === 'ALL' ? 'active' : ''}`}
-              onClick={() => setSelectedRegion('ALL')}
-            >
-              ALL REGIONS
-            </button>
-            {(['MY', 'ID', 'PH'] as Region[]).map(reg => (
-              <button
-                key={reg}
-                className={`filterPill ${selectedRegion === reg ? 'active' : ''}`}
-                onClick={() => setSelectedRegion(reg)}
-              >
-                <img src={`/flags/${REGION_META[reg].flagFile}`} alt="" width={14} height={10} style={{ borderRadius: 2 }} />
-                {reg}
-              </button>
-            ))}
-          </div>
-
-          {/* Role selector in official broadcast order: GOLD, ROAM, MID, JUNGLE, EXP */}
+          {/* Role selector pills in official broadcast order */}
           <div className="filterGroup">
             <span className="filterGroupLabel">ROLE</span>
             <button
@@ -704,10 +670,7 @@ export default function PlayerScores({
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Bottom Row: Search, Sort, Bench Toggle */}
-        <div className="toolbarRow">
           {/* Search bar */}
           <div className="scoresSearchWrap">
             <span className="searchIcon">
@@ -719,7 +682,7 @@ export default function PlayerScores({
             <input
               className="scoresSearchInput"
               type="text"
-              placeholder="Search player handle or team code..."
+              placeholder={`Search ${REGION_META[selectedRegion].name} player or team...`}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -738,19 +701,10 @@ export default function PlayerScores({
             <option value="kda">Sort by: Highest KDA Ratio</option>
             <option value="matches">Sort by: Most Matches Played</option>
           </select>
-
-          {/* Bench filter pill */}
-          <button
-            className={`filterPill ${hideBench ? 'active' : ''}`}
-            onClick={() => setHideBench(!hideBench)}
-            title="Substitutes receive strictly 0 pts and do not dilute starter scores"
-          >
-            {hideBench ? 'ACTIVE STARTERS ONLY' : 'SHOWING BENCH SUBS (0 PTS)'}
-          </button>
         </div>
       </section>
 
-      {/* Main Leaderboard Table */}
+      {/* Main Modern Leaderboard Table */}
       <section className="playerScoresTableWrap">
         <div className="playerScoresTableHead">
           <span>#</span>
@@ -763,20 +717,20 @@ export default function PlayerScores({
           <span>A</span>
           <span>KDA</span>
           <span>SCORE</span>
-          <span>BREAKDOWN</span>
+          <span>ACTION</span>
         </div>
 
         {loading ? (
           <div className="scoresEmptyState">
             <span>⋯</span>
-            <h3>Loading verified scores…</h3>
-            <p>Fetching official KDA entries and compiling regional player rankings.</p>
+            <h3>Loading {REGION_META[selectedRegion].name} scores…</h3>
+            <p>Fetching official KDA entries from the verified scoring ledger.</p>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="scoresEmptyState">
             <span>∅</span>
             <h3>No players matched</h3>
-            <p>Try adjusting your search query, role filter, or region selection.</p>
+            <p>Try adjusting your search query or role filter for {REGION_META[selectedRegion].name}.</p>
           </div>
         ) : (
           filteredItems.map((item, index) => {
@@ -853,7 +807,7 @@ export default function PlayerScores({
 
                 {/* 10. Fantasy Score */}
                 <div className="rowScorePill">
-                  <strong>{item.fantasyScore}</strong>
+                  <strong>{item.fantasyScore} PTS</strong>
                 </div>
 
                 {/* 11. Details button */}
@@ -874,7 +828,7 @@ export default function PlayerScores({
         )}
       </section>
 
-      {/* Match Breakdown Modal */}
+      {/* Requirement 3: Detailed Match Breakdown Modal (Hardened Light & Dark Mode Contrast) */}
       {activeModalPlayer && (
         <div className="breakdownModalShade" onClick={() => setActiveModalPlayer(null)}>
           <div className="breakdownModalCard" onClick={e => e.stopPropagation()}>
@@ -891,7 +845,7 @@ export default function PlayerScores({
               {activeModalPlayer.photoUrl ? (
                 <img className="breakdownModalAvatar" src={activeModalPlayer.photoUrl} alt={activeModalPlayer.handle} />
               ) : (
-                <div className="breakdownModalAvatar" style={{ display: 'grid', placeItems: 'center', fontWeight: 900 }}>
+                <div className="breakdownModalAvatar fallback">
                   {activeModalPlayer.handle.slice(0, 2).toUpperCase()}
                 </div>
               )}
@@ -902,10 +856,10 @@ export default function PlayerScores({
                     {activeModalPlayer.role}
                   </span>
                   {activeModalPlayer.teamLogo && (
-                    <img src={activeModalPlayer.teamLogo} alt="" width={16} height={16} />
+                    <img src={activeModalPlayer.teamLogo} alt="" width={18} height={18} />
                   )}
                   <b>{activeModalPlayer.teamName} ({activeModalPlayer.teamCode})</b>
-                  <span>· {activeModalPlayer.region}</span>
+                  <span>· {REGION_META[activeModalPlayer.region].name}</span>
                 </p>
               </div>
             </div>
@@ -922,35 +876,35 @@ export default function PlayerScores({
               </div>
             </div>
 
-            {/* KDA Summary Overview */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
-              <div style={{ background: 'rgba(0,0,0,0.04)', padding: '10px', borderRadius: '8px', border: '1px solid var(--line)' }}>
-                <small style={{ fontSize: '7px', color: 'var(--muted)', fontWeight: 900, textTransform: 'uppercase' }}>KILLS</small>
-                <div style={{ fontSize: '14px', fontWeight: 900, color: '#ff536b' }}>{activeModalPlayer.kills}</div>
+            {/* 4 Stat Overview Boxes */}
+            <div className="statOverviewGrid">
+              <div className="statOverviewBox">
+                <small>TOTAL KILLS</small>
+                <div className="statNum kills">{activeModalPlayer.kills}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.04)', padding: '10px', borderRadius: '8px', border: '1px solid var(--line)' }}>
-                <small style={{ fontSize: '7px', color: 'var(--muted)', fontWeight: 900, textTransform: 'uppercase' }}>DEATHS</small>
-                <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--muted)' }}>{activeModalPlayer.deaths}</div>
+              <div className="statOverviewBox">
+                <small>TOTAL DEATHS</small>
+                <div className="statNum deaths">{activeModalPlayer.deaths}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.04)', padding: '10px', borderRadius: '8px', border: '1px solid var(--line)' }}>
-                <small style={{ fontSize: '7px', color: 'var(--muted)', fontWeight: 900, textTransform: 'uppercase' }}>ASSISTS</small>
-                <div style={{ fontSize: '14px', fontWeight: 900, color: '#60baff' }}>{activeModalPlayer.assists}</div>
+              <div className="statOverviewBox">
+                <small>TOTAL ASSISTS</small>
+                <div className="statNum assists">{activeModalPlayer.assists}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.04)', padding: '10px', borderRadius: '8px', border: '1px solid var(--line)' }}>
-                <small style={{ fontSize: '7px', color: 'var(--muted)', fontWeight: 900, textTransform: 'uppercase' }}>KDA RATIO</small>
-                <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--ink)' }}>{activeModalPlayer.kdaRatio}</div>
+              <div className="statOverviewBox">
+                <small>KDA RATIO</small>
+                <div className="statNum">{activeModalPlayer.kdaRatio}</div>
               </div>
             </div>
 
             {/* Match Breakdown List */}
             <div className="breakdownMatchesList">
-              <span style={{ fontSize: '9px', fontWeight: 900, letterSpacing: '0.6px', color: 'var(--muted)', textTransform: 'uppercase' }}>
+              <span className="breakdownSectionTitle">
                 MATCH BY MATCH BREAKDOWN ({activeModalPlayer.matchBreakdown.length} MATCHES)
               </span>
 
               {activeModalPlayer.matchBreakdown.length === 0 ? (
-                <p style={{ fontSize: '9px', color: 'var(--muted)' }}>
-                  Detailed game logs will be linked as series results are recorded.
+                <p className="noMatchesNote">
+                  Series match breakdowns populate as match days conclude.
                 </p>
               ) : (
                 activeModalPlayer.matchBreakdown.map((m, idx) => (
@@ -959,7 +913,7 @@ export default function PlayerScores({
                       <div className="breakdownOpponent">
                         {m.opponentLogo && <img src={m.opponentLogo} alt="" />}
                         <span>vs {m.opponentName} ({m.opponentCode})</span>
-                        <small style={{ color: 'var(--muted)', fontSize: '8px' }}>· {m.seriesScore}</small>
+                        <small>· {m.seriesScore}</small>
                       </div>
                       <span className="breakdownMatchScore">+{m.score} PTS</span>
                     </div>
@@ -971,21 +925,12 @@ export default function PlayerScores({
                       <span>Date: <b>{m.date}</b></span>
                     </div>
 
-                    {/* Per-game stats if available */}
+                    {/* Per-game breakdown */}
                     {Array.isArray(m.games) && m.games.length > 0 && (
-                      <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+                      <div className="perGameStrip">
                         {m.games.map(g => (
-                          <span
-                            key={g.game}
-                            style={{
-                              fontSize: '8px',
-                              background: 'rgba(0,0,0,0.06)',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              border: '1px solid var(--line)'
-                            }}
-                          >
-                            Game {g.game}: {g.kills}/{g.deaths}/{g.assists}
+                          <span key={g.game} className="gamePill">
+                            Game {g.game}: {g.kills} / {g.deaths} / {g.assists}
                           </span>
                         ))}
                       </div>
@@ -998,5 +943,173 @@ export default function PlayerScores({
         </div>
       )}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Requirement 5: Featured Player Scores Widget on Command Center Dashboard
+// ---------------------------------------------------------------------------
+
+export function DashboardPlayerScores({
+  region,
+  onViewAll
+}: {
+  region: Region;
+  onViewAll: () => void;
+}) {
+  const [topPlayers, setTopPlayers] = useState<PlayerScoreItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadTop() {
+      setLoading(true);
+
+      if (!supabase) {
+        if (mounted) {
+          const preview = generateRegionalPreviewStats(region);
+          setTopPlayers(preview.filter(p => p.isStarter).slice(0, 4));
+          setLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const { data: rpcRows } = await (supabase as any).rpc('get_player_scores_leaderboard', {
+          target_region: region,
+          target_week: null
+        });
+
+        if (Array.isArray(rpcRows) && rpcRows.length > 0) {
+          const items: PlayerScoreItem[] = rpcRows.slice(0, 4).map((r: any) => {
+            const role = normalizeRole(r.role || 'MID');
+            const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region };
+            const photo = r.photo_url || getPlayerPhoto(r.handle, region);
+            const deaths = Number(r.deaths || 0);
+            const kills = Number(r.kills || 0);
+            const assists = Number(r.assists || 0);
+            const kdaNum = deaths === 0 ? (kills + assists) : Number(((kills + assists) / deaths).toFixed(2));
+            const kdaRatio = deaths === 0 ? `${kills + assists}.0 (Perfect)` : kdaNum.toFixed(2);
+            const score = Number(r.fantasy_score || (kills * 3 + assists));
+
+            return {
+              playerId: r.player_id,
+              handle: r.handle,
+              role,
+              region,
+              teamCode: r.team_code,
+              teamName: teamMeta.name || r.team_code,
+              teamLogo: r.team_logo_url || teamMeta.logo,
+              photoUrl: photo,
+              matchesPlayed: Number(r.matches_played || 1),
+              kills,
+              deaths,
+              assists,
+              fantasyScore: score,
+              kdaRatio,
+              kdaNumber: kdaNum,
+              isStarter: true,
+              matchBreakdown: []
+            };
+          });
+
+          if (mounted) {
+            setTopPlayers(items);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Fallback
+        if (mounted) {
+          const preview = generateRegionalPreviewStats(region);
+          setTopPlayers(preview.filter(p => p.isStarter).slice(0, 4));
+          setLoading(false);
+        }
+      } catch {
+        if (mounted) {
+          const preview = generateRegionalPreviewStats(region);
+          setTopPlayers(preview.filter(p => p.isStarter).slice(0, 4));
+          setLoading(false);
+        }
+      }
+    }
+
+    loadTop();
+    return () => { mounted = false; };
+  }, [region]);
+
+  return (
+    <section className="panel dashboardPlayerScoresPanel">
+      <div className="dashboardScoresHead">
+        <div>
+          <span className="adminCloudTag">● {REGION_META[region].name.toUpperCase()} · FANTASY STANDOUTS</span>
+          <h2>Top Player Scores</h2>
+          <p>Highest scoring pro players ranked by verified match KDA (+3 Kills, +1 Assist)</p>
+        </div>
+        <button className="textBtn" onClick={onViewAll}>
+          VIEW ALL {REGION_META[region].name} SCORES →
+        </button>
+      </div>
+
+      <div className="dashboardScoresList">
+        {loading ? (
+          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--muted)', fontSize: '10px' }}>
+            Loading top regional players…
+          </div>
+        ) : topPlayers.length === 0 ? (
+          <div style={{ padding: '20px', textAlign: 'center', color: 'var(--muted)', fontSize: '10px' }}>
+            No player scores recorded for {REGION_META[region].name} yet.
+          </div>
+        ) : (
+          topPlayers.map((player, idx) => {
+            const rank = idx + 1;
+            const rankBadge = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
+            return (
+              <div className="dashboardScoreRow" key={player.playerId} onClick={onViewAll}>
+                <span className={`standRank ${rankBadge}`}>{rank}</span>
+                <div className="dashboardPlayerAvatarWrap">
+                  {player.photoUrl ? (
+                    <img className="dashboardPlayerAvatar" src={player.photoUrl} alt={player.handle} />
+                  ) : (
+                    <div className="dashboardPlayerAvatar fallback">
+                      {player.handle.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                  {player.teamLogo && (
+                    <span className="dashboardPlayerTeam">
+                      <img src={player.teamLogo} alt={player.teamCode} />
+                    </span>
+                  )}
+                </div>
+                <div className="dashboardPlayerMeta">
+                  <div className="dashboardHandleLine">
+                    <b>{player.handle}</b>
+                    <span className={`rolePill role-${player.role.toLowerCase()}`}>{player.role}</span>
+                  </div>
+                  <small>{player.teamName} ({player.teamCode})</small>
+                </div>
+                <div className="dashboardPlayerKDA">
+                  <span>K: <b>{player.kills}</b></span>
+                  <span>D: <b>{player.deaths}</b></span>
+                  <span>A: <b>{player.assists}</b></span>
+                  <small>({player.kdaRatio} KDA)</small>
+                </div>
+                <div className="dashboardPlayerScorePill">
+                  <strong>+{player.fantasyScore}</strong>
+                  <small>PTS</small>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <div className="dashboardScoresFoot">
+        <button className="primary wide" onClick={onViewAll}>
+          EXPLORE {REGION_META[region].name.toUpperCase()} PLAYER LEADERBOARD
+        </button>
+      </div>
+    </section>
   );
 }
