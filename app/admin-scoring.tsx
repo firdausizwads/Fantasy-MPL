@@ -155,9 +155,10 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   }, [weekId]);
 
   // Match Players split into Home & Away
+  // Ordered to match the official MPL post-game scoreboard: GOLD -> ROAM -> MID -> JUNGLE -> EXP
   const homeAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
-    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+    const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
     return roster
       .filter(p => p.teamId === openMatch.homeTeamId)
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
@@ -165,7 +166,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
   const awayAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
-    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+    const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
     return roster
       .filter(p => p.teamId === openMatch.awayTeamId)
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
@@ -204,11 +205,14 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     setAutoFillSourceNote(null);
 
     // Initial Starter Mapping: Exactly 1 player per role (5 total starters per team)
+    // Ordered to match official scoreboard: GOLD -> ROAM -> MID -> JUNGLE -> EXP
+    const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
     const starterMap: Record<string, boolean> = {};
     const homeAssigned = new Set<string>();
     const awayAssigned = new Set<string>();
 
-    const hList = roster.filter(p => p.teamId === match.homeTeamId);
+    const hList = roster.filter(p => p.teamId === match.homeTeamId)
+      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role));
     hList.forEach(p => {
       if (!homeAssigned.has(p.role)) {
         starterMap[p.id] = true;
@@ -218,7 +222,8 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       }
     });
 
-    const aList = roster.filter(p => p.teamId === match.awayTeamId);
+    const aList = roster.filter(p => p.teamId === match.awayTeamId)
+      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role));
     aList.forEach(p => {
       if (!awayAssigned.has(p.role)) {
         starterMap[p.id] = true;
@@ -996,7 +1001,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
                 <div className="kdaSectionLabel">
                   <span>ACTIVE LINEUP (SCORED)</span>
-                  <small>EXP · JGL · MID · GOLD · ROAM</small>
+                  <small>GOLD · ROAM · MID · JGL · EXP</small>
                 </div>
 
                 <div className="kdaTableHeader">
@@ -1086,7 +1091,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
                 <div className="kdaSectionLabel">
                   <span>ACTIVE LINEUP (SCORED)</span>
-                  <small>EXP · JGL · MID · GOLD · ROAM</small>
+                  <small>GOLD · ROAM · MID · JGL · EXP</small>
                 </div>
 
                 <div className="kdaTableHeader">

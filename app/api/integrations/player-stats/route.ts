@@ -147,9 +147,9 @@ export async function POST(request: NextRequest) {
 
     const matchSeed = Math.abs(match.id.split('-').reduce((acc, part) => acc + parseInt(part, 16) || 1, 0));
 
-    // CRITICAL: Filter exactly 5 starters per team (1 EXP, 1 JUNGLE, 1 MID, 1 GOLD, 1 ROAM).
-    // Any bench/reserve players with duplicate roles MUST have played = false and 0 stats!
-    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+    // CRITICAL: Filter exactly 5 starters per team in official broadcast order:
+    // 1. GOLD, 2. ROAM, 3. MID, 4. JUNGLE, 5. EXP
+    const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
 
     const homeAssignedRoles = new Set<string>();
     const awayAssignedRoles = new Set<string>();
