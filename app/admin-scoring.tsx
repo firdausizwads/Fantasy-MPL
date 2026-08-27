@@ -35,6 +35,42 @@ type PlayerStatsState = {
 
 type ActiveViewTab = 'totals' | 'game1' | 'game2' | 'game3';
 
+function AdminIcon({ name }: { name: 'sync' | 'paste' | 'check' | 'clock' }) {
+  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  if (name === 'sync') {
+    return (
+      <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" {...common}>
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+      </svg>
+    );
+  }
+  if (name === 'paste') {
+    return (
+      <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" {...common}>
+        <rect x="8" y="2" width="8" height="4" rx="1" />
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <path d="M9 12h6M9 16h4" />
+      </svg>
+    );
+  }
+  if (name === 'check') {
+    return (
+      <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" {...common}>
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    );
+  }
+  if (name === 'clock') {
+    return (
+      <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" {...common}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    );
+  }
+  return null;
+}
+
 export default function AdminScoring({ region, notify }: { region: Region; notify: (message: string) => void }) {
   const [weeks, setWeeks] = useState<WeekOption[]>([]);
   const [weekId, setWeekId] = useState('');
@@ -319,7 +355,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       });
 
       setStats(draft);
-      notify('⚡ Stats auto-filled from official match center! Verify numbers and save.');
+      notify('Stats auto-filled from official match center. Please verify numbers and save.');
     } catch (err) {
       notify('Failed to connect to stats ingestion endpoint.');
     } finally {
@@ -467,7 +503,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     setMatches(prev => prev.map(m => m.id === openMatch.id
       ? { ...m, homeScore: home, awayScore: away, status: 'completed', resultState: 'verified' }
       : m));
-    notify(statErrors ? `Match saved · ${statErrors} player stat rows had issues.` : '✓ Match result & player KDAs verified and saved!');
+    notify(statErrors ? `Match saved · ${statErrors} player stat rows had issues.` : 'Match result & player KDAs verified and saved.');
   }
 
   // Fantasy Scoring Calculation Engine
@@ -527,7 +563,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       <div className="adminScoringHead">
         <div>
           <div className="adminScoringBadges">
-            <span className="adminCloudTag">● REGIONAL SCORING ENGINE</span>
+            <span className="adminCloudTag">REGIONAL SCORING ENGINE</span>
             <span className="adminSeasonPill">{region} · SEASON 18</span>
           </div>
           <h2>Official Results & Player KDA Verification</h2>
@@ -582,7 +618,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       <div className="adminMatchesGrid">
         <div className="adminMatchesHeader">
           <h3>MATCH FIXTURES & RESULTS</h3>
-          <span>Click &apos;Enter Result&apos; to view or auto-populate Game 1 / Game 2 KDAs</span>
+          <span>Select &apos;Enter Result&apos; to view or auto-populate Game 1 / Game 2 KDAs</span>
         </div>
 
         {matches.length === 0 && (
@@ -606,7 +642,8 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                   </span>
                   <span className="matchBestOf">BEST OF 3</span>
                   <span className={`matchStatusPill ${isVerified ? 'verified' : 'pending'}`}>
-                    {isVerified ? '✓ VERIFIED' : '⏳ PENDING REVIEW'}
+                    <AdminIcon name={isVerified ? 'check' : 'clock'} />
+                    {isVerified ? 'VERIFIED' : 'PENDING REVIEW'}
                   </span>
                 </div>
 
@@ -636,7 +673,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                     className="actionBtn"
                     onClick={() => openResultEditor(m)}
                   >
-                    {m.homeScore !== null ? '⚡ Edit Result & KDA' : '⚡ Enter Result & KDA'}
+                    {m.homeScore !== null ? 'Edit Result & KDA' : 'Enter Result & KDA'}
                   </button>
                 </div>
               </div>
@@ -710,7 +747,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
             </button>
 
             <div className="modalTopBadge">
-              <span className="seasonTag"><i /> OFFICIAL MATCH RESULT & KDA VERIFICATION</span>
+              <span className="seasonTag">OFFICIAL MATCH RESULT & KDA VERIFICATION</span>
             </div>
 
             {/* Modal Matchup & Series Score */}
@@ -762,14 +799,16 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                   disabled={autoFilling || busy}
                   onClick={autoFillFromApi}
                 >
-                  {autoFilling ? '⚡ FETCHING OFFICIAL STATS…' : '⚡ AUTO-FILL STATS FROM MATCH CENTER'}
+                  <AdminIcon name="sync" />
+                  {autoFilling ? 'FETCHING OFFICIAL STATS…' : 'AUTO-FILL STATS FROM MATCH CENTER'}
                 </button>
                 <button
                   type="button"
                   className="pasteToggleBtn"
                   onClick={() => setShowPasteBox(!showPasteBox)}
                 >
-                  📋 {showPasteBox ? 'Hide Paste Tool' : 'Quick Paste Scoreboard'}
+                  <AdminIcon name="paste" />
+                  {showPasteBox ? 'Hide Paste Tool' : 'Quick Paste Scoreboard'}
                 </button>
               </div>
               <span className="automationHint">Official S18 Match Verification</span>
@@ -805,28 +844,28 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 className={activeTab === 'totals' ? 'active' : ''}
                 onClick={() => setActiveTab('totals')}
               >
-                📊 SERIES TOTALS (SUM)
+                SERIES TOTALS (SUM)
               </button>
               <button
                 type="button"
                 className={activeTab === 'game1' ? 'active' : ''}
                 onClick={() => setActiveTab('game1')}
               >
-                🎮 GAME 1
+                GAME 1
               </button>
               <button
                 type="button"
                 className={activeTab === 'game2' ? 'active' : ''}
                 onClick={() => setActiveTab('game2')}
               >
-                🎮 GAME 2
+                GAME 2
               </button>
               <button
                 type="button"
                 className={activeTab === 'game3' ? 'active' : ''}
                 onClick={() => setActiveTab('game3')}
               >
-                🎮 GAME 3
+                GAME 3
               </button>
             </div>
 
@@ -967,7 +1006,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 disabled={busy}
                 onClick={saveResult}
               >
-                {busy ? 'SAVING VERIFIED STATS…' : '✓ VERIFY & SAVE RESULT'}
+                {busy ? 'SAVING VERIFIED STATS…' : 'VERIFY & SAVE RESULT'}
               </button>
             </div>
           </div>

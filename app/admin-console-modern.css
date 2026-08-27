@@ -256,7 +256,9 @@
 }
 
 .matchStatusPill {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 2px 7px;
   border-radius: 6px;
   font-size: 7px;
@@ -567,6 +569,9 @@
 }
 
 .autoFillBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 14px;
   border-radius: 8px;
   border: 0;
@@ -585,6 +590,9 @@
 }
 
 .pasteToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--admin-border);
