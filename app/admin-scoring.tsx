@@ -48,7 +48,7 @@ function AdminIcon({ name }: { name: 'sync' | 'paste' | 'check' | 'clock' }) {
     return (
       <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" {...common}>
         <rect x="8" y="2" width="8" height="4" rx="1" />
-        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2" />
         <path d="M9 12h6M9 16h4" />
       </svg>
     );
@@ -79,10 +79,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   const [openMatch, setOpenMatch] = useState<MatchRow | null>(null);
   const [scores, setScores] = useState<{ home: string; away: string }>({ home: '', away: '' });
   const [stats, setStats] = useState<PlayerStatsState>({});
+  const [activeStarters, setActiveStarters] = useState<Record<string, boolean>>({});
   const [activeTab, setActiveTab] = useState<ActiveViewTab>('totals');
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [autoFilling, setAutoFilling] = useState(false);
+  const [autoFillSourceNote, setAutoFillSourceNote] = useState<string | null>(null);
   const [showPasteBox, setShowPasteBox] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const [lastRun, setLastRun] = useState<{ lineups: number; transactions: number } | null>(null);
@@ -153,7 +155,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   }, [weekId]);
 
   // Match Players split into Home & Away
-  const homePlayers = useMemo(() => {
+  const homeAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
     const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
     return roster
@@ -161,7 +163,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
   }, [openMatch, roster]);
 
-  const awayPlayers = useMemo(() => {
+  const awayAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
     const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
     return roster
@@ -169,9 +171,25 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
   }, [openMatch, roster]);
 
+  const homeStarters = useMemo(() => {
+    return homeAllPlayers.filter(p => activeStarters[p.id]);
+  }, [homeAllPlayers, activeStarters]);
+
+  const homeBench = useMemo(() => {
+    return homeAllPlayers.filter(p => !activeStarters[p.id]);
+  }, [homeAllPlayers, activeStarters]);
+
+  const awayStarters = useMemo(() => {
+    return awayAllPlayers.filter(p => activeStarters[p.id]);
+  }, [awayAllPlayers, activeStarters]);
+
+  const awayBench = useMemo(() => {
+    return awayAllPlayers.filter(p => !activeStarters[p.id]);
+  }, [awayAllPlayers, activeStarters]);
+
   const matchPlayers = useMemo(() => {
-    return [...homePlayers, ...awayPlayers];
-  }, [homePlayers, awayPlayers]);
+    return [...homeAllPlayers, ...awayAllPlayers];
+  }, [homeAllPlayers, awayAllPlayers]);
 
   // Open Result Editor Modal
   async function openResultEditor(match: MatchRow) {
@@ -183,8 +201,37 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     setActiveTab('totals');
     setShowPasteBox(false);
     setPasteText('');
+    setAutoFillSourceNote(null);
 
-    if (!supabase) return;
+    // Initial Starter Mapping: Exactly 1 player per role (5 total starters per team)
+    const starterMap: Record<string, boolean> = {};
+    const homeAssigned = new Set<string>();
+    const awayAssigned = new Set<string>();
+
+    const hList = roster.filter(p => p.teamId === match.homeTeamId);
+    hList.forEach(p => {
+      if (!homeAssigned.has(p.role)) {
+        starterMap[p.id] = true;
+        homeAssigned.add(p.role);
+      } else {
+        starterMap[p.id] = false; // Bench sub
+      }
+    });
+
+    const aList = roster.filter(p => p.teamId === match.awayTeamId);
+    aList.forEach(p => {
+      if (!awayAssigned.has(p.role)) {
+        starterMap[p.id] = true;
+        awayAssigned.add(p.role);
+      } else {
+        starterMap[p.id] = false; // Bench sub
+      }
+    });
+
+    if (!supabase) {
+      setActiveStarters(starterMap);
+      return;
+    }
 
     // Fetch existing stats with deaths & games (graceful fallback if column not yet added)
     let data: any[] | null = null;
@@ -203,6 +250,11 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
     const draft: PlayerStatsState = {};
     (data || []).forEach((s) => {
+      // If player had recorded non-zero stats, confirm them as starter
+      if ((s.kills > 0 || s.assists > 0) && starterMap[s.player_id] === false) {
+        starterMap[s.player_id] = true;
+      }
+
       const gamesObj: Record<number, StatValues> = {};
       if (Array.isArray(s.games)) {
         s.games.forEach((g: any) => {
@@ -225,7 +277,26 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       };
     });
 
+    setActiveStarters(starterMap);
     setStats(draft);
+  }
+
+  // Toggle or swap bench player to active starter
+  function swapBenchToStarter(player: RosterPlayer) {
+    setActiveStarters(prev => {
+      const currentStatus = prev[player.id];
+      if (!currentStatus) {
+        // Find existing starter with the same role and swap
+        const teamPlayers = roster.filter(p => p.teamId === player.teamId && p.role === player.role);
+        const nextMap = { ...prev };
+        teamPlayers.forEach(p => { nextMap[p.id] = false; });
+        nextMap[player.id] = true;
+        return nextMap;
+      } else {
+        return { ...prev, [player.id]: false };
+      }
+    });
+    notify(`${player.handle} (${player.role}) is now active in the lineup.`);
   }
 
   // Update stat value in state (handles per-game and series totals)
@@ -237,7 +308,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       };
 
       if (activeTab === 'totals') {
-        // Direct series total edit
         return {
           ...prev,
           [playerId]: {
@@ -250,7 +320,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         };
       }
 
-      // Game-specific edit (Game 1, Game 2, Game 3)
       const gNum = activeTab === 'game1' ? 1 : activeTab === 'game2' ? 2 : 3;
       const gameStat = current.games[gNum] || { kills: '', deaths: '', assists: '' };
       const updatedGames = {
@@ -261,7 +330,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         }
       };
 
-      // Automatically recalculate series totals from game breakdown
       let sumK = 0, sumD = 0, sumA = 0;
       let hasAnyGameInput = false;
       for (let g = 1; g <= 3; g++) {
@@ -333,8 +401,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         });
       }
 
+      const starterMap: Record<string, boolean> = { ...activeStarters };
       const draft: PlayerStatsState = { ...stats };
+
       (result.players || []).forEach((p: any) => {
+        starterMap[p.player_id] = Boolean(p.is_starter);
+
         const gamesObj: Record<number, StatValues> = {};
         (p.games || []).forEach((g: any) => {
           gamesObj[g.game] = {
@@ -354,8 +426,10 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         };
       });
 
+      setActiveStarters(starterMap);
       setStats(draft);
-      notify('Stats auto-filled from official match center. Please verify numbers and save.');
+      setAutoFillSourceNote('Notice: Auto-Fill applied lane-role stats to the 5 starters. All bench substitutes are strictly locked to 0 (DNP). Please review before verifying.');
+      notify('Stats populated for the starting 5. Substitutes locked to 0.');
     } catch (err) {
       notify('Failed to connect to stats ingestion endpoint.');
     } finally {
@@ -369,6 +443,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     const lines = pasteText.split(/[\n,;]+/);
     let matched = 0;
     const draft = { ...stats };
+    const starterMap = { ...activeStarters };
 
     matchPlayers.forEach(p => {
       const handleLower = p.handle.toLowerCase();
@@ -381,6 +456,9 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
             const k = numMatch[1];
             const d = numMatch[2];
             const a = numMatch[3];
+
+            // If player appears in paste text, confirm them as a played starter
+            starterMap[p.id] = true;
 
             const current = draft[p.id] || {
               total: { kills: '0', deaths: '0', assists: '0' },
@@ -417,6 +495,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
     });
 
     if (matched > 0) {
+      setActiveStarters(starterMap);
       setStats(draft);
       notify(`Parsed and matched ${matched} player KDA records.`);
       setShowPasteBox(false);
@@ -450,17 +529,37 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
     let statErrors = 0;
     for (const player of matchPlayers) {
+      const isStarter = activeStarters[player.id];
+
+      // CRITICAL: Bench players who Did Not Play (DNP) must receive ZERO points
+      if (!isStarter) {
+        const { error: dnpError } = await supabase.rpc('admin_upsert_player_stat', {
+          target_match: openMatch.id,
+          target_player: player.id,
+          target_team: player.teamId,
+          kill_count: 0,
+          assist_count: 0,
+          death_count: 0,
+          games_breakdown: []
+        });
+        if (dnpError) {
+          await supabase.rpc('admin_upsert_player_stat', {
+            target_match: openMatch.id,
+            target_player: player.id,
+            target_team: player.teamId,
+            kill_count: 0,
+            assist_count: 0
+          });
+        }
+        continue;
+      }
+
       const pStat = stats[player.id];
       if (!pStat) continue;
 
       const killCount = parseInt(pStat.total.kills || '0', 10) || 0;
       const deathCount = parseInt(pStat.total.deaths || '0', 10) || 0;
       const assistCount = parseInt(pStat.total.assists || '0', 10) || 0;
-
-      // Skip completely empty draft rows
-      if (pStat.total.kills === '' && pStat.total.deaths === '' && pStat.total.assists === '') {
-        continue;
-      }
 
       // Convert games to structured JSON
       const gamesBreakdown = Object.entries(pStat.games || {})
@@ -472,7 +571,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         }))
         .sort((a, b) => a.game - b.game);
 
-      // Attempt enhanced RPC with death_count and games_breakdown
       const { error: upsertError } = await supabase.rpc('admin_upsert_player_stat', {
         target_match: openMatch.id,
         target_player: player.id,
@@ -484,7 +582,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       });
 
       if (upsertError) {
-        // Fallback for older database versions without migration 034 applied yet
         const { error: fallbackError } = await supabase.rpc('admin_upsert_player_stat', {
           target_match: openMatch.id,
           target_player: player.id,
@@ -800,7 +897,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                   onClick={autoFillFromApi}
                 >
                   <AdminIcon name="sync" />
-                  {autoFilling ? 'FETCHING OFFICIAL STATS…' : 'AUTO-FILL STATS FROM MATCH CENTER'}
+                  {autoFilling ? 'FETCHING STARTING 5 STATS…' : 'AUTO-FILL STARTING 5 STATS'}
                 </button>
                 <button
                   type="button"
@@ -811,8 +908,16 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                   {showPasteBox ? 'Hide Paste Tool' : 'Quick Paste Scoreboard'}
                 </button>
               </div>
-              <span className="automationHint">Official S18 Match Verification</span>
+              <span className="automationHint">Only Active Starters Receive Fantasy Points</span>
             </div>
+
+            {/* Notice Banner when Auto-Fill is applied */}
+            {autoFillSourceNote && (
+              <div className="autoFillNoticeBanner">
+                <span>PRESET</span>
+                <p>{autoFillSourceNote}</p>
+              </div>
+            )}
 
             {/* Quick Paste Scoreboard Box */}
             {showPasteBox && (
@@ -828,7 +933,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 />
                 <div className="quickPasteActions">
                   <button type="button" className="applyPasteBtn" onClick={parseAndApplyPaste}>
-                    Parse & Apply to Current Tab
+                    Parse & Apply to Active Players
                   </button>
                   <button type="button" className="cancelPasteBtn" onClick={() => setShowPasteBox(false)}>
                     Cancel
@@ -871,7 +976,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
             <div className="tabExplanation">
               {activeTab === 'totals' ? (
-                <span>Aggregated Series Totals (Sum of all games played). You can also edit totals directly.</span>
+                <span>Aggregated Series Totals (Sum of all games played). Only active starters receive points.</span>
               ) : (
                 <span>
                   Editing <b>{activeTab.toUpperCase()}</b> stats. Entering kills/deaths/assists here automatically sums into Series Totals!
@@ -886,7 +991,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 <div className="teamColumnHead">
                   <span className="teamCodeBadge">{openMatch.homeCode}</span>
                   <b>{openMatch.homeName}</b>
-                  <small>5 ROSTER STARTERS</small>
+                  <small>{homeStarters.length} STARTERS PLAYED</small>
+                </div>
+
+                <div className="kdaSectionLabel">
+                  <span>ACTIVE LINEUP (SCORED)</span>
+                  <small>EXP · JGL · MID · GOLD · ROAM</small>
                 </div>
 
                 <div className="kdaTableHeader">
@@ -898,7 +1008,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 </div>
 
                 <div className="kdaRows">
-                  {homePlayers.map(p => {
+                  {homeStarters.map(p => {
                     const k = getStatValue(p.id, 'kills');
                     const d = getStatValue(p.id, 'deaths');
                     const a = getStatValue(p.id, 'assists');
@@ -935,6 +1045,35 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                     );
                   })}
                 </div>
+
+                {/* Home Bench / Reserves (DNP - 0 points) */}
+                {homeBench.length > 0 && (
+                  <div className="benchContainer">
+                    <div className="benchNotice">
+                      BENCH / SUBSTITUTES (DID NOT PLAY — 0 FANTASY POINTS)
+                    </div>
+                    <div className="kdaRows">
+                      {homeBench.map(p => (
+                        <div className="kdaRow benchRow" key={p.id}>
+                          <div className="playerMeta">
+                            <span className="benchBadge">BENCH</span>
+                            <b>{p.handle}</b>
+                            <small>{p.role}</small>
+                          </div>
+                          <span className="kdaRatioPill">DNP (0 PTS)</span>
+                          <button
+                            type="button"
+                            className="subSwapBtn"
+                            onClick={() => swapBenchToStarter(p)}
+                            title="Swap this substitute into the active lineup"
+                          >
+                            Sub In
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* AWAY TEAM */}
@@ -942,7 +1081,12 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 <div className="teamColumnHead">
                   <span className="teamCodeBadge">{openMatch.awayCode}</span>
                   <b>{openMatch.awayName}</b>
-                  <small>5 ROSTER STARTERS</small>
+                  <small>{awayStarters.length} STARTERS PLAYED</small>
+                </div>
+
+                <div className="kdaSectionLabel">
+                  <span>ACTIVE LINEUP (SCORED)</span>
+                  <small>EXP · JGL · MID · GOLD · ROAM</small>
                 </div>
 
                 <div className="kdaTableHeader">
@@ -954,7 +1098,7 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                 </div>
 
                 <div className="kdaRows">
-                  {awayPlayers.map(p => {
+                  {awayStarters.map(p => {
                     const k = getStatValue(p.id, 'kills');
                     const d = getStatValue(p.id, 'deaths');
                     const a = getStatValue(p.id, 'assists');
@@ -991,14 +1135,43 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
                     );
                   })}
                 </div>
+
+                {/* Away Bench / Reserves (DNP - 0 points) */}
+                {awayBench.length > 0 && (
+                  <div className="benchContainer">
+                    <div className="benchNotice">
+                      BENCH / SUBSTITUTES (DID NOT PLAY — 0 FANTASY POINTS)
+                    </div>
+                    <div className="kdaRows">
+                      {awayBench.map(p => (
+                        <div className="kdaRow benchRow" key={p.id}>
+                          <div className="playerMeta">
+                            <span className="benchBadge">BENCH</span>
+                            <b>{p.handle}</b>
+                            <small>{p.role}</small>
+                          </div>
+                          <span className="kdaRatioPill">DNP (0 PTS)</span>
+                          <button
+                            type="button"
+                            className="subSwapBtn"
+                            onClick={() => swapBenchToStarter(p)}
+                            title="Swap this substitute into the active lineup"
+                          >
+                            Sub In
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Modal Bottom Save Bar */}
             <div className="modalSaveBar">
               <div className="modalSaveInfo">
-                <span>VERIFICATION CHECKLIST</span>
-                <p>Series score and 10 player K/D/A stats will be committed to the official database.</p>
+                <span>VERIFICATION SAFETY GUARANTEE</span>
+                <p>Only active starters receive fantasy points. Bench players are confirmed as 0 (DNP).</p>
               </div>
               <button
                 type="button"

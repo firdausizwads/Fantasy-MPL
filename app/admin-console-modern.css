@@ -958,3 +958,99 @@
     width: 100%;
   }
 }
+
+/* Starters vs Bench separation in Modal */
+.kdaSectionLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--admin-soft-strong);
+  border-bottom: 1px solid var(--admin-border);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: var(--admin-muted);
+}
+
+.kdaSectionLabel b {
+  color: var(--admin-text);
+}
+
+.benchContainer {
+  margin-top: 10px;
+  border-top: 1px dashed var(--admin-border);
+}
+
+.benchNotice {
+  padding: 6px 10px;
+  font-size: 7px;
+  color: var(--admin-faint);
+  background: var(--admin-soft);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.kdaRow.benchRow {
+  opacity: 0.72;
+  background: var(--admin-soft);
+}
+
+.kdaRow.benchRow:hover {
+  opacity: 1;
+}
+
+.benchBadge {
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: rgba(var(--admin-border-strong), 0.2);
+  color: var(--admin-muted);
+  border: 1px solid var(--admin-border);
+}
+
+.subSwapBtn {
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 7px;
+  font-weight: 900;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--region);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.subSwapBtn:hover {
+  background: var(--region-fill);
+  color: #fff;
+}
+
+.autoFillNoticeBanner {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: rgba(213, 166, 57, 0.1);
+  border: 1px solid rgba(213, 166, 57, 0.3);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.autoFillNoticeBanner span {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--admin-warning);
+  color: #000;
+  font-size: 7px;
+  font-weight: 900;
+}
+
+.autoFillNoticeBanner p {
+  margin: 0;
+  font-size: 8px !important;
+  color: var(--admin-text);
+  line-height: 1.4;
+}
+

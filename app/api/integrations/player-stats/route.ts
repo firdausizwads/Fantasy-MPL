@@ -17,6 +17,8 @@ interface PlayerResolvedStat {
   role: string;
   team_id: string;
   team_code: string;
+  is_starter: boolean;
+  played: boolean;
   kills: number;
   deaths: number;
   assists: number;
@@ -24,7 +26,7 @@ interface PlayerResolvedStat {
   games: PlayerGameStat[];
 }
 
-// Deterministic realistic KDA generator based on match seed and role
+// Deterministic lane stats generator for starting 5 players only
 function generateRealisticLaneStats(
   handle: string,
   role: string,
@@ -32,7 +34,6 @@ function generateRealisticLaneStats(
   gameNumber: number,
   matchSeed: number
 ): PlayerGameStat {
-  // Simple hash for consistency
   let hash = matchSeed * 31 + gameNumber * 17;
   for (let i = 0; i < handle.length; i++) {
     hash = (hash * 33 + handle.charCodeAt(i)) % 10000;
@@ -44,26 +45,26 @@ function generateRealisticLaneStats(
 
   const roleUpper = (role || 'MID').toUpperCase();
   if (roleUpper === 'JUNGLE') {
-    kills = teamWonGame ? 4 + (hash % 6) : 1 + (hash % 4);
+    kills = teamWonGame ? 4 + (hash % 5) : 1 + (hash % 3);
     deaths = teamWonGame ? hash % 3 : 2 + (hash % 4);
-    assists = 3 + (hash % 7);
+    assists = 3 + (hash % 6);
   } else if (roleUpper === 'GOLD') {
-    kills = teamWonGame ? 5 + (hash % 7) : 1 + (hash % 4);
+    kills = teamWonGame ? 5 + (hash % 6) : 1 + (hash % 4);
     deaths = teamWonGame ? hash % 3 : 2 + (hash % 4);
-    assists = 2 + (hash % 6);
+    assists = 2 + (hash % 5);
   } else if (roleUpper === 'MID') {
-    kills = teamWonGame ? 2 + (hash % 5) : hash % 3;
+    kills = teamWonGame ? 2 + (hash % 4) : hash % 3;
     deaths = teamWonGame ? 1 + (hash % 3) : 2 + (hash % 4);
-    assists = teamWonGame ? 6 + (hash % 8) : 2 + (hash % 5);
+    assists = teamWonGame ? 6 + (hash % 7) : 2 + (hash % 5);
   } else if (roleUpper === 'ROAM') {
     kills = hash % 2;
     deaths = teamWonGame ? 1 + (hash % 3) : 3 + (hash % 5);
-    assists = teamWonGame ? 8 + (hash % 9) : 3 + (hash % 6);
+    assists = teamWonGame ? 7 + (hash % 8) : 3 + (hash % 5);
   } else {
     // EXP
     kills = teamWonGame ? 2 + (hash % 4) : 1 + (hash % 3);
     deaths = teamWonGame ? 1 + (hash % 3) : 2 + (hash % 4);
-    assists = 3 + (hash % 6);
+    assists = 3 + (hash % 5);
   }
 
   return { game: gameNumber, kills, deaths, assists };
@@ -117,23 +118,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not load team rosters for match' }, { status: 404 });
     }
 
-    // Determine series score (use existing or compute standard Bo3 outcome)
+    // Determine series score (use existing or standard Bo3)
     let homeScore = match.home_score ?? 2;
     let awayScore = match.away_score ?? 1;
     if (match.home_score === null && match.away_score === null) {
-      // Default to competitive Bo3 (2-1 or 2-0)
       homeScore = 2;
       awayScore = 1;
     }
     const totalGames = Math.max(2, Math.min(5, homeScore + awayScore));
 
     // Determine game winners based on scores
-    const gameWinners: boolean[] = []; // true = home won, false = away won
+    const gameWinners: boolean[] = [];
     let hWins = 0;
     let aWins = 0;
     for (let g = 1; g <= totalGames; g++) {
       if (hWins < homeScore && aWins < awayScore) {
-        // Alternating for realism
         const homeWinsThis = g % 2 === 1;
         gameWinners.push(homeWinsThis);
         if (homeWinsThis) hWins++; else aWins++;
@@ -146,45 +145,94 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate stats for each player
     const matchSeed = Math.abs(match.id.split('-').reduce((acc, part) => acc + parseInt(part, 16) || 1, 0));
 
-    const resolvedStats: PlayerResolvedStat[] = rosters.map(r => {
+    // CRITICAL: Filter exactly 5 starters per team (1 EXP, 1 JUNGLE, 1 MID, 1 GOLD, 1 ROAM).
+    // Any bench/reserve players with duplicate roles MUST have played = false and 0 stats!
+    const roleOrder = ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'];
+
+    const homeAssignedRoles = new Set<string>();
+    const awayAssignedRoles = new Set<string>();
+
+    const resolvedStats: PlayerResolvedStat[] = [];
+
+    // Sort to prioritize consistent primary starter selection
+    const sortedRosters = [...rosters].sort((a, b) => {
+      const rA = roleOrder.indexOf(a.role);
+      const rB = roleOrder.indexOf(b.role);
+      if (rA !== rB) return rA - rB;
+      return (a.players?.handle || '').localeCompare(b.players?.handle || '');
+    });
+
+    for (const r of sortedRosters) {
       const handle = r.players?.handle || 'PLAYER';
       const isHome = r.team_id === match.home_team_id;
       const teamCode = isHome ? homeCode : awayCode;
+      const roleSet = isHome ? homeAssignedRoles : awayAssignedRoles;
 
-      const games: PlayerGameStat[] = [];
-      let totalKills = 0;
-      let totalDeaths = 0;
-      let totalAssists = 0;
-
-      for (let g = 1; g <= totalGames; g++) {
-        const teamWon = isHome ? gameWinners[g - 1] : !gameWinners[g - 1];
-        const gStat = generateRealisticLaneStats(handle, r.role, teamWon, g, matchSeed);
-        games.push(gStat);
-        totalKills += gStat.kills;
-        totalDeaths += gStat.deaths;
-        totalAssists += gStat.assists;
+      // Only the first player for each lane role is a starter
+      const isStarter = !roleSet.has(r.role);
+      if (isStarter) {
+        roleSet.add(r.role);
       }
 
-      const kdaRatio = totalDeaths === 0 
-        ? `${(totalKills + totalAssists).toFixed(1)} (Perfect)` 
-        : ((totalKills + totalAssists) / totalDeaths).toFixed(2);
+      if (isStarter) {
+        // Starters get realistic game stats
+        const games: PlayerGameStat[] = [];
+        let totalKills = 0;
+        let totalDeaths = 0;
+        let totalAssists = 0;
 
-      return {
-        player_id: r.player_id,
-        handle,
-        role: r.role,
-        team_id: r.team_id,
-        team_code: teamCode,
-        kills: totalKills,
-        deaths: totalDeaths,
-        assists: totalAssists,
-        kda: kdaRatio,
-        games
-      };
-    });
+        for (let g = 1; g <= totalGames; g++) {
+          const teamWon = isHome ? gameWinners[g - 1] : !gameWinners[g - 1];
+          const gStat = generateRealisticLaneStats(handle, r.role, teamWon, g, matchSeed);
+          games.push(gStat);
+          totalKills += gStat.kills;
+          totalDeaths += gStat.deaths;
+          totalAssists += gStat.assists;
+        }
+
+        const kdaRatio = totalDeaths === 0 
+          ? `${(totalKills + totalAssists).toFixed(1)} (Perfect)` 
+          : ((totalKills + totalAssists) / totalDeaths).toFixed(2);
+
+        resolvedStats.push({
+          player_id: r.player_id,
+          handle,
+          role: r.role,
+          team_id: r.team_id,
+          team_code: teamCode,
+          is_starter: true,
+          played: true,
+          kills: totalKills,
+          deaths: totalDeaths,
+          assists: totalAssists,
+          kda: kdaRatio,
+          games
+        });
+      } else {
+        // Bench/Substitute players: Strictly 0 stats / DNP!
+        const games: PlayerGameStat[] = [];
+        for (let g = 1; g <= totalGames; g++) {
+          games.push({ game: g, kills: 0, deaths: 0, assists: 0 });
+        }
+
+        resolvedStats.push({
+          player_id: r.player_id,
+          handle,
+          role: r.role,
+          team_id: r.team_id,
+          team_code: teamCode,
+          is_starter: false,
+          played: false, // Did Not Play
+          kills: 0,
+          deaths: 0,
+          assists: 0,
+          kda: 'DNP',
+          games
+        });
+      }
+    }
 
     return NextResponse.json({
       ok: true,
@@ -194,7 +242,9 @@ export async function POST(request: NextRequest) {
       home_score: homeScore,
       away_score: awayScore,
       total_games: totalGames,
-      source: 'Official MPL Regional League Recaps & Match Center',
+      is_simulated: true,
+      source: 'Official Starting 5 Preset (Substitutes Locked to 0 / DNP)',
+      warning: 'Stats were generated from lane-role starting presets. Substitutes are set to 0 (DNP). Please verify against official post-match scoreboard before saving.',
       players: resolvedStats
     });
   } catch (error) {
