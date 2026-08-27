@@ -384,12 +384,22 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
   // 1-Click Automated Ingestion from API
   async function autoFillFromApi() {
-    if (!openMatch) return;
+    if (!openMatch || !supabase) return;
     setAutoFilling(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        notify('Authentication required to fetch stats.');
+        setAutoFilling(false);
+        return;
+      }
+
       const res = await fetch('/api/integrations/player-stats', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({ match_id: openMatch.id })
       });
       const result = await res.json();

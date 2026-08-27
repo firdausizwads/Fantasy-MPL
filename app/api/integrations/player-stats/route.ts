@@ -72,6 +72,13 @@ function generateRealisticLaneStats(
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = request.headers.get('authorization') || '';
+    const jwt = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+
+    if (!jwt) {
+      return NextResponse.json({ error: 'Unauthorized: Admin session required' }, { status: 401 });
+    }
+
     const body = await request.json().catch(() => ({}));
     const matchId = body.match_id;
 
@@ -80,15 +87,41 @@ export async function POST(request: NextRequest) {
     }
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!url || !serviceRoleKey) {
+    if (!url || !publishableKey) {
       return NextResponse.json({ error: 'Supabase server configuration incomplete' }, { status: 503 });
     }
 
-    const client = createClient<Database>(url, serviceRoleKey, {
+    // Authenticate the caller using their JWT
+    const authClient = createClient<Database>(url, publishableKey, {
+      global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false }
     });
+
+    const { data: userData, error: userError } = await authClient.auth.getUser(jwt);
+    if (userError || !userData.user) {
+      return NextResponse.json({ error: 'Unauthorized session' }, { status: 401 });
+    }
+
+    // Verify admin role
+    const { data: profile } = await authClient
+      .from('profiles')
+      .select('account_role')
+      .eq('id', userData.user.id)
+      .maybeSingle();
+
+    if (!['admin', 'super_admin'].includes(profile?.account_role || '')) {
+      return NextResponse.json({ error: 'Administrator role required' }, { status: 403 });
+    }
+
+    // Use service role client if configured, otherwise fall back to authenticated client
+    const client = serviceRoleKey
+      ? createClient<Database>(url, serviceRoleKey, {
+          auth: { persistSession: false, autoRefreshToken: false }
+        })
+      : authClient;
 
     // 1. Fetch match info
     const { data: match, error: matchError } = await client
