@@ -97,14 +97,14 @@ export function isPlayerInRegion(
   const normHandle = (handle || '').toLowerCase().trim();
   const normDbRegion = (dbRegionCode || '').toUpperCase().trim();
 
-  // 1. If teamCode belongs to another region -> REJECT
+  // 1. If teamCode belongs to ANY other region -> REJECT
   for (const [r, teamSet] of Object.entries(REGION_TEAMS) as [Region, Set<string>][]) {
     if (r !== targetRegion && teamSet.has(normTeam)) {
       return false;
     }
   }
 
-  // 2. If player handle belongs to another region -> REJECT
+  // 2. If player handle belongs to ANY other region -> REJECT
   for (const [r, playerSet] of Object.entries(REGION_PLAYERS) as [Region, Set<string>][]) {
     if (r !== targetRegion && playerSet.has(normHandle)) {
       return false;
@@ -121,7 +121,6 @@ export function isPlayerInRegion(
   if (REGION_PLAYERS[targetRegion].has(normHandle)) return true;
   if (normDbRegion === targetRegion) return true;
 
-  // Unverified player with no link to target region -> REJECT
   return false;
 }
 
@@ -276,10 +275,11 @@ export function generateRegionalPreviewStats(region: Region): PlayerScoreItem[] 
 
 // ---------------------------------------------------------------------------
 // Main Player Scores Leaderboard Component
+// Strictly isolated to the active region. Zero cross-region buttons or mixing!
 // ---------------------------------------------------------------------------
 
 export default function PlayerScores({
-  region: initialRegion,
+  region,
   PageBanner,
   onNavigate
 }: {
@@ -287,8 +287,7 @@ export default function PlayerScores({
   PageBanner?: React.ComponentType<{ tag: string; title: string; copy: string; side: React.ReactNode; sideLabel: string }>;
   onNavigate?: (view: any) => void;
 }) {
-  // Strictly region-based (Malaysia shows Malaysia only, ID shows ID only, PH shows PH only)
-  const [selectedRegion, setSelectedRegion] = useState<Region>(initialRegion);
+  // Region is strictly locked to the active region (Malaysia is Malaysia only; no ID/PH buttons)
   const [selectedRole, setSelectedRole] = useState<Role | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'score' | 'kills' | 'assists' | 'kda' | 'matches'>('score');
@@ -297,12 +296,7 @@ export default function PlayerScores({
   const [playerScores, setPlayerScores] = useState<PlayerScoreItem[]>([]);
   const [activeModalPlayer, setActiveModalPlayer] = useState<PlayerScoreItem | null>(null);
 
-  // Sync when initialRegion changes
-  useEffect(() => {
-    setSelectedRegion(initialRegion);
-  }, [initialRegion]);
-
-  // Load data for the selected region strictly
+  // Load data strictly for the active region
   useEffect(() => {
     let mounted = true;
 
@@ -311,7 +305,7 @@ export default function PlayerScores({
 
       if (!supabase) {
         if (mounted) {
-          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
+          setPlayerScores(generateRegionalPreviewStats(region));
           setIsLiveCloud(false);
           setLoading(false);
         }
@@ -321,21 +315,21 @@ export default function PlayerScores({
       try {
         // 1. Try get_player_scores_leaderboard RPC
         const { data: rpcRows, error: rpcErr } = await (supabase as any).rpc('get_player_scores_leaderboard', {
-          target_region: selectedRegion,
+          target_region: region,
           target_week: null
         });
 
         if (!rpcErr && Array.isArray(rpcRows) && rpcRows.length > 0) {
-          // Strict regional filter: only accept players truly belonging to selectedRegion
+          // Strict regional filter: only accept players truly belonging to region
           const filteredRpcRows = rpcRows.filter((r: any) =>
-            isPlayerInRegion(selectedRegion, r.team_code, r.handle, r.region_code)
+            isPlayerInRegion(region, r.team_code, r.handle, r.region_code)
           );
 
           if (filteredRpcRows.length > 0) {
             const formatted: PlayerScoreItem[] = filteredRpcRows.map((r: any) => {
               const role = normalizeRole(r.role || 'MID');
-              const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region: selectedRegion };
-              const photo = r.photo_url || getPlayerPhoto(r.handle, selectedRegion);
+              const teamMeta = TEAM_INDEX[r.team_code] || { name: r.team_name, logo: r.team_logo_url, region };
+              const photo = r.photo_url || getPlayerPhoto(r.handle, region);
               const deaths = Number(r.deaths || 0);
               const kills = Number(r.kills || 0);
               const assists = Number(r.assists || 0);
@@ -347,7 +341,7 @@ export default function PlayerScores({
                 playerId: r.player_id,
                 handle: r.handle,
                 role,
-                region: selectedRegion,
+                region,
                 teamCode: r.team_code,
                 teamName: teamMeta.name || r.team_code,
                 teamLogo: r.team_logo_url || teamMeta.logo,
@@ -394,18 +388,18 @@ export default function PlayerScores({
             const dbRegion = r.season?.region_code || null;
 
             // Strict validation: NEVER default missing region to 'MY'!
-            if (!isPlayerInRegion(selectedRegion, teamCode, playerHandle, dbRegion)) {
+            if (!isPlayerInRegion(region, teamCode, playerHandle, dbRegion)) {
               return;
             }
 
             rosterMap.set(r.player_id, {
               handle: playerHandle || 'PLAYER',
               role: normalizeRole(r.role || 'MID'),
-              region: selectedRegion,
+              region,
               teamCode: teamCode,
               teamName: r.team?.name || TEAM_INDEX[teamCode]?.name || teamCode,
               teamLogo: r.team?.logo_url || TEAM_INDEX[teamCode]?.logo,
-              photoUrl: r.player?.photo_url || getPlayerPhoto(playerHandle, selectedRegion)
+              photoUrl: r.player?.photo_url || getPlayerPhoto(playerHandle, region)
             });
           });
 
@@ -416,7 +410,7 @@ export default function PlayerScores({
 
           statsData.forEach((st: any) => {
             const info = rosterMap.get(st.player_id);
-            if (!info) return; // Skip players not verified in selected region
+            if (!info) return; // Skip players not verified in active region
 
             const match = matchMap.get(st.match_id);
             const isHome = match?.home_team_id === st.team_id;
@@ -449,7 +443,7 @@ export default function PlayerScores({
                 playerId: st.player_id,
                 handle: info.handle,
                 role: info.role,
-                region: selectedRegion,
+                region,
                 teamCode: info.teamCode,
                 teamName: info.teamName,
                 teamLogo: info.teamLogo,
@@ -493,13 +487,13 @@ export default function PlayerScores({
 
         // 3. Fallback to regional preview
         if (mounted) {
-          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
+          setPlayerScores(generateRegionalPreviewStats(region));
           setIsLiveCloud(false);
           setLoading(false);
         }
       } catch {
         if (mounted) {
-          setPlayerScores(generateRegionalPreviewStats(selectedRegion));
+          setPlayerScores(generateRegionalPreviewStats(region));
           setIsLiveCloud(false);
           setLoading(false);
         }
@@ -508,14 +502,14 @@ export default function PlayerScores({
 
     loadData();
     return () => { mounted = false; };
-  }, [selectedRegion]);
+  }, [region]);
 
-  // Filter and sort items strictly for the selected region
+  // Filter and sort items strictly for the active region
   const filteredItems = useMemo(() => {
     return playerScores
       .filter(item => {
         // Enforce region strictly
-        if (!isPlayerInRegion(selectedRegion, item.teamCode, item.handle, item.region)) return false;
+        if (!isPlayerInRegion(region, item.teamCode, item.handle, item.region)) return false;
         // Role filter
         if (selectedRole !== 'ALL' && item.role !== selectedRole) return false;
         // Bench filter: hide substitutes who have 0 pts
@@ -554,7 +548,7 @@ export default function PlayerScores({
         }
         return 0;
       });
-  }, [playerScores, selectedRegion, selectedRole, searchQuery, sortBy]);
+  }, [playerScores, region, selectedRole, searchQuery, sortBy]);
 
   // Top 3 Podium standouts for this region
   const podiumTop3 = useMemo(() => filteredItems.slice(0, 3), [filteredItems]);
@@ -564,18 +558,18 @@ export default function PlayerScores({
     <div className="page playerScoresWrap">
       {PageBanner ? (
         <PageBanner
-          tag={`${REGION_META[selectedRegion].name.toUpperCase()} · PLAYER SCORES`}
+          tag={`${REGION_META[region].name.toUpperCase()} · PLAYER SCORES`}
           title="Player Scores"
-          copy={`Official regional leaderboard ranking ${REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.`}
+          copy={`Official regional leaderboard ranking ${REGION_META[region].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.`}
           side={topScorer ? `${topScorer.handle} · ${topScorer.fantasyScore} PTS` : '—'}
           sideLabel="TOP REGIONAL SCORER"
         />
       ) : (
         <section className="pageBanner">
           <div>
-            <span className="seasonTag">● {REGION_META[selectedRegion].name.toUpperCase()} · PLAYER SCORES</span>
+            <span className="seasonTag">● {REGION_META[region].name.toUpperCase()} · PLAYER SCORES</span>
             <h1>Player Scores</h1>
-            <p>Official regional leaderboard ranking ${REGION_META[selectedRegion].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.</p>
+            <p>Official regional leaderboard ranking {REGION_META[region].name} players by fantasy score (+3 pts per Kill, +1 pt per Assist). Bench substitutes receive 0 pts.</p>
           </div>
           <div className="bannerSide">
             <small>TOP REGIONAL SCORER</small>
@@ -584,42 +578,31 @@ export default function PlayerScores({
         </section>
       )}
 
-      {/* Tabs between Manager Leaderboard and Player Scores */}
-      <div className="leaderboardTypeTabs">
-        <button onClick={() => onNavigate && onNavigate('leaderboard')}>
+      {/* Modern Segmented Navigation Tabs */}
+      <div className="modernLeaderboardSwitcher">
+        <button
+          className="switcherTab"
+          onClick={() => onNavigate && onNavigate('leaderboard')}
+        >
           MANAGER RANKINGS
         </button>
-        <button className="active">
+        <button className="switcherTab active">
           PLAYER SCORES
         </button>
-      </div>
-
-      {/* Region Switcher Tabs: Modern Pill design with ZERO flags */}
-      <div className="regionalTabsBar">
-        {(['MY', 'ID', 'PH'] as Region[]).map(reg => (
-          <button
-            key={reg}
-            className={`regionalTabBtn ${selectedRegion === reg ? 'active' : ''}`}
-            onClick={() => setSelectedRegion(reg)}
-          >
-            <span className="regionalLeagueBadge">{reg}</span>
-            <span className="regionalTabName">{REGION_META[reg].name}</span>
-          </button>
-        ))}
       </div>
 
       {/* Status Bar */}
       <div className="scoresSourceBar">
         <span className={`sourcePill ${isLiveCloud ? 'live' : 'preview'}`}>
           <i className="pulseDot" />
-          {isLiveCloud ? `OFFICIAL VERIFIED LEDGER · ${REGION_META[selectedRegion].name.toUpperCase()}` : `VERIFIED STARTERS PREVIEW · ${REGION_META[selectedRegion].name.toUpperCase()}`}
+          {isLiveCloud ? `OFFICIAL VERIFIED LEDGER · ${REGION_META[region].name.toUpperCase()}` : `VERIFIED STARTERS PREVIEW · ${REGION_META[region].name.toUpperCase()}`}
         </span>
         <span className="scoresFormulaNote">
           SCORING RULE: KILLS × 3 + ASSISTS × 1 · BENCH PLAYERS DNP (0 PTS)
         </span>
       </div>
 
-      {/* Podium Showcase (Top 3 Players in Region) - Compact & Mobile-Responsive */}
+      {/* Podium Showcase (Top 3 Players in Region) */}
       {podiumTop3.length >= 3 && (
         <section className="podiumGrid">
           {/* #2 Rank (Silver) */}
@@ -752,7 +735,7 @@ export default function PlayerScores({
               <input
                 className="scoresSearchInput"
                 type="text"
-                placeholder={`Search ${REGION_META[selectedRegion].name} player or team...`}
+                placeholder={`Search ${REGION_META[region].name} player or team...`}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -775,164 +758,175 @@ export default function PlayerScores({
         </div>
       </section>
 
-      {/* Main Leaderboard Table: Desktop Grid + Responsive Mobile Cards */}
-      <section className="playerScoresTableWrap">
-        <div className="playerScoresTableHead">
-          <span>#</span>
-          <span>PLAYER</span>
-          <span>ROLE</span>
-          <span>TEAM</span>
-          <span>MATCHES</span>
-          <span>K</span>
-          <span>D</span>
-          <span>A</span>
-          <span>KDA</span>
-          <span>SCORE</span>
-          <span>ACTION</span>
+      {/* Modern Player Scores Table (Desktop Grid + Mobile Responsive Cards) */}
+      <section className="modernScoresTableWrap">
+        {/* Modern styled column headers */}
+        <div className="modernScoresTableHead">
+          <span className="headColRank">#</span>
+          <span className="headColPlayer">PLAYER</span>
+          <span className="headColRole desktopOnly">ROLE</span>
+          <span className="headColTeam desktopOnly">TEAM</span>
+          <span className="headColMatches desktopOnly">MATCHES</span>
+          <span className="headColK desktopOnly">K</span>
+          <span className="headColD desktopOnly">D</span>
+          <span className="headColA desktopOnly">A</span>
+          <span className="headColKda desktopOnly">KDA</span>
+          <span className="headColScore">
+            <span className="colPillTag scoreTag">FANTASY PTS</span>
+          </span>
+          <span className="headColAction desktopOnly">ACTION</span>
         </div>
 
         {loading ? (
           <div className="scoresEmptyState">
             <span>⋯</span>
-            <h3>Loading {REGION_META[selectedRegion].name} scores…</h3>
+            <h3>Loading {REGION_META[region].name} scores…</h3>
             <p>Fetching official KDA entries from the verified scoring ledger.</p>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="scoresEmptyState">
             <span>∅</span>
             <h3>No players matched</h3>
-            <p>Try adjusting your search query or role filter for {REGION_META[selectedRegion].name}.</p>
+            <p>Try adjusting your search query or role filter for {REGION_META[region].name}.</p>
           </div>
         ) : (
-          filteredItems.map((item, index) => {
-            const rank = index + 1;
-            const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
+          <div className="modernScoresTableBody">
+            {filteredItems.map((item, index) => {
+              const rank = index + 1;
+              const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
 
-            return (
-              <div
-                className="playerScoresRow"
-                key={item.playerId}
-                onClick={() => setActiveModalPlayer(item)}
-              >
-                {/* 1. Rank & Player Profile */}
-                <div className="rowMainGroup">
-                  <div className={`rowRank ${rankClass}`}>
-                    {rank}
+              return (
+                <div
+                  className="modernPlayerScoresRow"
+                  key={item.playerId}
+                  onClick={() => setActiveModalPlayer(item)}
+                >
+                  {/* 1. Rank */}
+                  <div className="cellRank">
+                    <span className={`modernRankBadge ${rankClass}`}>#{rank}</span>
                   </div>
 
-                  <div className="rowPlayerCell">
-                    <div className="rowAvatarWrap">
-                      {item.photoUrl ? (
-                        <img className="rowAvatar" src={item.photoUrl} alt={item.handle} />
-                      ) : (
-                        <div className="rowAvatarPending">
-                          {item.handle.slice(0, 2).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="rowPlayerInfo">
-                      <div className="rowPlayerNameLine">
-                        <b>{item.handle}</b>
-                        <span className={`mobileOnlyRolePill rolePill role-${item.role.toLowerCase()}`}>
-                          {item.role}
-                        </span>
-                      </div>
-                      <div className="rowPlayerSubline">
-                        {item.teamLogo && (
-                          <img className="mobileOnlyTeamLogo" src={item.teamLogo} alt="" />
+                  {/* 2. Player Info */}
+                  <div className="cellPlayer">
+                    <div className="modernPlayerProfile">
+                      <div className="modernPlayerAvatarWrap">
+                        {item.photoUrl ? (
+                          <img className="modernPlayerAvatar" src={item.photoUrl} alt={item.handle} />
+                        ) : (
+                          <div className="modernPlayerAvatar fallback">
+                            {item.handle.slice(0, 2).toUpperCase()}
+                          </div>
                         )}
-                        <span className="teamNameTxt">{item.teamName}</span>
-                        <span className="teamCodeBadge">({item.teamCode})</span>
+                      </div>
+                      <div className="modernPlayerMeta">
+                        <div className="modernPlayerNameLine">
+                          <b>{item.handle}</b>
+                          <span className={`mobileOnlyRoleBadge rolePill role-${item.role.toLowerCase()}`}>
+                            {item.role}
+                          </span>
+                        </div>
+                        <div className="modernPlayerSubline">
+                          {item.teamLogo && (
+                            <img className="modernPlayerTeamLogo" src={item.teamLogo} alt="" />
+                          )}
+                          <span className="modernTeamName">{item.teamName}</span>
+                          <small className="modernTeamCode">({item.teamCode})</small>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* 2. Desktop Only: Role Badge */}
-                <div className="desktopCol colRole">
-                  <span className={`rolePill role-${item.role.toLowerCase()}`}>
-                    {item.role}
-                  </span>
-                </div>
-
-                {/* 3. Desktop Only: Team Logo & Code */}
-                <div className="desktopCol rowTeamCell">
-                  {item.teamLogo && (
-                    <img className="rowTeamLogo" src={item.teamLogo} alt={item.teamCode} />
-                  )}
-                  <b>{item.teamCode}</b>
-                </div>
-
-                {/* 4. Desktop Only: Matches */}
-                <div className="desktopCol statCell">
-                  {item.matchesPlayed}
-                </div>
-
-                {/* 5. Desktop Only: Kills */}
-                <div className="desktopCol statCell kills">
-                  {item.kills}
-                </div>
-
-                {/* 6. Desktop Only: Deaths */}
-                <div className="desktopCol statCell deaths">
-                  {item.deaths}
-                </div>
-
-                {/* 7. Desktop Only: Assists */}
-                <div className="desktopCol statCell assists">
-                  {item.assists}
-                </div>
-
-                {/* 8. Desktop Only: KDA Ratio */}
-                <div className="desktopCol statCell kda">
-                  {item.kdaRatio}
-                </div>
-
-                {/* 9. Fantasy Score Pill */}
-                <div className="rowScorePill">
-                  <strong>{item.fantasyScore} PTS</strong>
-                  <span className="mobileTapHint">STATS →</span>
-                </div>
-
-                {/* 10. Desktop Only: Details Button */}
-                <div className="desktopCol colAction">
-                  <button
-                    className="rowBreakdownBtn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveModalPlayer(item);
-                    }}
-                  >
-                    DETAILS →
-                  </button>
-                </div>
-
-                {/* 11. Mobile Only: Modern Tabular Stats Strip */}
-                <div className="mobileStatsStrip">
-                  <div className="mobileStatItem">
-                    <small>KILLS</small>
-                    <strong className="statKills">{item.kills}</strong>
+                  {/* 3. Role (Desktop) */}
+                  <div className="cellRole desktopOnly">
+                    <span className={`rolePill role-${item.role.toLowerCase()}`}>
+                      {item.role}
+                    </span>
                   </div>
-                  <div className="mobileStatItem">
-                    <small>DEATHS</small>
-                    <strong className="statDeaths">{item.deaths}</strong>
+
+                  {/* 4. Team (Desktop) */}
+                  <div className="cellTeam desktopOnly">
+                    <div className="teamLogoGroup">
+                      {item.teamLogo && (
+                        <img className="modernTeamLogoIcon" src={item.teamLogo} alt={item.teamCode} />
+                      )}
+                      <b>{item.teamCode}</b>
+                    </div>
                   </div>
-                  <div className="mobileStatItem">
-                    <small>ASSISTS</small>
-                    <strong className="statAssists">{item.assists}</strong>
+
+                  {/* 5. Matches (Desktop) */}
+                  <div className="cellMatches desktopOnly">
+                    <span className="statNumText">{item.matchesPlayed}</span>
                   </div>
-                  <div className="mobileStatItem">
-                    <small>KDA</small>
-                    <strong>{item.kdaRatio}</strong>
+
+                  {/* 6. Kills (Desktop) */}
+                  <div className="cellK desktopOnly">
+                    <span className="statNumText kills">{item.kills}</span>
                   </div>
-                  <div className="mobileStatItem">
-                    <small>SERIES</small>
-                    <strong>{item.matchesPlayed}M</strong>
+
+                  {/* 7. Deaths (Desktop) */}
+                  <div className="cellD desktopOnly">
+                    <span className="statNumText deaths">{item.deaths}</span>
+                  </div>
+
+                  {/* 8. Assists (Desktop) */}
+                  <div className="cellA desktopOnly">
+                    <span className="statNumText assists">{item.assists}</span>
+                  </div>
+
+                  {/* 9. KDA (Desktop) */}
+                  <div className="cellKda desktopOnly">
+                    <span className="statNumText kda">{item.kdaRatio}</span>
+                  </div>
+
+                  {/* 10. Fantasy Score (Desktop & Mobile) */}
+                  <div className="cellScore">
+                    <div className="modernScoreBadge">
+                      <strong>{item.fantasyScore}</strong>
+                      <small>PTS</small>
+                    </div>
+                    <span className="mobileDetailsCue">STATS →</span>
+                  </div>
+
+                  {/* 11. Action Button (Desktop) */}
+                  <div className="cellAction desktopOnly">
+                    <button
+                      className="modernActionBtn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveModalPlayer(item);
+                      }}
+                    >
+                      DETAILS →
+                    </button>
+                  </div>
+
+                  {/* 12. Mobile Stats Ribbon (Mobile Only) */}
+                  <div className="mobilePlayerStatsRibbon mobileOnly">
+                    <div className="mStatBox">
+                      <small>KILLS</small>
+                      <b className="statKills">{item.kills}</b>
+                    </div>
+                    <div className="mStatBox">
+                      <small>DEATHS</small>
+                      <b className="statDeaths">{item.deaths}</b>
+                    </div>
+                    <div className="mStatBox">
+                      <small>ASSISTS</small>
+                      <b className="statAssists">{item.assists}</b>
+                    </div>
+                    <div className="mStatBox">
+                      <small>KDA</small>
+                      <b>{item.kdaRatio}</b>
+                    </div>
+                    <div className="mStatBox">
+                      <small>MATCHES</small>
+                      <b>{item.matchesPlayed}</b>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </section>
 

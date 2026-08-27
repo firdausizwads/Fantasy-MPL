@@ -156,6 +156,7 @@ export function CloudDashboard({
 
 // ---------------------------------------------------------------------------
 // Regional leaderboard fed by the score_transactions ledger
+// Modern styled columns (Zero Country Flags)
 // ---------------------------------------------------------------------------
 
 type BoardRow = {
@@ -208,47 +209,76 @@ export function CloudLeaderboard({
       <div>
         <span className="adminCloudTag">● OFFICIAL REGIONAL LEDGER</span>
         <h2>Regional Leaderboard</h2>
-        <p className="modernStandingsSub">Official standings for {region} fantasy managers.</p>
+        <p className="modernStandingsSub">Official standings for {region} fantasy managers. (Independent per region)</p>
       </div>
       {myIndex >= 0 && <span className="myRankPill">YOUR RANK · #{myIndex + 1}</span>}
     </div>
-    {rows.length === 0
-      ? <div className="adminEmptyNote" style={{ padding: '24px', textAlign: 'center' }}>
-          <p>No scored results yet. The leaderboard fills after official match scoring.</p>
+
+    {rows.length === 0 ? (
+      <div className="adminEmptyNote" style={{ padding: '24px', textAlign: 'center' }}>
+        <p>No scored results yet. The leaderboard fills after official match scoring.</p>
+      </div>
+    ) : (
+      <div className="modernLeaderboardTable">
+        {/* Modern styled column headers */}
+        <div className="modernLeaderboardHeader">
+          <span className="colHeadRank">#</span>
+          <span className="colHeadManager">MANAGER</span>
+          <span className="colHeadScore">
+            <span className="colPillTag fantasyTag">FANTASY</span>
+          </span>
+          <span className="colHeadScore">
+            <span className="colPillTag predTag">PREDICTIONS</span>
+          </span>
+          <span className="colHeadTotal">
+            <span className="colPillTag totalTag">TOTAL POINTS</span>
+          </span>
         </div>
-      : <div className="standingsTable modernSimpleTable">
-          <div className="standingsHeader simpleBoardCols">
-            <span>#</span>
-            <span>MANAGER</span>
-            <span style={{ textAlign: 'center' }}>FANTASY SCORES</span>
-            <span style={{ textAlign: 'center' }}>PREDICTION SCORES</span>
-            <span style={{ textAlign: 'right' }}>TOTAL SCORES</span>
-          </div>
+
+        {/* Modern floating row cards */}
+        <div className="modernLeaderboardBody">
           {rows.map((r, i) => {
             const rank = i + 1;
             const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
             return (
-              <div className={`standingsRow simpleBoardCols ${r.user_id === userId ? 'me' : ''}`} key={r.user_id}>
-                <span className={`standRank ${rankClass}`}>{rank}</span>
-                <div className="managerNameWrapper">
-                  <b>{r.manager_name}</b>
-                  {r.user_id === userId && <small className="youBadge">YOU</small>}
+              <div className={`modernLeaderboardRow ${r.user_id === userId ? 'me' : ''}`} key={r.user_id}>
+                <div className="rowCellRank">
+                  <span className={`modernRankBadge ${rankClass}`}>#{rank}</span>
                 </div>
-                <span className="simpleScoreCol fantasy">
-                  {Number(r.fantasy_points || 0).toLocaleString()} <small>PTS</small>
-                </span>
-                <span className="simpleScoreCol pred">
-                  {Number(r.prediction_points || 0).toLocaleString()} <small>PTS</small>
-                </span>
-                <div className="simpleTotalScoreWrapper">
-                  <strong className="simpleTotalPill">
+                <div className="rowCellManager">
+                  <div className="modernManagerAvatar">
+                    {r.avatar_url ? (
+                      <img src={r.avatar_url} alt="" />
+                    ) : (
+                      <i>{r.manager_name.slice(0, 2).toUpperCase()}</i>
+                    )}
+                  </div>
+                  <div className="modernManagerName">
+                    <b>{r.manager_name}</b>
+                    {r.user_id === userId && <span className="modernYouBadge">YOU</span>}
+                  </div>
+                </div>
+                <div className="rowCellScore">
+                  <span className="modernStatValue fantasy">
+                    {Number(r.fantasy_points || 0).toLocaleString()} <small>PTS</small>
+                  </span>
+                </div>
+                <div className="rowCellScore">
+                  <span className="modernStatValue pred">
+                    {Number(r.prediction_points || 0).toLocaleString()} <small>PTS</small>
+                  </span>
+                </div>
+                <div className="rowCellTotal">
+                  <strong className="modernTotalScorePill">
                     {Number(r.total_points).toLocaleString()} <small>PTS</small>
                   </strong>
                 </div>
               </div>
             );
           })}
-        </div>}
+        </div>
+      </div>
+    )}
   </section>;
 }
 
