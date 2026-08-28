@@ -402,7 +402,7 @@ function Predictions({region,userId,picks,scores,submittedAt,savePick,saveScore,
       name: p.name,
       photo: p.photo || undefined,
       role: p.role || 'STARTER',
-      team: officialTeams.find(t => t.code === p.team)?.name || p.team
+      team: TEAM_INDEX[p.team]?.name || p.team
     }));
   const rawCandidates = (usingCloud && mvpCandidates.length > 0) ? mvpCandidates : fallbackMvpCandidates;
   const filteredCandidates = rawCandidates.filter(candidate => {
