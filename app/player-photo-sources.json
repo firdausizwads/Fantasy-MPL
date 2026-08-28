@@ -435,6 +435,16 @@
       "sourceImage": "https://liquipedia.net/commons/images/thumb/e/ed/PRO_Koyl_at_MSC_2026_Knockout_Stage.jpg/600px-PRO_Koyl_at_MSC_2026_Knockout_Stage.jpg",
       "rightsNote": "Copyrighted event photo. Rights remain with the original rights holder; review before commercial use.",
       "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+    },
+    {
+      "region": "PH",
+      "team": "TNC",
+      "player": "Vin",
+      "photo": "/players/ph/tnc/vin.webp",
+      "source": "https://liquipedia.net/mobilelegends/Vinnn",
+      "sourceImage": "https://liquipedia.net/commons/images/a/ab/TNC_Vin_MPL_PH_S18.png",
+      "rightsNote": "Official MPL Philippines Season 18 team portrait. Rights remain with TNC Pro Team / Liquipedia.",
+      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
     }
   ],
   "unresolved": [
@@ -452,12 +462,6 @@
       "region": "PH",
       "team": "TNC",
       "name": "Zehn",
-      "reason": "Source dataset contains only a no-photo placeholder"
-    },
-    {
-      "region": "PH",
-      "team": "TNC",
-      "name": "Vin",
       "reason": "Source dataset contains only a no-photo placeholder"
     }
   ]
