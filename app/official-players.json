@@ -1,75 +1,587 @@
 [
   {
+    "region": "MY",
+    "team": "AC",
+    "name": "Momo",
+    "role": "EXP Lane",
+    "photo": "/players/my/ac/momo.webp",
+    "source": "https://liquipedia.net/mobilelegends/Momo"
+  },
+  {
+    "region": "MY",
+    "team": "AC",
+    "name": "Zahyed",
+    "role": "Jungle",
+    "photo": "/players/my/ac/zahyed.webp",
+    "source": "https://liquipedia.net/mobilelegends/Zahyed"
+  },
+  {
+    "region": "MY",
+    "team": "AC",
+    "name": "Izanami",
+    "role": "Midlane",
+    "photo": "/players/my/ac/izanami.webp",
+    "source": "https://liquipedia.net/mobilelegends/Izanami"
+  },
+  {
+    "region": "MY",
+    "team": "AC",
+    "name": "Nets",
+    "role": "Gold Lane",
+    "photo": "/players/my/ac/nets.webp",
+    "source": "https://liquipedia.net/mobilelegends/Nets"
+  },
+  {
+    "region": "MY",
+    "team": "AC",
+    "name": "Reyzar",
+    "role": "Roam",
+    "photo": "/players/my/ac/reyzar.webp",
+    "source": "https://liquipedia.net/mobilelegends/Reyzar"
+  },
+  {
+    "region": "MY",
+    "team": "AC",
+    "name": "Martzy",
+    "role": "Midlane",
+    "photo": "/players/my/ac/martzyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Martzy"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "Jeymz",
+    "role": "EXP Lane",
+    "photo": "/players/my/btrm/jeymz.webp",
+    "source": "https://liquipedia.net/mobilelegends/Jeymz"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "Chibi",
+    "role": "Jungle",
+    "photo": "/players/my/btrm/chibii.webp",
+    "source": "https://liquipedia.net/mobilelegends/Chibi"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "Zieyy",
+    "role": "Midlane",
+    "photo": "/players/my/btrm/zieyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Zieyy"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "Ciku",
+    "role": "Gold Lane",
+    "photo": "/players/my/btrm/cikugais.webp",
+    "source": "https://liquipedia.net/mobilelegends/Ciku"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "GRBoy",
+    "role": "Roam",
+    "photo": "/players/my/btrm/grboy.webp",
+    "source": "https://liquipedia.net/mobilelegends/GR"
+  },
+  {
+    "region": "MY",
+    "team": "BTRM",
+    "name": "Amzziq",
+    "role": "Gold Lane",
+    "photo": "/players/my/btrm/amzziq.webp",
+    "source": "https://liquipedia.net/mobilelegends/Amzziq"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Ye3",
+    "role": "EXP Lane",
+    "photo": "/players/my/ig/ye3.webp",
+    "source": "https://liquipedia.net/mobilelegends/Ye3"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Lunnn",
+    "role": "Jungle",
+    "photo": "/players/my/ig/lunnn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Lunnn"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Treacky",
+    "role": "Midlane",
+    "photo": "/players/my/ig/treacky.webp",
+    "source": "https://liquipedia.net/mobilelegends/Treacky"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Rokji",
+    "role": "Gold Lane",
+    "photo": "/players/my/ig/rokji.webp",
+    "source": "https://liquipedia.net/mobilelegends/Rough"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Atannn",
+    "role": "Roam",
+    "photo": "/players/my/ig/atannn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Atannn"
+  },
+  {
+    "region": "MY",
+    "team": "IG",
+    "name": "Rezza",
+    "role": "EXP Lane",
+    "photo": "/players/my/ig/rezza.webp",
+    "source": "https://liquipedia.net/mobilelegends/Rezza"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "LEHTzy",
+    "role": "EXP Lane",
+    "photo": "/players/my/rrqmy/lehtzy.webp",
+    "source": "https://liquipedia.net/mobilelegends/LEHTzy"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Super Kenn",
+    "role": "Jungle",
+    "photo": "/players/my/rrqmy/superkenn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Super Kenn"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Yehezkiel",
+    "role": "Midlane",
+    "photo": "/players/my/rrqmy/yehezkiel.webp",
+    "source": "https://liquipedia.net/mobilelegends/Yehezkiel"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Loleal",
+    "role": "Gold Lane",
+    "photo": "/players/my/rrqmy/loleal.webp",
+    "source": "https://liquipedia.net/mobilelegends/Loleal"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Addboy",
+    "role": "Roam",
+    "photo": "/players/my/rrqmy/addboyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Addboy"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Aj",
+    "role": "Midlane",
+    "photo": "/players/my/rrqmy/aj.webp",
+    "source": "https://liquipedia.net/mobilelegends/Aj"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Izzshiki",
+    "role": "Gold Lane",
+    "photo": "/players/my/rrqmy/izzshiki.webp",
+    "source": "https://liquipedia.net/mobilelegends/Izzshiki"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "JinZhao",
+    "role": "Roam",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/JinZhao"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Kramm",
+    "role": "EXP Lane",
+    "photo": "/players/my/srg/kramm.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kramm"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Sekysss",
+    "role": "Jungle",
+    "photo": "/players/my/srg/sekysss.webp",
+    "source": "https://liquipedia.net/mobilelegends/Sekys"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Stormie",
+    "role": "Midlane",
+    "photo": "/players/my/srg/stormie.webp",
+    "source": "https://liquipedia.net/mobilelegends/Stormie"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Innocent",
+    "role": "Gold Lane",
+    "photo": "/players/my/srg/innocent.webp",
+    "source": "https://liquipedia.net/mobilelegends/Innocent"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Yums",
+    "role": "Roam",
+    "photo": "/players/my/srg/yums.webp",
+    "source": "https://liquipedia.net/mobilelegends/Yums"
+  },
+  {
+    "region": "MY",
+    "team": "SRG",
+    "name": "Unii",
+    "role": "Jungle",
+    "photo": "/players/my/srg/unii.webp",
+    "source": "https://liquipedia.net/mobilelegends/Unii"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "3Mar",
+    "role": "EXP Lane",
+    "photo": "/players/my/fl/3mar.webp",
+    "source": "https://liquipedia.net/mobilelegends/3MarTzy"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "Garyy",
+    "role": "Jungle",
+    "photo": "/players/my/fl/garyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Garyy"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "UK1R",
+    "role": "Midlane",
+    "photo": "/players/my/fl/uk1r.webp",
+    "source": "https://liquipedia.net/mobilelegends/UK1R"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "Vanix",
+    "role": "Gold Lane",
+    "photo": "/players/my/fl/vanix.webp",
+    "source": "https://liquipedia.net/mobilelegends/Vanix"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "Xorn",
+    "role": "Roam",
+    "photo": "/players/my/fl/xorn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Xorn"
+  },
+  {
+    "region": "MY",
+    "team": "FL",
+    "name": "Osker",
+    "role": "Roam",
+    "photo": "/players/my/fl/osker.webp",
+    "source": "https://liquipedia.net/mobilelegends/Osker"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "Sepat",
+    "role": "EXP Lane",
+    "photo": "/players/my/vms/sepat.webp",
+    "source": "https://liquipedia.net/mobilelegends/Sepat"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "Dolynn",
+    "role": "Jungle",
+    "photo": "/players/my/tr/dolynn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Dolynn"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "Kyym",
+    "role": "Midlane",
+    "photo": "/players/my/tr/kyym.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kyym"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "Cliveee",
+    "role": "Gold Lane",
+    "photo": "/players/my/tr/cliveee.webp",
+    "source": "https://liquipedia.net/mobilelegends/Pinnn"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "NovaXcobar",
+    "role": "Roam",
+    "photo": "/players/my/tr/novaxcobar.webp",
+    "source": "https://liquipedia.net/mobilelegends/NovaXcobar"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "JWen",
+    "role": "EXP Lane",
+    "photo": "/players/my/tr/jwen.webp",
+    "source": "https://liquipedia.net/mobilelegends/Teh O Ice"
+  },
+  {
+    "region": "MY",
+    "team": "TR",
+    "name": "Smooth",
+    "role": "EXP Lane",
+    "photo": "/players/my/tr/smooth.webp",
+    "source": "https://liquipedia.net/mobilelegends/Smooth"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Sizkaa",
+    "role": "EXP Lane",
+    "photo": "/players/my/vms/sizkaa.webp",
+    "source": "https://liquipedia.net/mobilelegends/Sizkaa"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Error 404",
+    "role": "Jungle",
+    "photo": "/players/my/vms/error-404.webp",
+    "source": "https://liquipedia.net/mobilelegends/Error 404"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Claw Kun",
+    "role": "Midlane",
+    "photo": "/players/my/vms/clawkun.webp",
+    "source": "https://liquipedia.net/mobilelegends/Claw Kun"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Natco",
+    "role": "Gold Lane",
+    "photo": "/players/my/vms/natco.webp",
+    "source": "https://liquipedia.net/mobilelegends/Natco"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Zqeef",
+    "role": "Roam",
+    "photo": "/players/my/vms/zqeef.webp",
+    "source": "https://liquipedia.net/mobilelegends/Zqeef"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "Sepat",
+    "role": "EXP Lane",
+    "photo": "/players/my/vms/sepat.webp",
+    "source": "https://liquipedia.net/mobilelegends/Sepat"
+  },
+  {
+    "region": "MY",
+    "team": "VMS",
+    "name": "EyyMal",
+    "role": "Jungle",
+    "photo": "/players/my/vms/eyymal.webp",
+    "source": "https://liquipedia.net/mobilelegends/EyyMal"
+  },
+  {
     "region": "ID",
     "team": "AE",
-    "name": "NINO",
+    "name": "Nino",
     "role": "EXP Lane",
     "photo": "/players/id/ae/nino.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Nino.png"
+    "source": "https://liquipedia.net/mobilelegends/Nino"
   },
   {
     "region": "ID",
     "team": "AE",
-    "name": "DINGARAI",
-    "role": "Gold Lane",
-    "photo": "/players/id/ae/dingarai.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Dingarai.png"
-  },
-  {
-    "region": "ID",
-    "team": "AE",
-    "name": "AFFAN",
+    "name": "Affan",
     "role": "Jungle",
     "photo": "/players/id/ae/affan.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Affan.png"
+    "source": "https://liquipedia.net/mobilelegends/Yazukee"
   },
   {
     "region": "ID",
     "team": "AE",
-    "name": "REYY",
-    "role": "Jungle",
-    "photo": "/players/id/ae/reyy.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Reyy.png"
-  },
-  {
-    "region": "ID",
-    "team": "AE",
-    "name": "DALVIN",
+    "name": "Dalvin",
     "role": "Midlane",
     "photo": "/players/id/ae/dalvin.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Dalvin.png"
+    "source": "https://liquipedia.net/mobilelegends/Hijumee"
   },
   {
     "region": "ID",
     "team": "AE",
-    "name": "HALIM",
-    "role": "Midlane",
-    "photo": "/players/id/ae/halim.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Halim.png"
+    "name": "Dingarai",
+    "role": "Gold Lane",
+    "photo": "/players/id/ae/dingarai.webp",
+    "source": "https://liquipedia.net/mobilelegends/Arfy"
   },
   {
     "region": "ID",
     "team": "AE",
-    "name": "ALEXANDER",
+    "name": "Alexander",
     "role": "Roam",
     "photo": "/players/id/ae/alexander.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Alexander.png"
+    "source": "https://liquipedia.net/mobilelegends/alekk"
   },
   {
     "region": "ID",
     "team": "AE",
-    "name": "IVANN",
-    "role": "Roam",
-    "photo": "/players/id/ae/ivann.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/AE/Ivann.png"
+    "name": "Reyy",
+    "role": "Jungle",
+    "photo": "/players/id/ae/reyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Reyy"
   },
   {
     "region": "ID",
-    "team": "DEWA",
-    "name": "LAUFEYSON",
-    "role": "Analyst",
-    "photo": "/players/id/dewa/laufeyson.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Laufeyson.png"
+    "team": "AE",
+    "name": "Halim",
+    "role": "Midlane",
+    "photo": "/players/id/ae/halim.webp",
+    "source": "https://liquipedia.net/mobilelegends/Cyruz"
+  },
+  {
+    "region": "ID",
+    "team": "AE",
+    "name": "Ivann",
+    "role": "Roam",
+    "photo": "/players/id/ae/ivann.webp",
+    "source": "https://liquipedia.net/mobilelegends/Ivann"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "Shogun",
+    "role": "EXP Lane",
+    "photo": "/players/id/btr/shogun.webp",
+    "source": "https://liquipedia.net/mobilelegends/Shogun"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "Nnael",
+    "role": "Jungle",
+    "photo": "/players/id/btr/nnael.webp",
+    "source": "https://liquipedia.net/mobilelegends/Nnael"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "Moreno",
+    "role": "Midlane",
+    "photo": "/players/id/btr/moreno.webp",
+    "source": "https://liquipedia.net/mobilelegends/Moreno"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "EMANN",
+    "role": "Gold Lane",
+    "photo": "/players/id/btr/emann.webp",
+    "source": "https://liquipedia.net/mobilelegends/EMANN"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "Finn",
+    "role": "Roam",
+    "photo": "/players/id/btr/finn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Finn"
+  },
+  {
+    "region": "ID",
+    "team": "BTR",
+    "name": "Miguel",
+    "role": "Flex",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Miguel (Indonesian player)"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Rendyy",
+    "role": "EXP Lane",
+    "photo": "/players/id/evos/rendyyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Rendyy"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Alberttt",
+    "role": "Jungle",
+    "photo": "/players/id/evos/alberttt.webp",
+    "source": "https://liquipedia.net/mobilelegends/Alberttt"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Ryzaa",
+    "role": "Midlane",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Ryzaa"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Erlan",
+    "role": "Gold Lane",
+    "photo": "/players/id/evos/erlan.webp",
+    "source": "https://liquipedia.net/mobilelegends/Erlan"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Muezza",
+    "role": "Roam",
+    "photo": "/players/id/evos/muezza.webp",
+    "source": "https://liquipedia.net/mobilelegends/Muezza"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "Vell",
+    "role": "EXP Lane",
+    "photo": "/players/id/evos/vell.webp",
+    "source": "https://liquipedia.net/mobilelegends/Vell"
+  },
+  {
+    "region": "ID",
+    "team": "EVOS",
+    "name": "DrianW",
+    "role": "Midlane",
+    "photo": "/players/id/evos/drianw.webp",
+    "source": "https://liquipedia.net/mobilelegends/DrianW"
   },
   {
     "region": "ID",
@@ -77,719 +589,319 @@
     "name": "QINN",
     "role": "EXP Lane",
     "photo": "/players/id/dewa/qinn.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Qinn.png"
+    "source": "https://liquipedia.net/mobilelegends/QINN"
   },
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "MAYBEEE",
-    "role": "Gold Lane",
-    "photo": "/players/id/dewa/maybeee.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Maybeee.png"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "KAYN",
+    "name": "Kayn",
     "role": "Jungle",
     "photo": "/players/id/dewa/kayn.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Kayn.png"
+    "source": "https://liquipedia.net/mobilelegends/Kayn"
   },
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "OCTA",
-    "role": "Mid Lane",
+    "name": "Octa",
+    "role": "Midlane",
     "photo": "/players/id/dewa/octa.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Octa.png"
+    "source": "https://liquipedia.net/mobilelegends/Octa"
   },
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "ITOSHI KESU",
+    "name": "Maybeee",
+    "role": "Gold Lane",
+    "photo": "/players/id/dewa/maybeee.webp",
+    "source": "https://liquipedia.net/mobilelegends/Maybeee"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Itoshi Kesu",
     "role": "Roam",
     "photo": "/players/id/dewa/itoshi-kesu.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Itoshi%20Kesu.png"
+    "source": "https://liquipedia.net/mobilelegends/KESUUU"
   },
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "RUL GOOD",
-    "role": "Roam",
-    "photo": "/players/id/dewa/rul-good.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/DEWA/Rul%20Good.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "BRAVO",
-    "role": "Analyst",
-    "photo": "/players/id/evos/bravo.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Bravo.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "RENDYYY",
-    "role": "EXP Lane",
-    "photo": "/players/id/evos/rendyyy.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Rendyyy.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "VELL",
-    "role": "EXP Lane",
-    "photo": "/players/id/evos/vell.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Vell.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "ERLAN",
-    "role": "Gold Lane",
-    "photo": "/players/id/evos/erlan.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Erlan.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "ALBERTTT",
+    "name": "Hazle",
     "role": "Jungle",
-    "photo": "/players/id/evos/alberttt.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Alberttt.png"
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Hazle"
   },
   {
     "region": "ID",
-    "team": "EVOS",
-    "name": "DRIANW",
-    "role": "Mid Lane",
-    "photo": "/players/id/evos/drianw.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Drianw.png"
-  },
-  {
-    "region": "ID",
-    "team": "EVOS",
-    "name": "MUEZZA",
-    "role": "Roam",
-    "photo": "/players/id/evos/muezza.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/EVOS/Muezza.png"
+    "team": "DEWA",
+    "name": "RuL Good",
+    "role": "Flex",
+    "photo": "/players/id/dewa/rul-good.webp",
+    "source": "https://liquipedia.net/mobilelegends/RuL Good"
   },
   {
     "region": "ID",
     "team": "GEEK",
-    "name": "FEBRIII",
-    "role": "EXP Lane",
-    "photo": "/players/id/geek/febriii.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Febriii.png"
-  },
-  {
-    "region": "ID",
-    "team": "GEEK",
-    "name": "MARCEL",
+    "name": "MarceL",
     "role": "EXP Lane",
     "photo": "/players/id/geek/marcel.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Marcel.png"
+    "source": "https://liquipedia.net/mobilelegends/MarceL"
   },
   {
     "region": "ID",
     "team": "GEEK",
-    "name": "KENNZYYSKIE",
-    "role": "Gold Lane",
-    "photo": "/players/id/geek/kennzyyskie.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Kennzyskie.png"
-  },
-  {
-    "region": "ID",
-    "team": "GEEK",
-    "name": "NAZARA",
+    "name": "Nazara",
     "role": "Jungle",
     "photo": "/players/id/geek/nazara.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Nazara.png"
+    "source": "https://liquipedia.net/mobilelegends/Nazara"
   },
   {
     "region": "ID",
     "team": "GEEK",
-    "name": "ABOYY",
-    "role": "Mid Lane",
+    "name": "A B O Y",
+    "role": "Midlane",
     "photo": "/players/id/geek/aboyy.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Aboy.png"
+    "source": "https://liquipedia.net/mobilelegends/A B O Y"
   },
   {
     "region": "ID",
     "team": "GEEK",
-    "name": "AUDYTZY",
+    "name": "KennzyySkie",
+    "role": "Gold Lane",
+    "photo": "/players/id/geek/kennzyyskie.webp",
+    "source": "https://liquipedia.net/mobilelegends/KennzyySkie"
+  },
+  {
+    "region": "ID",
+    "team": "GEEK",
+    "name": "Frenzyy",
+    "role": "Roam",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Frenzyy"
+  },
+  {
+    "region": "ID",
+    "team": "GEEK",
+    "name": "Febriii",
+    "role": "EXP Lane",
+    "photo": "/players/id/geek/febriii.webp",
+    "source": "https://liquipedia.net/mobilelegends/Febriii"
+  },
+  {
+    "region": "ID",
+    "team": "GEEK",
+    "name": "AudyTzy",
     "role": "Roam",
     "photo": "/players/id/geek/audytzy.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/GEEK/Audytzy.png"
+    "source": "https://liquipedia.net/mobilelegends/AudyTzy"
   },
   {
     "region": "ID",
     "team": "NAVI",
-    "name": "HAN",
-    "role": "Analyst",
-    "photo": "/players/id/navi/han.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Han.png"
-  },
-  {
-    "region": "ID",
-    "team": "NAVI",
-    "name": "FEBBB",
-    "role": "EXP Lane",
-    "photo": "/players/id/navi/febbb.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Febbb.png"
-  },
-  {
-    "region": "ID",
-    "team": "NAVI",
-    "name": "KARSS",
+    "name": "Karss",
     "role": "EXP Lane",
     "photo": "/players/id/navi/karss.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Karss.png"
+    "source": "https://liquipedia.net/mobilelegends/Karss"
   },
   {
     "region": "ID",
     "team": "NAVI",
-    "name": "ZEONN",
-    "role": "Gold Lane",
-    "photo": "/players/id/navi/zeonn.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Zeonn.png"
-  },
-  {
-    "region": "ID",
-    "team": "NAVI",
-    "name": "ANDORYUUU",
+    "name": "Andoryuuu",
     "role": "Jungle",
     "photo": "/players/id/navi/andoryuuu.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Andoryuuu.png"
+    "source": "https://liquipedia.net/mobilelegends/Andoryuuu"
   },
   {
     "region": "ID",
     "team": "NAVI",
-    "name": "JIIZEE",
-    "role": "Mid Lane",
+    "name": "Jiizee",
+    "role": "Midlane",
     "photo": "/players/id/navi/jiizee.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Jiize.png"
+    "source": "https://liquipedia.net/mobilelegends/Jizeezeze"
   },
   {
     "region": "ID",
     "team": "NAVI",
-    "name": "APRHO",
+    "name": "Zeonn",
+    "role": "Gold Lane",
+    "photo": "/players/id/navi/zeonn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Zeonn"
+  },
+  {
+    "region": "ID",
+    "team": "NAVI",
+    "name": "APHRO",
     "role": "Roam",
     "photo": "/players/id/navi/aprho.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/NAVI/Aprho.png"
+    "source": "https://liquipedia.net/mobilelegends/APHRO"
+  },
+  {
+    "region": "ID",
+    "team": "NAVI",
+    "name": "Febbb",
+    "role": "EXP Lane",
+    "photo": "/players/id/navi/febbb.webp",
+    "source": "https://liquipedia.net/mobilelegends/Febbb"
+  },
+  {
+    "region": "ID",
+    "team": "NAVI",
+    "name": "Joshua",
+    "role": "Jungle",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Coolfire"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "Lutpiii",
+    "role": "EXP Lane",
+    "photo": "/players/id/onicid/lutpiii.webp",
+    "source": "https://liquipedia.net/mobilelegends/Lutpiii"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "Kairi",
+    "role": "Jungle",
+    "photo": "/players/id/onicid/kairi.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kairi"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "S A N Z",
+    "role": "Midlane",
+    "photo": "/players/id/onicid/s-a-n-z.webp",
+    "source": "https://liquipedia.net/mobilelegends/S A N Z"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "Kelra",
+    "role": "Gold Lane",
+    "photo": "/players/id/onicid/kelra.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kelra"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "Kiboy",
+    "role": "Roam",
+    "photo": "/players/id/onicid/kiboy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kiboy"
+  },
+  {
+    "region": "ID",
+    "team": "ONICID",
+    "name": "SamueL",
+    "role": "Roam",
+    "photo": "/players/id/onicid/samuel.webp",
+    "source": "https://liquipedia.net/mobilelegends/SamueL"
   },
   {
     "region": "ID",
     "team": "RRQID",
-    "name": "JOSHUA",
+    "name": "Joshua",
     "role": "EXP Lane",
     "photo": "/players/id/rrqid/joshua.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Joshua.png"
+    "source": "https://liquipedia.net/mobilelegends/Lynchh"
   },
   {
     "region": "ID",
     "team": "RRQID",
-    "name": "ARTHUR",
-    "role": "Gold Lane",
-    "photo": "/players/id/rrqid/arthur.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Arthur.png"
-  },
-  {
-    "region": "ID",
-    "team": "RRQID",
-    "name": "HABIL",
-    "role": "Gold Lane",
-    "photo": "/players/id/rrqid/habil.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Habil.png"
-  },
-  {
-    "region": "ID",
-    "team": "RRQID",
-    "name": "DEMONKITE",
+    "name": "Demonkite",
     "role": "Jungle",
     "photo": "/players/id/rrqid/demonkite.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Demonkite.png"
+    "source": "https://liquipedia.net/mobilelegends/Demonkite"
   },
   {
     "region": "ID",
     "team": "RRQID",
-    "name": "CLAYYY",
-    "role": "Mid Lane",
-    "photo": "/players/id/rrqid/clayyy.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Clayy.png"
-  },
-  {
-    "region": "ID",
-    "team": "RRQID",
-    "name": "HAJIRIN",
-    "role": "Mid Lane",
+    "name": "Hajirin",
+    "role": "Midlane",
     "photo": "/players/id/rrqid/hajirin.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Hajirin.png"
+    "source": "https://liquipedia.net/mobilelegends/Rinz"
   },
   {
     "region": "ID",
     "team": "RRQID",
-    "name": "SAID",
+    "name": "Arthur",
+    "role": "Gold Lane",
+    "photo": "/players/id/rrqid/arthur.webp",
+    "source": "https://liquipedia.net/mobilelegends/Sutsujin"
+  },
+  {
+    "region": "ID",
+    "team": "RRQID",
+    "name": "Said",
     "role": "Roam",
     "photo": "/players/id/rrqid/said.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/RRQ/Said.png"
+    "source": "https://liquipedia.net/mobilelegends/Idok"
+  },
+  {
+    "region": "ID",
+    "team": "RRQID",
+    "name": "Habil",
+    "role": "Gold Lane",
+    "photo": "/players/id/rrqid/habil.webp",
+    "source": "https://liquipedia.net/mobilelegends/KurooKy"
+  },
+  {
+    "region": "ID",
+    "team": "RRQID",
+    "name": "Clayyy",
+    "role": "Midlane",
+    "photo": "/players/id/rrqid/clayyy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Clayyy"
   },
   {
     "region": "ID",
     "team": "TLID",
-    "name": "FACEHUGGER",
-    "role": "Analyst",
-    "photo": "/players/id/tlid/facehugger.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Facehugger.png"
-  },
-  {
-    "region": "ID",
-    "team": "TLID",
-    "name": "ARAN",
+    "name": "Aran",
     "role": "EXP Lane",
     "photo": "/players/id/tlid/aran.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Aran.png"
+    "source": "https://liquipedia.net/mobilelegends/Aran"
   },
   {
     "region": "ID",
     "team": "TLID",
-    "name": "KEVEN",
-    "role": "Gold Lane",
-    "photo": "/players/id/tlid/keven.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Keven.png"
-  },
-  {
-    "region": "ID",
-    "team": "TLID",
-    "name": "KEVIN",
+    "name": "Kevin",
     "role": "Jungle",
     "photo": "/players/id/tlid/kevin.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Kevin.png"
+    "source": "https://liquipedia.net/mobilelegends/JOOOOO"
   },
   {
     "region": "ID",
     "team": "TLID",
-    "name": "ANAVER",
-    "role": "Mid Lane",
-    "photo": "/players/id/tlid/anaver.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Anaver.png"
-  },
-  {
-    "region": "ID",
-    "team": "TLID",
-    "name": "DRICHEL",
+    "name": "Drichel",
     "role": "Midlane",
     "photo": "/players/id/tlid/drichel.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Drichel.png"
+    "source": "https://liquipedia.net/mobilelegends/Drichel"
   },
   {
     "region": "ID",
     "team": "TLID",
-    "name": "LYONI",
+    "name": "Keven",
+    "role": "Gold Lane",
+    "photo": "/players/id/tlid/keven.webp",
+    "source": "https://liquipedia.net/mobilelegends/Jull"
+  },
+  {
+    "region": "ID",
+    "team": "TLID",
+    "name": "Lyoni",
     "role": "Roam",
     "photo": "/players/id/tlid/lyoni.webp",
-    "source": "https://cdn.id-mpl.com/season18/player/TLID/Lyoni.png"
+    "source": "https://liquipedia.net/mobilelegends/Lyoni"
   },
   {
-    "region": "MY",
-    "team": "AC",
-    "name": "Momo",
-    "role": "EXP Laner",
-    "photo": "/players/my/ac/momo.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-MOMO.png"
-  },
-  {
-    "region": "MY",
-    "team": "AC",
-    "name": "NETS",
-    "role": "Gold Laner",
-    "photo": "/players/my/ac/nets.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-NETS.png"
-  },
-  {
-    "region": "MY",
-    "team": "AC",
-    "name": "Zahyed",
-    "role": "Jungler",
-    "photo": "/players/my/ac/zahyed.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-ZAHYED.png"
-  },
-  {
-    "region": "MY",
-    "team": "AC",
-    "name": "Izanami",
-    "role": "Mid Laner",
-    "photo": "/players/my/ac/izanami.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-IZANAMI.png"
-  },
-  {
-    "region": "MY",
-    "team": "AC",
-    "name": "MARTZYY",
-    "role": "Mid Laner",
-    "photo": "/players/my/ac/martzyy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-MARTZYY.png"
-  },
-  {
-    "region": "MY",
-    "team": "AC",
-    "name": "REYZAR",
-    "role": "Roamer",
-    "photo": "/players/my/ac/reyzar.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/AC/S18-REYZAR.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "Jeymz",
-    "role": "EXP Laner",
-    "photo": "/players/my/btrm/jeymz.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-Jeymz.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "AMZZIQ",
-    "role": "Gold Laner",
-    "photo": "/players/my/btrm/amzziq.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-Amzziq.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "CikuGais",
-    "role": "Gold Laner",
-    "photo": "/players/my/btrm/cikugais.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-CikuGais.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "Chibii",
-    "role": "Jungler",
-    "photo": "/players/my/btrm/chibii.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-Chibi.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "Zieyy",
-    "role": "Mid Laner",
-    "photo": "/players/my/btrm/zieyy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-Zieyy.png"
-  },
-  {
-    "region": "MY",
-    "team": "BTRM",
-    "name": "GRboy",
-    "role": "Roamer",
-    "photo": "/players/my/btrm/grboy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/BTRM/S18-GRboy.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "3Mar",
-    "role": "EXP Laner",
-    "photo": "/players/my/fl/3mar.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-3MAR.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "Vanix",
-    "role": "Gold Laner",
-    "photo": "/players/my/fl/vanix.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-VANIX.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "Garyy",
-    "role": "Jungler",
-    "photo": "/players/my/fl/garyy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-GARYY.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "UK1R",
-    "role": "Mid Laner",
-    "photo": "/players/my/fl/uk1r.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-UK1R.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "Osker",
-    "role": "Roamer",
-    "photo": "/players/my/fl/osker.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-OSKER.png"
-  },
-  {
-    "region": "MY",
-    "team": "FL",
-    "name": "XORN",
-    "role": "Roamer",
-    "photo": "/players/my/fl/xorn.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMFLASH/S18-XORN.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "REZZA",
-    "role": "EXP Laner",
-    "photo": "/players/my/ig/rezza.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-REZZA.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "YE3",
-    "role": "EXP Laner",
-    "photo": "/players/my/ig/ye3.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-YE3.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "Rokji",
-    "role": "Gold Laner",
-    "photo": "/players/my/ig/rokji.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-NEWROKJI.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "Lunnn",
-    "role": "Jungler",
-    "photo": "/players/my/ig/lunnn.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-NEWLUNNN.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "Treacky",
-    "role": "Mid Laner",
-    "photo": "/players/my/ig/treacky.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-TREACKY.png"
-  },
-  {
-    "region": "MY",
-    "team": "IG",
-    "name": "ATANNN",
-    "role": "Roamer",
-    "photo": "/players/my/ig/atannn.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/Invictus-Gaming/S18-NEWATANNN.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "LEHTZY",
-    "role": "EXP Laner",
-    "photo": "/players/my/rrqmy/lehtzy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-LEHTZY.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "IZZSHIKI",
-    "role": "Gold Laner",
-    "photo": "/players/my/rrqmy/izzshiki.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-IZZSHIKI.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "Loleal",
-    "role": "Gold Laner",
-    "photo": "/players/my/rrqmy/loleal.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-LOLEAL.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "SUPERKENN",
-    "role": "Jungler",
-    "photo": "/players/my/rrqmy/superkenn.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-SUPERKENN.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "AJ",
-    "role": "Mid Laner",
-    "photo": "/players/my/rrqmy/aj.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-AJ.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "Yehezkiel",
-    "role": "Mid Laner",
-    "photo": "/players/my/rrqmy/yehezkiel.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S18-YEHEZKIEL.png"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "Addboyy",
-    "role": "Roamer",
-    "photo": "/players/my/rrqmy/addboyy.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/RRQ/S188-ADDBOYY.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "kramM",
-    "role": "EXP Laner",
-    "photo": "/players/my/srg/kramm.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_KRAMM.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "Innocent",
-    "role": "Gold Laner",
-    "photo": "/players/my/srg/innocent.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_INNOCENT.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "Sekysss",
-    "role": "Jungler",
-    "photo": "/players/my/srg/sekysss.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_SEKYSSS.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "Unii",
-    "role": "Jungler",
-    "photo": "/players/my/srg/unii.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_UNII.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "Stormie",
-    "role": "Mid Laner",
-    "photo": "/players/my/srg/stormie.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_STORMIE.png"
-  },
-  {
-    "region": "MY",
-    "team": "SRG",
-    "name": "YumS",
-    "role": "Roamer",
-    "photo": "/players/my/srg/yums.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/SRG/S18_YUMS.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "JWen",
-    "role": "EXP Laner",
-    "photo": "/players/my/tr/jwen.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-JWEN.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "SMOOTH",
-    "role": "EXP Laner",
-    "photo": "/players/my/tr/smooth.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-SMOOTH.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "Cliveee",
-    "role": "Gold Laner",
-    "photo": "/players/my/tr/cliveee.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-CLIVEEE.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "Dolynn",
-    "role": "Jungler",
-    "photo": "/players/my/tr/dolynn.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-DOLYNN.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "Kyym",
-    "role": "Mid Laner",
-    "photo": "/players/my/tr/kyym.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-KYYM.png"
-  },
-  {
-    "region": "MY",
-    "team": "TR",
-    "name": "NovaXcobar",
-    "role": "Roamer",
-    "photo": "/players/my/tr/novaxcobar.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/TEAMREY/S18-NOVAXCOBAR.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "SEPAT",
-    "role": "EXP Laner",
-    "photo": "/players/my/vms/sepat.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/S18-SEPAT.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "Sizkaa",
-    "role": "EXP Laner",
-    "photo": "/players/my/vms/sizkaa.webp",
-    "source": "https://liquipedia.net/mobilelegends/MPL/Malaysia/Season_18"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "Natco",
-    "role": "Gold Laner",
-    "photo": "/players/my/vms/natco.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/S18-NATCO.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "ERROR 404",
-    "role": "Jungler",
-    "photo": "/players/my/vms/error-404.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/S18-ERROR404.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "EYYMAL",
-    "role": "Jungler",
-    "photo": "/players/my/vms/eyymal.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/EyyMal.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "CLAWKUN",
-    "role": "Mid Laner",
-    "photo": "/players/my/vms/clawkun.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/S18-CLAWKUN.png"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "ZQEEF",
-    "role": "Roamer",
-    "photo": "/players/my/vms/zqeef.webp",
-    "source": "https://mplmy-storage.sgp1.digitaloceanspaces.com/season18/player/VAMOS/S18-%20ZQEEF.png"
+    "region": "ID",
+    "team": "TLID",
+    "name": "Anaver",
+    "role": "Midlane",
+    "photo": "/players/id/tlid/anaver.webp",
+    "source": "https://liquipedia.net/mobilelegends/NenShikii"
   },
   {
     "region": "PH",
@@ -797,15 +909,7 @@
     "name": "JMPINKMAN",
     "role": "EXP Lane",
     "photo": "/players/ph/apbr/jmpinkman.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/JM.png"
-  },
-  {
-    "region": "PH",
-    "team": "APBR",
-    "name": "Shizou",
-    "role": "Gold Lane",
-    "photo": "/players/ph/apbr/shizou.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shizou.png"
+    "source": "https://liquipedia.net/mobilelegends/JM"
   },
   {
     "region": "PH",
@@ -813,15 +917,23 @@
     "name": "Jamespangks",
     "role": "Jungle",
     "photo": "/players/ph/apbr/jamespangks.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jamespangks.png"
+    "source": "https://liquipedia.net/mobilelegends/Jamespangks"
   },
   {
     "region": "PH",
     "team": "APBR",
     "name": "LanceCy",
-    "role": "Mid Lane",
+    "role": "Midlane",
     "photo": "/players/ph/apbr/lancecy.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/LanceCy.png"
+    "source": "https://liquipedia.net/mobilelegends/LanceCy"
+  },
+  {
+    "region": "PH",
+    "team": "APBR",
+    "name": "Shizou",
+    "role": "Gold Lane",
+    "photo": "/players/ph/apbr/shizou.webp",
+    "source": "https://liquipedia.net/mobilelegends/Shizou"
   },
   {
     "region": "PH",
@@ -829,127 +941,15 @@
     "name": "Escalera",
     "role": "Roam",
     "photo": "/players/ph/apbr/escalera.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Escalera.png"
+    "source": "https://liquipedia.net/mobilelegends/Escalera"
   },
   {
     "region": "PH",
-    "team": "FLCN",
-    "name": "Flap",
+    "team": "APBR",
+    "name": "Allen",
     "role": "EXP Lane",
-    "photo": "/players/ph/flcn/flap.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/FlapTzy.png"
-  },
-  {
-    "region": "PH",
-    "team": "FLCN",
-    "name": "Super Marco",
-    "role": "Gold Lane",
-    "photo": "/players/ph/flcn/super-marco.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SUPER_MARCO.png"
-  },
-  {
-    "region": "PH",
-    "team": "FLCN",
-    "name": "Kyle",
-    "role": "Jungle",
-    "photo": "/players/ph/flcn/kyle.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KyleTzy.png"
-  },
-  {
-    "region": "PH",
-    "team": "FLCN",
-    "name": "Hadji",
-    "role": "Mid Lane",
-    "photo": "/players/ph/flcn/hadji.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Hadji.png"
-  },
-  {
-    "region": "PH",
-    "team": "FLCN",
-    "name": "Owgwen",
-    "role": "Roam",
-    "photo": "/players/ph/flcn/owgwen.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Owgwen.png"
-  },
-  {
-    "region": "PH",
-    "team": "OMG",
-    "name": "Louis",
-    "role": "EXP Lane",
-    "photo": "/players/ph/omg/louis.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Louis.png"
-  },
-  {
-    "region": "PH",
-    "team": "OMG",
-    "name": "Cull",
-    "role": "Gold Lane",
     "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
-  },
-  {
-    "region": "PH",
-    "team": "OMG",
-    "name": "Raizen",
-    "role": "Jungle",
-    "photo": "/players/ph/omg/raizen.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Raizen.png"
-  },
-  {
-    "region": "PH",
-    "team": "OMG",
-    "name": "Minguin",
-    "role": "Mid Lane",
-    "photo": "/players/ph/omg/minguin.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Minguin.png"
-  },
-  {
-    "region": "PH",
-    "team": "OMG",
-    "name": "Perkziva",
-    "role": "Roam",
-    "photo": "/players/ph/omg/perkziva.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Perkz.png"
-  },
-  {
-    "region": "PH",
-    "team": "ONPH",
-    "name": "Kirk",
-    "role": "EXP Lane",
-    "photo": "/players/ph/onph/kirk.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kirk.png"
-  },
-  {
-    "region": "PH",
-    "team": "ONPH",
-    "name": "Savero",
-    "role": "Gold Lane",
-    "photo": "/players/ph/onph/savero.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Savero.png"
-  },
-  {
-    "region": "PH",
-    "team": "ONPH",
-    "name": "K1NGKONG",
-    "role": "Jungle",
-    "photo": "/players/ph/onph/k1ngkong.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/K1NGKONG.png"
-  },
-  {
-    "region": "PH",
-    "team": "ONPH",
-    "name": "Super Frince",
-    "role": "Mid Lane",
-    "photo": "/players/ph/onph/super-frince.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Frince.png"
-  },
-  {
-    "region": "PH",
-    "team": "ONPH",
-    "name": "Super Yoshi",
-    "role": "Roam",
-    "photo": "/players/ph/onph/super-yoshi.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Yoshi.png"
+    "source": "https://liquipedia.net/mobilelegends/Allen"
   },
   {
     "region": "PH",
@@ -957,15 +957,7 @@
     "name": "Nathzz",
     "role": "EXP Lane",
     "photo": "/players/ph/rora/nathzz.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nathzz.png"
-  },
-  {
-    "region": "PH",
-    "team": "RORA",
-    "name": "Domeng",
-    "role": "Gold Lane",
-    "photo": "/players/ph/rora/domeng.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Domeng.png"
+    "source": "https://liquipedia.net/mobilelegends/Nathzz"
   },
   {
     "region": "PH",
@@ -979,9 +971,17 @@
     "region": "PH",
     "team": "RORA",
     "name": "Yue",
-    "role": "Mid Lane",
+    "role": "Midlane",
     "photo": "/players/ph/rora/yue.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Yue.png"
+    "source": "https://liquipedia.net/mobilelegends/Yue"
+  },
+  {
+    "region": "PH",
+    "team": "RORA",
+    "name": "Domeng",
+    "role": "Gold Lane",
+    "photo": "/players/ph/rora/domeng.webp",
+    "source": "https://liquipedia.net/mobilelegends/Domeng"
   },
   {
     "region": "PH",
@@ -989,7 +989,167 @@
     "name": "Light",
     "role": "Roam",
     "photo": "/players/ph/rora/light.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Light.png"
+    "source": "https://liquipedia.net/mobilelegends/Light"
+  },
+  {
+    "region": "PH",
+    "team": "RORA",
+    "name": "Yecs",
+    "role": "Flex",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Yecs"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Louis",
+    "role": "EXP Lane",
+    "photo": "/players/ph/omg/louis.webp",
+    "source": "https://liquipedia.net/mobilelegends/Louis"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Raizen",
+    "role": "Jungle",
+    "photo": "/players/ph/omg/raizen.webp",
+    "source": "https://liquipedia.net/mobilelegends/Raizen"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Minguin",
+    "role": "Midlane",
+    "photo": "/players/ph/omg/minguin.webp",
+    "source": "https://liquipedia.net/mobilelegends/Minguin"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Cull",
+    "role": "Gold Lane",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Cull"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Perkziva",
+    "role": "Roam",
+    "photo": "/players/ph/omg/perkziva.webp",
+    "source": "https://liquipedia.net/mobilelegends/Perkz"
+  },
+  {
+    "region": "PH",
+    "team": "OMG",
+    "name": "Peuder",
+    "role": "Flex",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Peuder"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Kirk",
+    "role": "EXP Lane",
+    "photo": "/players/ph/onph/kirk.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kirk"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "K1NGKONG",
+    "role": "Jungle",
+    "photo": "/players/ph/onph/k1ngkong.webp",
+    "source": "https://liquipedia.net/mobilelegends/K1NGKONG"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Super Frince",
+    "role": "Midlane",
+    "photo": "/players/ph/onph/super-frince.webp",
+    "source": "https://liquipedia.net/mobilelegends/Super Frince"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Savero",
+    "role": "Gold Lane",
+    "photo": "/players/ph/onph/savero.webp",
+    "source": "https://liquipedia.net/mobilelegends/Savero"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Super Yoshi",
+    "role": "Roam",
+    "photo": "/players/ph/onph/super-yoshi.webp",
+    "source": "https://liquipedia.net/mobilelegends/Super Yoshi"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Dann",
+    "role": "EXP Lane",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Dan"
+  },
+  {
+    "region": "PH",
+    "team": "ONPH",
+    "name": "Brusko",
+    "role": "Roam",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Brusko"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Flap",
+    "role": "EXP Lane",
+    "photo": "/players/ph/flcn/flap.webp",
+    "source": "https://liquipedia.net/mobilelegends/FlapTzy"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Kyle",
+    "role": "Jungle",
+    "photo": "/players/ph/flcn/kyle.webp",
+    "source": "https://liquipedia.net/mobilelegends/KyleTzy"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Hadji",
+    "role": "Midlane",
+    "photo": "/players/ph/flcn/hadji.webp",
+    "source": "https://liquipedia.net/mobilelegends/Hadji"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Super Marco",
+    "role": "Gold Lane",
+    "photo": "/players/ph/flcn/super-marco.webp",
+    "source": "https://liquipedia.net/mobilelegends/Super Marco"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Owgwen",
+    "role": "Roam",
+    "photo": "/players/ph/flcn/owgwen.webp",
+    "source": "https://liquipedia.net/mobilelegends/Owgwen"
+  },
+  {
+    "region": "PH",
+    "team": "FLCN",
+    "name": "Ferdz",
+    "role": "EXP Lane",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Ferdz"
   },
   {
     "region": "PH",
@@ -997,15 +1157,7 @@
     "name": "Sanford",
     "role": "EXP Lane",
     "photo": "/players/ph/tlph/sanford.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanford.png"
-  },
-  {
-    "region": "PH",
-    "team": "TLPH",
-    "name": "Teddy",
-    "role": "Gold Lane",
-    "photo": "/players/ph/tlph/teddy.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Teddyqt.png"
+    "source": "https://liquipedia.net/mobilelegends/Sanford"
   },
   {
     "region": "PH",
@@ -1013,15 +1165,23 @@
     "name": "KarlTzy",
     "role": "Jungle",
     "photo": "/players/ph/tlph/karltzy.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KarlTzy.png"
+    "source": "https://liquipedia.net/mobilelegends/KarlTzy"
   },
   {
     "region": "PH",
     "team": "TLPH",
     "name": "Sanji",
-    "role": "Mid Lane",
+    "role": "Midlane",
     "photo": "/players/ph/tlph/sanji.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanji.png"
+    "source": "https://liquipedia.net/mobilelegends/Sanji"
+  },
+  {
+    "region": "PH",
+    "team": "TLPH",
+    "name": "Teddy",
+    "role": "Gold Lane",
+    "photo": "/players/ph/tlph/teddy.webp",
+    "source": "https://liquipedia.net/mobilelegends/Teddyqt"
   },
   {
     "region": "PH",
@@ -1029,7 +1189,15 @@
     "name": "Jaypee",
     "role": "Roam",
     "photo": "/players/ph/tlph/jaypee.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jaypee.png"
+    "source": "https://liquipedia.net/mobilelegends/Jaypee"
+  },
+  {
+    "region": "PH",
+    "team": "TLPH",
+    "name": "Daiki",
+    "role": "Gold Lane",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Dai Ki"
   },
   {
     "region": "PH",
@@ -1037,15 +1205,7 @@
     "name": "Ryota",
     "role": "EXP Lane",
     "photo": "/players/ph/tnc/ryota.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Ryota.png"
-  },
-  {
-    "region": "PH",
-    "team": "TNC",
-    "name": "Jowm",
-    "role": "Gold Lane",
-    "photo": "/players/ph/tnc/jowm.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jowm.png"
+    "source": "https://liquipedia.net/mobilelegends/Ryota"
   },
   {
     "region": "PH",
@@ -1053,15 +1213,23 @@
     "name": "Zaida",
     "role": "Jungle",
     "photo": "/players/ph/tnc/zaida.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Zaida.png"
+    "source": "https://liquipedia.net/mobilelegends/Zaida"
   },
   {
     "region": "PH",
     "team": "TNC",
     "name": "Vin",
-    "role": "Mid Lane",
+    "role": "Midlane",
     "photo": "/players/ph/tnc/vin.webp",
-    "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+    "source": "https://liquipedia.net/mobilelegends/Vinnn"
+  },
+  {
+    "region": "PH",
+    "team": "TNC",
+    "name": "Jowm",
+    "role": "Gold Lane",
+    "photo": "/players/ph/tnc/jowm.webp",
+    "source": "https://liquipedia.net/mobilelegends/Jowm"
   },
   {
     "region": "PH",
@@ -1069,7 +1237,15 @@
     "name": "Zehn",
     "role": "Roam",
     "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+    "source": "https://liquipedia.net/mobilelegends/Zehn"
+  },
+  {
+    "region": "PH",
+    "team": "TNC",
+    "name": "Yeyeniya",
+    "role": "Flex",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Lift"
   },
   {
     "region": "PH",
@@ -1077,15 +1253,7 @@
     "name": "Lansu",
     "role": "EXP Lane",
     "photo": "/players/ph/twis/lansu.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lansu.png"
-  },
-  {
-    "region": "PH",
-    "team": "TWIS",
-    "name": "Bennyqt",
-    "role": "Gold Lane",
-    "photo": "/players/ph/twis/bennyqt.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Bennyqt.png"
+    "source": "https://liquipedia.net/mobilelegends/Lansu"
   },
   {
     "region": "PH",
@@ -1093,15 +1261,23 @@
     "name": "Sensu1",
     "role": "Jungle",
     "photo": "/players/ph/twis/sensu1.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sensui.png"
+    "source": "https://liquipedia.net/mobilelegends/Sensui"
   },
   {
     "region": "PH",
     "team": "TWIS",
     "name": "Sionnn",
-    "role": "Mid Lane",
+    "role": "Midlane",
     "photo": "/players/ph/twis/sionnn.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sionnn.png"
+    "source": "https://liquipedia.net/mobilelegends/Sionnn"
+  },
+  {
+    "region": "PH",
+    "team": "TWIS",
+    "name": "Bennyqt",
+    "role": "Gold Lane",
+    "photo": "/players/ph/twis/bennyqt.webp",
+    "source": "https://liquipedia.net/mobilelegends/Bennyqt"
   },
   {
     "region": "PH",
@@ -1109,102 +1285,14 @@
     "name": "Tracy",
     "role": "Roam",
     "photo": "/players/ph/twis/tracy.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Tracy.jpg"
+    "source": "https://liquipedia.net/mobilelegends/Tracy"
   },
   {
-    "region": "ID",
-    "team": "BTR",
-    "name": "Shogun",
-    "role": "EXP Lane",
-    "photo": "/players/id/btr/shogun.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shogun.png"
-  },
-  {
-    "region": "ID",
-    "team": "BTR",
-    "name": "Nnael",
-    "role": "Jungle",
-    "photo": "/players/id/btr/nnael.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nnael.png"
-  },
-  {
-    "region": "ID",
-    "team": "BTR",
-    "name": "Moreno",
-    "role": "Mid Lane",
-    "photo": "/players/id/btr/moreno.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Moreno.png"
-  },
-  {
-    "region": "ID",
-    "team": "BTR",
-    "name": "EMANN",
-    "role": "Gold Lane",
-    "photo": "/players/id/btr/emann.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/EMANN.png"
-  },
-  {
-    "region": "ID",
-    "team": "BTR",
-    "name": "Finn",
-    "role": "Roamer",
-    "photo": "/players/id/btr/finn.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Finn.png"
-  },
-  {
-    "region": "ID",
-    "team": "BTR",
-    "name": "Miguel",
-    "role": "Flex",
+    "region": "PH",
+    "team": "TWIS",
+    "name": "Kurtt",
+    "role": "Midlane",
     "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "Lutpiii",
-    "role": "EXP Lane",
-    "photo": "/players/id/onicid/lutpiii.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lutpiii.png"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "Kairi",
-    "role": "Jungle",
-    "photo": "/players/id/onicid/kairi.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kairi.png"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "S A N Z",
-    "role": "Mid Lane",
-    "photo": "/players/id/onicid/s-a-n-z.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/S_A_N_Z.png"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "Kelra",
-    "role": "Gold Lane",
-    "photo": "/players/id/onicid/kelra.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kelra.png"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "Kiboy",
-    "role": "Roamer",
-    "photo": "/players/id/onicid/kiboy.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kiboy.png"
-  },
-  {
-    "region": "ID",
-    "team": "ONICID",
-    "name": "SamueL",
-    "role": "Flex",
-    "photo": "/players/id/onicid/samuel.webp",
-    "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SamueL.png"
+    "source": "https://liquipedia.net/mobilelegends/Super Kurt"
   }
 ]

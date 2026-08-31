@@ -1,468 +1,1123 @@
 {
-  "dataset": "Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang",
-  "datasetCommit": "29f98d037a70a0ce03908562c5be9cab333eedff",
-  "notice": "Player and team imagery remains the property of its respective rights holders. Verify permissions before commercial use.",
-  "records": [
+  "sources": [
     {
-      "region": "PH",
-      "team": "APBR",
-      "player": "JMPINKMAN",
-      "photo": "/players/ph/apbr/jmpinkman.webp",
-      "datasetPlayer": "JM",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/JM.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Momo",
+      "photo": "/players/my/ac/momo.webp",
+      "source": "https://liquipedia.net/mobilelegends/Momo"
     },
     {
-      "region": "PH",
-      "team": "APBR",
-      "player": "Shizou",
-      "photo": "/players/ph/apbr/shizou.webp",
-      "datasetPlayer": "Shizou",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shizou.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Zahyed",
+      "photo": "/players/my/ac/zahyed.webp",
+      "source": "https://liquipedia.net/mobilelegends/Zahyed"
     },
     {
-      "region": "PH",
-      "team": "APBR",
-      "player": "Jamespangks",
-      "photo": "/players/ph/apbr/jamespangks.webp",
-      "datasetPlayer": "Jamespangks",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jamespangks.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Izanami",
+      "photo": "/players/my/ac/izanami.webp",
+      "source": "https://liquipedia.net/mobilelegends/Izanami"
     },
     {
-      "region": "PH",
-      "team": "APBR",
-      "player": "LanceCy",
-      "photo": "/players/ph/apbr/lancecy.webp",
-      "datasetPlayer": "LanceCy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/LanceCy.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Nets",
+      "photo": "/players/my/ac/nets.webp",
+      "source": "https://liquipedia.net/mobilelegends/Nets"
     },
     {
-      "region": "PH",
-      "team": "APBR",
-      "player": "Escalera",
-      "photo": "/players/ph/apbr/escalera.webp",
-      "datasetPlayer": "Escalera",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Escalera.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Reyzar",
+      "photo": "/players/my/ac/reyzar.webp",
+      "source": "https://liquipedia.net/mobilelegends/Reyzar"
     },
     {
-      "region": "PH",
-      "team": "FLCN",
-      "player": "Flap",
-      "photo": "/players/ph/flcn/flap.webp",
-      "datasetPlayer": "FlapTzy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/FlapTzy.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "AC",
+      "name": "Martzy",
+      "photo": "/players/my/ac/martzyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Martzy"
     },
     {
-      "region": "PH",
-      "team": "FLCN",
-      "player": "Super Marco",
-      "photo": "/players/ph/flcn/super-marco.webp",
-      "datasetPlayer": "SUPER_MARCO",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SUPER_MARCO.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "Jeymz",
+      "photo": "/players/my/btrm/jeymz.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jeymz"
     },
     {
-      "region": "PH",
-      "team": "FLCN",
-      "player": "Kyle",
-      "photo": "/players/ph/flcn/kyle.webp",
-      "datasetPlayer": "KyleTzy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KyleTzy.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "Chibi",
+      "photo": "/players/my/btrm/chibii.webp",
+      "source": "https://liquipedia.net/mobilelegends/Chibi"
     },
     {
-      "region": "PH",
-      "team": "FLCN",
-      "player": "Hadji",
-      "photo": "/players/ph/flcn/hadji.webp",
-      "datasetPlayer": "Hadji",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Hadji.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "Zieyy",
+      "photo": "/players/my/btrm/zieyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Zieyy"
     },
     {
-      "region": "PH",
-      "team": "FLCN",
-      "player": "Owgwen",
-      "photo": "/players/ph/flcn/owgwen.webp",
-      "datasetPlayer": "Owgwen",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Owgwen.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "Ciku",
+      "photo": "/players/my/btrm/cikugais.webp",
+      "source": "https://liquipedia.net/mobilelegends/Ciku"
     },
     {
-      "region": "PH",
-      "team": "OMG",
-      "player": "Louis",
-      "photo": "/players/ph/omg/louis.webp",
-      "datasetPlayer": "Louis",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Louis.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "GRBoy",
+      "photo": "/players/my/btrm/grboy.webp",
+      "source": "https://liquipedia.net/mobilelegends/GR"
     },
     {
-      "region": "PH",
-      "team": "OMG",
-      "player": "Raizen",
-      "photo": "/players/ph/omg/raizen.webp",
-      "datasetPlayer": "Raizen",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Raizen.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "BTRM",
+      "name": "Amzziq",
+      "photo": "/players/my/btrm/amzziq.webp",
+      "source": "https://liquipedia.net/mobilelegends/Amzziq"
     },
     {
-      "region": "PH",
-      "team": "OMG",
-      "player": "Minguin",
-      "photo": "/players/ph/omg/minguin.webp",
-      "datasetPlayer": "Minguin",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Minguin.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Ye3",
+      "photo": "/players/my/ig/ye3.webp",
+      "source": "https://liquipedia.net/mobilelegends/Ye3"
     },
     {
-      "region": "PH",
-      "team": "OMG",
-      "player": "Perkziva",
-      "photo": "/players/ph/omg/perkziva.webp",
-      "datasetPlayer": "Perkz",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Perkz.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Lunnn",
+      "photo": "/players/my/ig/lunnn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Lunnn"
     },
     {
-      "region": "PH",
-      "team": "ONPH",
-      "player": "Kirk",
-      "photo": "/players/ph/onph/kirk.webp",
-      "datasetPlayer": "Kirk",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kirk.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Treacky",
+      "photo": "/players/my/ig/treacky.webp",
+      "source": "https://liquipedia.net/mobilelegends/Treacky"
     },
     {
-      "region": "PH",
-      "team": "ONPH",
-      "player": "Savero",
-      "photo": "/players/ph/onph/savero.webp",
-      "datasetPlayer": "Savero",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Savero.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Rokji",
+      "photo": "/players/my/ig/rokji.webp",
+      "source": "https://liquipedia.net/mobilelegends/Rough"
     },
     {
-      "region": "PH",
-      "team": "ONPH",
-      "player": "K1NGKONG",
-      "photo": "/players/ph/onph/k1ngkong.webp",
-      "datasetPlayer": "K1NGKONG",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/K1NGKONG.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Atannn",
+      "photo": "/players/my/ig/atannn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Atannn"
     },
     {
-      "region": "PH",
-      "team": "ONPH",
-      "player": "Super Frince",
-      "photo": "/players/ph/onph/super-frince.webp",
-      "datasetPlayer": "Super_Frince",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Frince.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "IG",
+      "name": "Rezza",
+      "photo": "/players/my/ig/rezza.webp",
+      "source": "https://liquipedia.net/mobilelegends/Rezza"
     },
     {
-      "region": "PH",
-      "team": "ONPH",
-      "player": "Super Yoshi",
-      "photo": "/players/ph/onph/super-yoshi.webp",
-      "datasetPlayer": "Super_Yoshi",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Super_Yoshi.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "LEHTzy",
+      "photo": "/players/my/rrqmy/lehtzy.webp",
+      "source": "https://liquipedia.net/mobilelegends/LEHTzy"
     },
     {
-      "region": "PH",
-      "team": "RORA",
-      "player": "Nathzz",
-      "photo": "/players/ph/rora/nathzz.webp",
-      "datasetPlayer": "Nathzz",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nathzz.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Super Kenn",
+      "photo": "/players/my/rrqmy/superkenn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Super Kenn"
     },
     {
-      "region": "PH",
-      "team": "RORA",
-      "player": "Domeng",
-      "photo": "/players/ph/rora/domeng.webp",
-      "datasetPlayer": "Domeng",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Domeng.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Yehezkiel",
+      "photo": "/players/my/rrqmy/yehezkiel.webp",
+      "source": "https://liquipedia.net/mobilelegends/Yehezkiel"
     },
     {
-      "region": "PH",
-      "team": "RORA",
-      "player": "Yue",
-      "photo": "/players/ph/rora/yue.webp",
-      "datasetPlayer": "Yue",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Yue.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Loleal",
+      "photo": "/players/my/rrqmy/loleal.webp",
+      "source": "https://liquipedia.net/mobilelegends/Loleal"
     },
     {
-      "region": "PH",
-      "team": "RORA",
-      "player": "Light",
-      "photo": "/players/ph/rora/light.webp",
-      "datasetPlayer": "Light",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Light.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Addboy",
+      "photo": "/players/my/rrqmy/addboyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Addboy"
     },
     {
-      "region": "PH",
-      "team": "TLPH",
-      "player": "Sanford",
-      "photo": "/players/ph/tlph/sanford.webp",
-      "datasetPlayer": "Sanford",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanford.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Aj",
+      "photo": "/players/my/rrqmy/aj.webp",
+      "source": "https://liquipedia.net/mobilelegends/Aj"
     },
     {
-      "region": "PH",
-      "team": "TLPH",
-      "player": "Teddy",
-      "photo": "/players/ph/tlph/teddy.webp",
-      "datasetPlayer": "Teddyqt",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Teddyqt.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "Izzshiki",
+      "photo": "/players/my/rrqmy/izzshiki.webp",
+      "source": "https://liquipedia.net/mobilelegends/Izzshiki"
     },
     {
-      "region": "PH",
-      "team": "TLPH",
-      "player": "KarlTzy",
-      "photo": "/players/ph/tlph/karltzy.webp",
-      "datasetPlayer": "KarlTzy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/KarlTzy.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Kramm",
+      "photo": "/players/my/srg/kramm.webp",
+      "source": "https://liquipedia.net/mobilelegends/Kramm"
     },
     {
-      "region": "PH",
-      "team": "TLPH",
-      "player": "Sanji",
-      "photo": "/players/ph/tlph/sanji.webp",
-      "datasetPlayer": "Sanji",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sanji.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Sekysss",
+      "photo": "/players/my/srg/sekysss.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sekys"
     },
     {
-      "region": "PH",
-      "team": "TLPH",
-      "player": "Jaypee",
-      "photo": "/players/ph/tlph/jaypee.webp",
-      "datasetPlayer": "Jaypee",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jaypee.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Stormie",
+      "photo": "/players/my/srg/stormie.webp",
+      "source": "https://liquipedia.net/mobilelegends/Stormie"
     },
     {
-      "region": "PH",
-      "team": "TNC",
-      "player": "Ryota",
-      "photo": "/players/ph/tnc/ryota.webp",
-      "datasetPlayer": "Ryota",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Ryota.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Innocent",
+      "photo": "/players/my/srg/innocent.webp",
+      "source": "https://liquipedia.net/mobilelegends/Innocent"
     },
     {
-      "region": "PH",
-      "team": "TNC",
-      "player": "Jowm",
-      "photo": "/players/ph/tnc/jowm.webp",
-      "datasetPlayer": "Jowm",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Jowm.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Yums",
+      "photo": "/players/my/srg/yums.webp",
+      "source": "https://liquipedia.net/mobilelegends/Yums"
     },
     {
-      "region": "PH",
-      "team": "TNC",
-      "player": "Zaida",
-      "photo": "/players/ph/tnc/zaida.webp",
-      "datasetPlayer": "Zaida",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Zaida.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "SRG",
+      "name": "Unii",
+      "photo": "/players/my/srg/unii.webp",
+      "source": "https://liquipedia.net/mobilelegends/Unii"
     },
     {
-      "region": "PH",
-      "team": "TWIS",
-      "player": "Lansu",
-      "photo": "/players/ph/twis/lansu.webp",
-      "datasetPlayer": "Lansu",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lansu.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "FL",
+      "name": "3Mar",
+      "photo": "/players/my/fl/3mar.webp",
+      "source": "https://liquipedia.net/mobilelegends/3MarTzy"
     },
     {
-      "region": "PH",
-      "team": "TWIS",
-      "player": "Bennyqt",
-      "photo": "/players/ph/twis/bennyqt.webp",
-      "datasetPlayer": "Bennyqt",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Bennyqt.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "FL",
+      "name": "Garyy",
+      "photo": "/players/my/fl/garyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Garyy"
     },
     {
-      "region": "PH",
-      "team": "TWIS",
-      "player": "Sensu1",
-      "photo": "/players/ph/twis/sensu1.webp",
-      "datasetPlayer": "Sensui",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sensui.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "FL",
+      "name": "UK1R",
+      "photo": "/players/my/fl/uk1r.webp",
+      "source": "https://liquipedia.net/mobilelegends/UK1R"
     },
     {
-      "region": "PH",
-      "team": "TWIS",
-      "player": "Sionnn",
-      "photo": "/players/ph/twis/sionnn.webp",
-      "datasetPlayer": "Sionnn",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Sionnn.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "FL",
+      "name": "Vanix",
+      "photo": "/players/my/fl/vanix.webp",
+      "source": "https://liquipedia.net/mobilelegends/Vanix"
     },
     {
-      "region": "PH",
-      "team": "TWIS",
-      "player": "Tracy",
-      "photo": "/players/ph/twis/tracy.webp",
-      "datasetPlayer": "Tracy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Tracy.jpg",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "region": "MY",
+      "team": "FL",
+      "name": "Xorn",
+      "photo": "/players/my/fl/xorn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Xorn"
+    },
+    {
+      "region": "MY",
+      "team": "FL",
+      "name": "Osker",
+      "photo": "/players/my/fl/osker.webp",
+      "source": "https://liquipedia.net/mobilelegends/Osker"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "Sepat",
+      "photo": "/players/my/vms/sepat.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sepat"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "Dolynn",
+      "photo": "/players/my/tr/dolynn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Dolynn"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "Kyym",
+      "photo": "/players/my/tr/kyym.webp",
+      "source": "https://liquipedia.net/mobilelegends/Kyym"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "Cliveee",
+      "photo": "/players/my/tr/cliveee.webp",
+      "source": "https://liquipedia.net/mobilelegends/Pinnn"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "NovaXcobar",
+      "photo": "/players/my/tr/novaxcobar.webp",
+      "source": "https://liquipedia.net/mobilelegends/NovaXcobar"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "JWen",
+      "photo": "/players/my/tr/jwen.webp",
+      "source": "https://liquipedia.net/mobilelegends/Teh O Ice"
+    },
+    {
+      "region": "MY",
+      "team": "TR",
+      "name": "Smooth",
+      "photo": "/players/my/tr/smooth.webp",
+      "source": "https://liquipedia.net/mobilelegends/Smooth"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Sizkaa",
+      "photo": "/players/my/vms/sizkaa.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sizkaa"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Error 404",
+      "photo": "/players/my/vms/error-404.webp",
+      "source": "https://liquipedia.net/mobilelegends/Error 404"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Claw Kun",
+      "photo": "/players/my/vms/clawkun.webp",
+      "source": "https://liquipedia.net/mobilelegends/Claw Kun"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Natco",
+      "photo": "/players/my/vms/natco.webp",
+      "source": "https://liquipedia.net/mobilelegends/Natco"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Zqeef",
+      "photo": "/players/my/vms/zqeef.webp",
+      "source": "https://liquipedia.net/mobilelegends/Zqeef"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "Sepat",
+      "photo": "/players/my/vms/sepat.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sepat"
+    },
+    {
+      "region": "MY",
+      "team": "VMS",
+      "name": "EyyMal",
+      "photo": "/players/my/vms/eyymal.webp",
+      "source": "https://liquipedia.net/mobilelegends/EyyMal"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Nino",
+      "photo": "/players/id/ae/nino.webp",
+      "source": "https://liquipedia.net/mobilelegends/Nino"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Affan",
+      "photo": "/players/id/ae/affan.webp",
+      "source": "https://liquipedia.net/mobilelegends/Yazukee"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Dalvin",
+      "photo": "/players/id/ae/dalvin.webp",
+      "source": "https://liquipedia.net/mobilelegends/Hijumee"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Dingarai",
+      "photo": "/players/id/ae/dingarai.webp",
+      "source": "https://liquipedia.net/mobilelegends/Arfy"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Alexander",
+      "photo": "/players/id/ae/alexander.webp",
+      "source": "https://liquipedia.net/mobilelegends/alekk"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Reyy",
+      "photo": "/players/id/ae/reyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Reyy"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Halim",
+      "photo": "/players/id/ae/halim.webp",
+      "source": "https://liquipedia.net/mobilelegends/Cyruz"
+    },
+    {
+      "region": "ID",
+      "team": "AE",
+      "name": "Ivann",
+      "photo": "/players/id/ae/ivann.webp",
+      "source": "https://liquipedia.net/mobilelegends/Ivann"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "player": "Shogun",
+      "name": "Shogun",
       "photo": "/players/id/btr/shogun.webp",
-      "datasetPlayer": "Shogun",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Shogun.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Shogun"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "player": "Nnael",
+      "name": "Nnael",
       "photo": "/players/id/btr/nnael.webp",
-      "datasetPlayer": "Nnael",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Nnael.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Nnael"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "player": "Moreno",
+      "name": "Moreno",
       "photo": "/players/id/btr/moreno.webp",
-      "datasetPlayer": "Moreno",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Moreno.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Moreno"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "player": "EMANN",
+      "name": "EMANN",
       "photo": "/players/id/btr/emann.webp",
-      "datasetPlayer": "EMANN",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/EMANN.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/EMANN"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "player": "Finn",
+      "name": "Finn",
       "photo": "/players/id/btr/finn.webp",
-      "datasetPlayer": "Finn",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Finn.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Finn"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Rendyy",
+      "photo": "/players/id/evos/rendyyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Rendyy"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Alberttt",
+      "photo": "/players/id/evos/alberttt.webp",
+      "source": "https://liquipedia.net/mobilelegends/Alberttt"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Erlan",
+      "photo": "/players/id/evos/erlan.webp",
+      "source": "https://liquipedia.net/mobilelegends/Erlan"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Muezza",
+      "photo": "/players/id/evos/muezza.webp",
+      "source": "https://liquipedia.net/mobilelegends/Muezza"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Vell",
+      "photo": "/players/id/evos/vell.webp",
+      "source": "https://liquipedia.net/mobilelegends/Vell"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "DrianW",
+      "photo": "/players/id/evos/drianw.webp",
+      "source": "https://liquipedia.net/mobilelegends/DrianW"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "QINN",
+      "photo": "/players/id/dewa/qinn.webp",
+      "source": "https://liquipedia.net/mobilelegends/QINN"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "Kayn",
+      "photo": "/players/id/dewa/kayn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Kayn"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "Octa",
+      "photo": "/players/id/dewa/octa.webp",
+      "source": "https://liquipedia.net/mobilelegends/Octa"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "Maybeee",
+      "photo": "/players/id/dewa/maybeee.webp",
+      "source": "https://liquipedia.net/mobilelegends/Maybeee"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "Itoshi Kesu",
+      "photo": "/players/id/dewa/itoshi-kesu.webp",
+      "source": "https://liquipedia.net/mobilelegends/KESUUU"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "RuL Good",
+      "photo": "/players/id/dewa/rul-good.webp",
+      "source": "https://liquipedia.net/mobilelegends/RuL Good"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "MarceL",
+      "photo": "/players/id/geek/marcel.webp",
+      "source": "https://liquipedia.net/mobilelegends/MarceL"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "Nazara",
+      "photo": "/players/id/geek/nazara.webp",
+      "source": "https://liquipedia.net/mobilelegends/Nazara"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "A B O Y",
+      "photo": "/players/id/geek/aboyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/A B O Y"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "KennzyySkie",
+      "photo": "/players/id/geek/kennzyyskie.webp",
+      "source": "https://liquipedia.net/mobilelegends/KennzyySkie"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "Febriii",
+      "photo": "/players/id/geek/febriii.webp",
+      "source": "https://liquipedia.net/mobilelegends/Febriii"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "AudyTzy",
+      "photo": "/players/id/geek/audytzy.webp",
+      "source": "https://liquipedia.net/mobilelegends/AudyTzy"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Karss",
+      "photo": "/players/id/navi/karss.webp",
+      "source": "https://liquipedia.net/mobilelegends/Karss"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Andoryuuu",
+      "photo": "/players/id/navi/andoryuuu.webp",
+      "source": "https://liquipedia.net/mobilelegends/Andoryuuu"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Jiizee",
+      "photo": "/players/id/navi/jiizee.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jizeezeze"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Zeonn",
+      "photo": "/players/id/navi/zeonn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Zeonn"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "APHRO",
+      "photo": "/players/id/navi/aprho.webp",
+      "source": "https://liquipedia.net/mobilelegends/APHRO"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Febbb",
+      "photo": "/players/id/navi/febbb.webp",
+      "source": "https://liquipedia.net/mobilelegends/Febbb"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "Lutpiii",
+      "name": "Lutpiii",
       "photo": "/players/id/onicid/lutpiii.webp",
-      "datasetPlayer": "Lutpiii",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Lutpiii.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Lutpiii"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "Kairi",
+      "name": "Kairi",
       "photo": "/players/id/onicid/kairi.webp",
-      "datasetPlayer": "Kairi",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kairi.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Kairi"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "S A N Z",
+      "name": "S A N Z",
       "photo": "/players/id/onicid/s-a-n-z.webp",
-      "datasetPlayer": "S_A_N_Z",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/S_A_N_Z.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/S A N Z"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "Kelra",
+      "name": "Kelra",
       "photo": "/players/id/onicid/kelra.webp",
-      "datasetPlayer": "Kelra",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kelra.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Kelra"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "Kiboy",
+      "name": "Kiboy",
       "photo": "/players/id/onicid/kiboy.webp",
-      "datasetPlayer": "Kiboy",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/Kiboy.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Kiboy"
     },
     {
       "region": "ID",
       "team": "ONICID",
-      "player": "SamueL",
+      "name": "SamueL",
       "photo": "/players/id/onicid/samuel.webp",
-      "datasetPlayer": "SamueL",
-      "source": "https://github.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/blob/29f98d037a70a0ce03908562c5be9cab333eedff/images/SamueL.png",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Indonesia/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/SamueL"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Joshua",
+      "photo": "/players/id/rrqid/joshua.webp",
+      "source": "https://liquipedia.net/mobilelegends/Lynchh"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Demonkite",
+      "photo": "/players/id/rrqid/demonkite.webp",
+      "source": "https://liquipedia.net/mobilelegends/Demonkite"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Hajirin",
+      "photo": "/players/id/rrqid/hajirin.webp",
+      "source": "https://liquipedia.net/mobilelegends/Rinz"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Arthur",
+      "photo": "/players/id/rrqid/arthur.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sutsujin"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Said",
+      "photo": "/players/id/rrqid/said.webp",
+      "source": "https://liquipedia.net/mobilelegends/Idok"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Habil",
+      "photo": "/players/id/rrqid/habil.webp",
+      "source": "https://liquipedia.net/mobilelegends/KurooKy"
+    },
+    {
+      "region": "ID",
+      "team": "RRQID",
+      "name": "Clayyy",
+      "photo": "/players/id/rrqid/clayyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Clayyy"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Aran",
+      "photo": "/players/id/tlid/aran.webp",
+      "source": "https://liquipedia.net/mobilelegends/Aran"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Kevin",
+      "photo": "/players/id/tlid/kevin.webp",
+      "source": "https://liquipedia.net/mobilelegends/JOOOOO"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Drichel",
+      "photo": "/players/id/tlid/drichel.webp",
+      "source": "https://liquipedia.net/mobilelegends/Drichel"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Keven",
+      "photo": "/players/id/tlid/keven.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jull"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Lyoni",
+      "photo": "/players/id/tlid/lyoni.webp",
+      "source": "https://liquipedia.net/mobilelegends/Lyoni"
+    },
+    {
+      "region": "ID",
+      "team": "TLID",
+      "name": "Anaver",
+      "photo": "/players/id/tlid/anaver.webp",
+      "source": "https://liquipedia.net/mobilelegends/NenShikii"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "JMPINKMAN",
+      "photo": "/players/ph/apbr/jmpinkman.webp",
+      "source": "https://liquipedia.net/mobilelegends/JM"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "Jamespangks",
+      "photo": "/players/ph/apbr/jamespangks.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jamespangks"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "LanceCy",
+      "photo": "/players/ph/apbr/lancecy.webp",
+      "source": "https://liquipedia.net/mobilelegends/LanceCy"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "Shizou",
+      "photo": "/players/ph/apbr/shizou.webp",
+      "source": "https://liquipedia.net/mobilelegends/Shizou"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "Escalera",
+      "photo": "/players/ph/apbr/escalera.webp",
+      "source": "https://liquipedia.net/mobilelegends/Escalera"
     },
     {
       "region": "PH",
       "team": "RORA",
-      "player": "Koyl",
+      "name": "Nathzz",
+      "photo": "/players/ph/rora/nathzz.webp",
+      "source": "https://liquipedia.net/mobilelegends/Nathzz"
+    },
+    {
+      "region": "PH",
+      "team": "RORA",
+      "name": "Koyl",
       "photo": "/players/ph/rora/koyl.webp",
-      "source": "https://liquipedia.net/mobilelegends/Koyl",
-      "sourceImage": "https://liquipedia.net/commons/images/thumb/e/ed/PRO_Koyl_at_MSC_2026_Knockout_Stage.jpg/600px-PRO_Koyl_at_MSC_2026_Knockout_Stage.jpg",
-      "rightsNote": "Copyrighted event photo. Rights remain with the original rights holder; review before commercial use.",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Koyl"
+    },
+    {
+      "region": "PH",
+      "team": "RORA",
+      "name": "Yue",
+      "photo": "/players/ph/rora/yue.webp",
+      "source": "https://liquipedia.net/mobilelegends/Yue"
+    },
+    {
+      "region": "PH",
+      "team": "RORA",
+      "name": "Domeng",
+      "photo": "/players/ph/rora/domeng.webp",
+      "source": "https://liquipedia.net/mobilelegends/Domeng"
+    },
+    {
+      "region": "PH",
+      "team": "RORA",
+      "name": "Light",
+      "photo": "/players/ph/rora/light.webp",
+      "source": "https://liquipedia.net/mobilelegends/Light"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Louis",
+      "photo": "/players/ph/omg/louis.webp",
+      "source": "https://liquipedia.net/mobilelegends/Louis"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Raizen",
+      "photo": "/players/ph/omg/raizen.webp",
+      "source": "https://liquipedia.net/mobilelegends/Raizen"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Minguin",
+      "photo": "/players/ph/omg/minguin.webp",
+      "source": "https://liquipedia.net/mobilelegends/Minguin"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Perkziva",
+      "photo": "/players/ph/omg/perkziva.webp",
+      "source": "https://liquipedia.net/mobilelegends/Perkz"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Kirk",
+      "photo": "/players/ph/onph/kirk.webp",
+      "source": "https://liquipedia.net/mobilelegends/Kirk"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "K1NGKONG",
+      "photo": "/players/ph/onph/k1ngkong.webp",
+      "source": "https://liquipedia.net/mobilelegends/K1NGKONG"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Super Frince",
+      "photo": "/players/ph/onph/super-frince.webp",
+      "source": "https://liquipedia.net/mobilelegends/Super Frince"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Savero",
+      "photo": "/players/ph/onph/savero.webp",
+      "source": "https://liquipedia.net/mobilelegends/Savero"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Super Yoshi",
+      "photo": "/players/ph/onph/super-yoshi.webp",
+      "source": "https://liquipedia.net/mobilelegends/Super Yoshi"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Flap",
+      "photo": "/players/ph/flcn/flap.webp",
+      "source": "https://liquipedia.net/mobilelegends/FlapTzy"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Kyle",
+      "photo": "/players/ph/flcn/kyle.webp",
+      "source": "https://liquipedia.net/mobilelegends/KyleTzy"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Hadji",
+      "photo": "/players/ph/flcn/hadji.webp",
+      "source": "https://liquipedia.net/mobilelegends/Hadji"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Super Marco",
+      "photo": "/players/ph/flcn/super-marco.webp",
+      "source": "https://liquipedia.net/mobilelegends/Super Marco"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Owgwen",
+      "photo": "/players/ph/flcn/owgwen.webp",
+      "source": "https://liquipedia.net/mobilelegends/Owgwen"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "Sanford",
+      "photo": "/players/ph/tlph/sanford.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sanford"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "KarlTzy",
+      "photo": "/players/ph/tlph/karltzy.webp",
+      "source": "https://liquipedia.net/mobilelegends/KarlTzy"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "Sanji",
+      "photo": "/players/ph/tlph/sanji.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sanji"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "Teddy",
+      "photo": "/players/ph/tlph/teddy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Teddyqt"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "Jaypee",
+      "photo": "/players/ph/tlph/jaypee.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jaypee"
     },
     {
       "region": "PH",
       "team": "TNC",
-      "player": "Vin",
+      "name": "Ryota",
+      "photo": "/players/ph/tnc/ryota.webp",
+      "source": "https://liquipedia.net/mobilelegends/Ryota"
+    },
+    {
+      "region": "PH",
+      "team": "TNC",
+      "name": "Zaida",
+      "photo": "/players/ph/tnc/zaida.webp",
+      "source": "https://liquipedia.net/mobilelegends/Zaida"
+    },
+    {
+      "region": "PH",
+      "team": "TNC",
+      "name": "Vin",
       "photo": "/players/ph/tnc/vin.webp",
-      "source": "https://liquipedia.net/mobilelegends/Vinnn",
-      "sourceImage": "https://liquipedia.net/commons/images/a/ab/TNC_Vin_MPL_PH_S18.png",
-      "rightsNote": "Official MPL Philippines Season 18 team portrait. Rights remain with TNC Pro Team / Liquipedia.",
-      "rosterVerification": "https://liquipedia.net/mobilelegends/MPL/Philippines/Season_18"
+      "source": "https://liquipedia.net/mobilelegends/Vinnn"
+    },
+    {
+      "region": "PH",
+      "team": "TNC",
+      "name": "Jowm",
+      "photo": "/players/ph/tnc/jowm.webp",
+      "source": "https://liquipedia.net/mobilelegends/Jowm"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Lansu",
+      "photo": "/players/ph/twis/lansu.webp",
+      "source": "https://liquipedia.net/mobilelegends/Lansu"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Sensu1",
+      "photo": "/players/ph/twis/sensu1.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sensui"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Sionnn",
+      "photo": "/players/ph/twis/sionnn.webp",
+      "source": "https://liquipedia.net/mobilelegends/Sionnn"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Bennyqt",
+      "photo": "/players/ph/twis/bennyqt.webp",
+      "source": "https://liquipedia.net/mobilelegends/Bennyqt"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Tracy",
+      "photo": "/players/ph/twis/tracy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Tracy"
     }
   ],
   "unresolved": [
     {
-      "region": "PH",
-      "team": "OMG",
-      "name": "Cull"
+      "region": "MY",
+      "team": "RRQMY",
+      "name": "JinZhao",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
     },
     {
       "region": "ID",
       "team": "BTR",
-      "name": "Miguel"
+      "name": "Miguel",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Ryzaa",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "ID",
+      "team": "DEWA",
+      "name": "Hazle",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "ID",
+      "team": "GEEK",
+      "name": "Frenzyy",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "ID",
+      "team": "NAVI",
+      "name": "Joshua",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "APBR",
+      "name": "Allen",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "RORA",
+      "name": "Yecs",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Cull",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "OMG",
+      "name": "Peuder",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Dann",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "ONPH",
+      "name": "Brusko",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "FLCN",
+      "name": "Ferdz",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "TLPH",
+      "name": "Daiki",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
     },
     {
       "region": "PH",
       "team": "TNC",
       "name": "Zehn",
-      "reason": "Source dataset contains only a no-photo placeholder"
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "TNC",
+      "name": "Yeyeniya",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+    },
+    {
+      "region": "PH",
+      "team": "TWIS",
+      "name": "Kurtt",
+      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
     }
   ]
 }
