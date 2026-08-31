@@ -58,7 +58,7 @@
   {
     "region": "MY",
     "team": "BTRM",
-    "name": "Chibi",
+    "name": "Chibii",
     "role": "Jungle",
     "photo": "/players/my/btrm/chibii.webp",
     "source": "https://liquipedia.net/mobilelegends/Chibi"
@@ -308,7 +308,7 @@
     "team": "TR",
     "name": "Sepat",
     "role": "EXP Lane",
-    "photo": "/players/my/vms/sepat.webp",
+    "photo": "/players/my/tr/sepat.webp",
     "source": "https://liquipedia.net/mobilelegends/Sepat"
   },
   {
@@ -353,14 +353,6 @@
   },
   {
     "region": "MY",
-    "team": "TR",
-    "name": "Smooth",
-    "role": "EXP Lane",
-    "photo": "/players/my/tr/smooth.webp",
-    "source": "https://liquipedia.net/mobilelegends/Smooth"
-  },
-  {
-    "region": "MY",
     "team": "VMS",
     "name": "Sizkaa",
     "role": "EXP Lane",
@@ -398,14 +390,6 @@
     "role": "Roam",
     "photo": "/players/my/vms/zqeef.webp",
     "source": "https://liquipedia.net/mobilelegends/Zqeef"
-  },
-  {
-    "region": "MY",
-    "team": "VMS",
-    "name": "Sepat",
-    "role": "EXP Lane",
-    "photo": "/players/my/vms/sepat.webp",
-    "source": "https://liquipedia.net/mobilelegends/Sepat"
   },
   {
     "region": "MY",
@@ -523,9 +507,65 @@
     "region": "ID",
     "team": "BTR",
     "name": "Miguel",
-    "role": "Flex",
+    "role": "EXP Lane",
     "photo": null,
     "source": "https://liquipedia.net/mobilelegends/Miguel (Indonesian player)"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "QINN",
+    "role": "EXP Lane",
+    "photo": "/players/id/dewa/qinn.webp",
+    "source": "https://liquipedia.net/mobilelegends/QINN"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Kayn",
+    "role": "Jungle",
+    "photo": "/players/id/dewa/kayn.webp",
+    "source": "https://liquipedia.net/mobilelegends/Kayn"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Octa",
+    "role": "Midlane",
+    "photo": "/players/id/dewa/octa.webp",
+    "source": "https://liquipedia.net/mobilelegends/Octa"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Maybeee",
+    "role": "Gold Lane",
+    "photo": "/players/id/dewa/maybeee.webp",
+    "source": "https://liquipedia.net/mobilelegends/Maybeee"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Itoshi Kesu",
+    "role": "Roam",
+    "photo": "/players/id/dewa/itoshi-kesu.webp",
+    "source": "https://liquipedia.net/mobilelegends/KESUUU"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "Hazle",
+    "role": "Jungle",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Hazle"
+  },
+  {
+    "region": "ID",
+    "team": "DEWA",
+    "name": "RuL Good",
+    "role": "EXP Lane",
+    "photo": "/players/id/dewa/rul-good.webp",
+    "source": "https://liquipedia.net/mobilelegends/RuL Good"
   },
   {
     "region": "ID",
@@ -582,62 +622,6 @@
     "role": "Midlane",
     "photo": "/players/id/evos/drianw.webp",
     "source": "https://liquipedia.net/mobilelegends/DrianW"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "QINN",
-    "role": "EXP Lane",
-    "photo": "/players/id/dewa/qinn.webp",
-    "source": "https://liquipedia.net/mobilelegends/QINN"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "Kayn",
-    "role": "Jungle",
-    "photo": "/players/id/dewa/kayn.webp",
-    "source": "https://liquipedia.net/mobilelegends/Kayn"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "Octa",
-    "role": "Midlane",
-    "photo": "/players/id/dewa/octa.webp",
-    "source": "https://liquipedia.net/mobilelegends/Octa"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "Maybeee",
-    "role": "Gold Lane",
-    "photo": "/players/id/dewa/maybeee.webp",
-    "source": "https://liquipedia.net/mobilelegends/Maybeee"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "Itoshi Kesu",
-    "role": "Roam",
-    "photo": "/players/id/dewa/itoshi-kesu.webp",
-    "source": "https://liquipedia.net/mobilelegends/KESUUU"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "Hazle",
-    "role": "Jungle",
-    "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/Hazle"
-  },
-  {
-    "region": "ID",
-    "team": "DEWA",
-    "name": "RuL Good",
-    "role": "Flex",
-    "photo": "/players/id/dewa/rul-good.webp",
-    "source": "https://liquipedia.net/mobilelegends/RuL Good"
   },
   {
     "region": "ID",
@@ -746,7 +730,7 @@
   {
     "region": "ID",
     "team": "NAVI",
-    "name": "Joshua",
+    "name": "Coolfire",
     "role": "Jungle",
     "photo": null,
     "source": "https://liquipedia.net/mobilelegends/Coolfire"
@@ -995,7 +979,7 @@
     "region": "PH",
     "team": "RORA",
     "name": "Yecs",
-    "role": "Flex",
+    "role": "EXP Lane",
     "photo": null,
     "source": "https://liquipedia.net/mobilelegends/Yecs"
   },
@@ -1043,7 +1027,7 @@
     "region": "PH",
     "team": "OMG",
     "name": "Peuder",
-    "role": "Flex",
+    "role": "Midlane",
     "photo": null,
     "source": "https://liquipedia.net/mobilelegends/Peuder"
   },
@@ -1243,7 +1227,7 @@
     "region": "PH",
     "team": "TNC",
     "name": "Yeyeniya",
-    "role": "Flex",
+    "role": "EXP Lane",
     "photo": null,
     "source": "https://liquipedia.net/mobilelegends/Lift"
   },

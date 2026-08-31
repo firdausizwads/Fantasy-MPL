@@ -1,4 +1,6 @@
 {
+  "description": "Verified high-resolution Season 18 player portrait assets with provenance.",
+  "verified_count": 143,
   "sources": [
     {
       "region": "MY",
@@ -52,7 +54,7 @@
     {
       "region": "MY",
       "team": "BTRM",
-      "name": "Chibi",
+      "name": "Chibii",
       "photo": "/players/my/btrm/chibii.webp",
       "source": "https://liquipedia.net/mobilelegends/Chibi"
     },
@@ -263,7 +265,7 @@
       "region": "MY",
       "team": "TR",
       "name": "Sepat",
-      "photo": "/players/my/vms/sepat.webp",
+      "photo": "/players/my/tr/sepat.webp",
       "source": "https://liquipedia.net/mobilelegends/Sepat"
     },
     {
@@ -303,13 +305,6 @@
     },
     {
       "region": "MY",
-      "team": "TR",
-      "name": "Smooth",
-      "photo": "/players/my/tr/smooth.webp",
-      "source": "https://liquipedia.net/mobilelegends/Smooth"
-    },
-    {
-      "region": "MY",
       "team": "VMS",
       "name": "Sizkaa",
       "photo": "/players/my/vms/sizkaa.webp",
@@ -342,13 +337,6 @@
       "name": "Zqeef",
       "photo": "/players/my/vms/zqeef.webp",
       "source": "https://liquipedia.net/mobilelegends/Zqeef"
-    },
-    {
-      "region": "MY",
-      "team": "VMS",
-      "name": "Sepat",
-      "photo": "/players/my/vms/sepat.webp",
-      "source": "https://liquipedia.net/mobilelegends/Sepat"
     },
     {
       "region": "MY",
@@ -450,48 +438,6 @@
     },
     {
       "region": "ID",
-      "team": "EVOS",
-      "name": "Rendyy",
-      "photo": "/players/id/evos/rendyyy.webp",
-      "source": "https://liquipedia.net/mobilelegends/Rendyy"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "Alberttt",
-      "photo": "/players/id/evos/alberttt.webp",
-      "source": "https://liquipedia.net/mobilelegends/Alberttt"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "Erlan",
-      "photo": "/players/id/evos/erlan.webp",
-      "source": "https://liquipedia.net/mobilelegends/Erlan"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "Muezza",
-      "photo": "/players/id/evos/muezza.webp",
-      "source": "https://liquipedia.net/mobilelegends/Muezza"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "Vell",
-      "photo": "/players/id/evos/vell.webp",
-      "source": "https://liquipedia.net/mobilelegends/Vell"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "DrianW",
-      "photo": "/players/id/evos/drianw.webp",
-      "source": "https://liquipedia.net/mobilelegends/DrianW"
-    },
-    {
-      "region": "ID",
       "team": "DEWA",
       "name": "QINN",
       "photo": "/players/id/dewa/qinn.webp",
@@ -531,6 +477,48 @@
       "name": "RuL Good",
       "photo": "/players/id/dewa/rul-good.webp",
       "source": "https://liquipedia.net/mobilelegends/RuL Good"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Rendyy",
+      "photo": "/players/id/evos/rendyyy.webp",
+      "source": "https://liquipedia.net/mobilelegends/Rendyy"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Alberttt",
+      "photo": "/players/id/evos/alberttt.webp",
+      "source": "https://liquipedia.net/mobilelegends/Alberttt"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Erlan",
+      "photo": "/players/id/evos/erlan.webp",
+      "source": "https://liquipedia.net/mobilelegends/Erlan"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Muezza",
+      "photo": "/players/id/evos/muezza.webp",
+      "source": "https://liquipedia.net/mobilelegends/Muezza"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Vell",
+      "photo": "/players/id/evos/vell.webp",
+      "source": "https://liquipedia.net/mobilelegends/Vell"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "DrianW",
+      "photo": "/players/id/evos/drianw.webp",
+      "source": "https://liquipedia.net/mobilelegends/DrianW"
     },
     {
       "region": "ID",
@@ -1021,103 +1009,103 @@
       "region": "MY",
       "team": "RRQMY",
       "name": "JinZhao",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "ID",
       "team": "BTR",
       "name": "Miguel",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "Ryzaa",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "ID",
       "team": "DEWA",
       "name": "Hazle",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Ryzaa",
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "ID",
       "team": "GEEK",
       "name": "Frenzyy",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "ID",
       "team": "NAVI",
-      "name": "Joshua",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "name": "Coolfire",
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "APBR",
       "name": "Allen",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "RORA",
       "name": "Yecs",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "OMG",
       "name": "Cull",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "OMG",
       "name": "Peuder",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "ONPH",
       "name": "Dann",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "ONPH",
       "name": "Brusko",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "FLCN",
       "name": "Ferdz",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "TLPH",
       "name": "Daiki",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "TNC",
       "name": "Zehn",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "TNC",
       "name": "Yeyeniya",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     },
     {
       "region": "PH",
       "team": "TWIS",
       "name": "Kurtt",
-      "reason": "Official Season 18 headshot pending from regional league broadcast / Liquipedia"
+      "note": "Awaiting official Season 18 stage headshot"
     }
   ]
 }

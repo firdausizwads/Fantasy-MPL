@@ -71,6 +71,47 @@ function AdminIcon({ name }: { name: 'sync' | 'paste' | 'check' | 'clock' }) {
   return null;
 }
 
+const PRIMARY_STARTER_HANDLES = new Set([
+  // MY
+  'momo', 'zahyed', 'izanami', 'nets', 'reyzar',
+  'jeymz', 'chibii', 'zieyy', 'ciku', 'grboy',
+  'ye3', 'lunnn', 'treacky', 'rokji', 'atannn',
+  'lehtzy', 'super kenn', 'yehezkiel', 'loleal', 'addboy',
+  'kramm', 'sekysss', 'stormie', 'innocent', 'yums',
+  '3mar', 'garyy', 'uk1r', 'vanix', 'xorn',
+  'sepat', 'dolynn', 'kyym', 'cliveee', 'novaxcobar',
+  'sizkaa', 'error 404', 'claw kun', 'natco', 'zqeef',
+  // ID
+  'nino', 'affan', 'dalvin', 'dingarai', 'alexander',
+  'shogun', 'nnael', 'moreno', 'emann', 'finn',
+  'qinn', 'kayn', 'octa', 'maybeee', 'itoshi kesu',
+  'rendyy', 'alberttt', 'ryzaa', 'erlan', 'muezza',
+  'marcel', 'nazara', 'a b o y', 'kennzyyskie', 'frenzyy',
+  'karss', 'andoryuuu', 'jiizee', 'zeonn', 'aphro',
+  'lutpiii', 'kairi', 's a n z', 'kelra', 'kiboy',
+  'joshua', 'demonkite', 'hajirin', 'arthur', 'said',
+  'aran', 'kevin', 'drichel', 'keven', 'lyoni',
+  // PH
+  'jmpinkman', 'jamespangks', 'lancecy', 'shizou', 'escalera',
+  'nathzz', 'koyl', 'yue', 'domeng', 'light',
+  'louis', 'raizen', 'minguin', 'cull', 'perkziva',
+  'kirk', 'k1ngkong', 'super frince', 'savero', 'super yoshi',
+  'flap', 'kyle', 'hadji', 'super marco', 'owgwen',
+  'sanford', 'karltzy', 'sanji', 'teddy', 'jaypee',
+  'ryota', 'zaida', 'vin', 'jowm', 'zehn',
+  'lansu', 'sensu1', 'sionnn', 'bennyqt', 'tracy'
+]);
+
+function normalizeRole(role: string): string {
+  const r = (role || '').toUpperCase().trim();
+  if (r.includes('EXP')) return 'EXP';
+  if (r.includes('JUNGLE') || r === 'JGL') return 'JUNGLE';
+  if (r.includes('MID')) return 'MID';
+  if (r.includes('GOLD')) return 'GOLD';
+  if (r.includes('ROAM')) return 'ROAM';
+  return r || 'EXP';
+}
+
 export default function AdminScoring({ region, notify }: { region: Region; notify: (message: string) => void }) {
   const [weeks, setWeeks] = useState<WeekOption[]>([]);
   const [weekId, setWeekId] = useState('');
@@ -108,7 +149,6 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
         supabase.from('season_rosters')
           .select('player_id,role,team_id,players(handle)')
           .eq('season_id', season.id).eq('active', true)
-          .in('role', ['EXP', 'JUNGLE', 'MID', 'GOLD', 'ROAM'])
       ]);
 
       if (!mounted) return;
@@ -117,17 +157,44 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       }));
       setWeeks(weekOptions);
       setWeekId(prev => prev || weekOptions[0]?.id || '');
+
+      // Strict Deduplication: Deduplicate by player_id and normalized handle
       const uniqueMap = new Map<string, RosterPlayer>();
+      const handleSeen = new Map<string, string>(); // teamId:cleanHandle -> player_id
+
       (rosterRows || []).forEach((r) => {
-        if (r.player_id && !uniqueMap.has(r.player_id)) {
-          uniqueMap.set(r.player_id, {
-            id: r.player_id,
-            handle: r.players?.handle || 'PLAYER',
-            role: r.role,
-            teamId: r.team_id
-          });
+        if (!r.player_id) return;
+        const rawHandle = r.players?.handle || 'PLAYER';
+        const normRole = normalizeRole(r.role);
+        const cleanHandle = rawHandle.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const teamKey = `${r.team_id}:${cleanHandle}`;
+
+        // If duplicate handle variant exists (e.g. chibi vs chibii), keep canonical chibii
+        if (handleSeen.has(teamKey)) {
+          const existingId = handleSeen.get(teamKey)!;
+          const existing = uniqueMap.get(existingId);
+          if (existing && rawHandle.length > existing.handle.length) {
+            uniqueMap.delete(existingId);
+            uniqueMap.set(r.player_id, {
+              id: r.player_id,
+              handle: rawHandle,
+              role: normRole,
+              teamId: r.team_id
+            });
+            handleSeen.set(teamKey, r.player_id);
+          }
+          return;
         }
+
+        handleSeen.set(teamKey, r.player_id);
+        uniqueMap.set(r.player_id, {
+          id: r.player_id,
+          handle: rawHandle,
+          role: normRole,
+          teamId: r.team_id
+        });
       });
+
       setRoster(Array.from(uniqueMap.values()));
       setLoading(false);
     }
@@ -225,15 +292,22 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
 
     // Initial Starter Mapping: Exactly 1 player per role (5 total starters per team)
     // Ordered to match official scoreboard: GOLD -> ROAM -> MID -> JUNGLE -> EXP
+    // Prioritizes known primary starters (e.g. Sepat for TR, Chibii for BTRM, Sizkaa for VMS)
     const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
     const starterMap: Record<string, boolean> = {};
     const homeAssigned = new Set<string>();
     const awayAssigned = new Set<string>();
 
-    const hList = roster.filter(p => p.teamId === match.homeTeamId)
-      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role));
+    const sortForStarters = (a: RosterPlayer, b: RosterPlayer) => {
+      const aIsPrimary = PRIMARY_STARTER_HANDLES.has(a.handle.toLowerCase().trim()) ? 1 : 0;
+      const bIsPrimary = PRIMARY_STARTER_HANDLES.has(b.handle.toLowerCase().trim()) ? 1 : 0;
+      if (aIsPrimary !== bIsPrimary) return bIsPrimary - aIsPrimary; // primary starter first
+      return roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle);
+    };
+
+    const hList = roster.filter(p => p.teamId === match.homeTeamId).sort(sortForStarters);
     hList.forEach(p => {
-      if (!homeAssigned.has(p.role)) {
+      if (!homeAssigned.has(p.role) && homeAssigned.size < 5) {
         starterMap[p.id] = true;
         homeAssigned.add(p.role);
       } else {
@@ -241,10 +315,9 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       }
     });
 
-    const aList = roster.filter(p => p.teamId === match.awayTeamId)
-      .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role));
+    const aList = roster.filter(p => p.teamId === match.awayTeamId).sort(sortForStarters);
     aList.forEach(p => {
-      if (!awayAssigned.has(p.role)) {
+      if (!awayAssigned.has(p.role) && awayAssigned.size < 5) {
         starterMap[p.id] = true;
         awayAssigned.add(p.role);
       } else {
