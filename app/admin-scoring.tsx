@@ -117,9 +117,18 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
       }));
       setWeeks(weekOptions);
       setWeekId(prev => prev || weekOptions[0]?.id || '');
-      setRoster((rosterRows || []).map((r) => ({
-        id: r.player_id, handle: r.players?.handle || 'PLAYER', role: r.role, teamId: r.team_id
-      })));
+      const uniqueMap = new Map<string, RosterPlayer>();
+      (rosterRows || []).forEach((r) => {
+        if (r.player_id && !uniqueMap.has(r.player_id)) {
+          uniqueMap.set(r.player_id, {
+            id: r.player_id,
+            handle: r.players?.handle || 'PLAYER',
+            role: r.role,
+            teamId: r.team_id
+          });
+        }
+      });
+      setRoster(Array.from(uniqueMap.values()));
       setLoading(false);
     }
     load();
@@ -159,16 +168,26 @@ export default function AdminScoring({ region, notify }: { region: Region; notif
   const homeAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
     const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
+    const seen = new Set<string>();
     return roster
-      .filter(p => p.teamId === openMatch.homeTeamId)
+      .filter(p => {
+        if (p.teamId !== openMatch.homeTeamId || seen.has(p.id)) return false;
+        seen.add(p.id);
+        return true;
+      })
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
   }, [openMatch, roster]);
 
   const awayAllPlayers = useMemo(() => {
     if (!openMatch) return [] as RosterPlayer[];
     const roleOrder = ['GOLD', 'ROAM', 'MID', 'JUNGLE', 'EXP'];
+    const seen = new Set<string>();
     return roster
-      .filter(p => p.teamId === openMatch.awayTeamId)
+      .filter(p => {
+        if (p.teamId !== openMatch.awayTeamId || seen.has(p.id)) return false;
+        seen.add(p.id);
+        return true;
+      })
       .sort((a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role) || a.handle.localeCompare(b.handle));
   }, [openMatch, roster]);
 
