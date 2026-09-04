@@ -1,6 +1,6 @@
 {
   "description": "Verified high-resolution Season 18 player portrait assets with provenance.",
-  "verified_count": 143,
+  "verified_count": 141,
   "sources": [
     {
       "region": "MY",
@@ -159,9 +159,9 @@
     {
       "region": "MY",
       "team": "RRQMY",
-      "name": "Addboy",
-      "photo": "/players/my/rrqmy/addboyy.webp",
-      "source": "https://liquipedia.net/mobilelegends/Addboy"
+      "name": "Smooth",
+      "photo": "/players/my/tr/smooth.webp",
+      "source": "https://liquipedia.net/mobilelegends/Smooth"
     },
     {
       "region": "MY",
@@ -446,13 +446,6 @@
     {
       "region": "ID",
       "team": "DEWA",
-      "name": "Kayn",
-      "photo": "/players/id/dewa/kayn.webp",
-      "source": "https://liquipedia.net/mobilelegends/Kayn"
-    },
-    {
-      "region": "ID",
-      "team": "DEWA",
       "name": "Octa",
       "photo": "/players/id/dewa/octa.webp",
       "source": "https://liquipedia.net/mobilelegends/Octa"
@@ -512,13 +505,6 @@
       "name": "Vell",
       "photo": "/players/id/evos/vell.webp",
       "source": "https://liquipedia.net/mobilelegends/Vell"
-    },
-    {
-      "region": "ID",
-      "team": "EVOS",
-      "name": "DrianW",
-      "photo": "/players/id/evos/drianw.webp",
-      "source": "https://liquipedia.net/mobilelegends/DrianW"
     },
     {
       "region": "ID",
@@ -1025,8 +1011,20 @@
     },
     {
       "region": "ID",
+      "team": "DEWA",
+      "name": "Shanee",
+      "note": "Awaiting official Season 18 stage headshot"
+    },
+    {
+      "region": "ID",
       "team": "EVOS",
       "name": "Ryzaa",
+      "note": "Awaiting official Season 18 stage headshot"
+    },
+    {
+      "region": "ID",
+      "team": "EVOS",
+      "name": "Kyy",
       "note": "Awaiting official Season 18 stage headshot"
     },
     {

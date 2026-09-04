@@ -76,7 +76,7 @@ const PRIMARY_STARTER_HANDLES = new Set([
   'momo', 'zahyed', 'izanami', 'nets', 'reyzar',
   'jeymz', 'chibii', 'zieyy', 'ciku', 'grboy',
   'ye3', 'lunnn', 'treacky', 'rokji', 'atannn',
-  'lehtzy', 'super kenn', 'yehezkiel', 'loleal', 'addboy',
+  'lehtzy', 'super kenn', 'yehezkiel', 'loleal', 'jinzhao',
   'kramm', 'sekysss', 'stormie', 'innocent', 'yums',
   '3mar', 'garyy', 'uk1r', 'vanix', 'xorn',
   'sepat', 'dolynn', 'kyym', 'cliveee', 'novaxcobar',
@@ -84,7 +84,7 @@ const PRIMARY_STARTER_HANDLES = new Set([
   // ID
   'nino', 'affan', 'dalvin', 'dingarai', 'alexander',
   'shogun', 'nnael', 'moreno', 'emann', 'finn',
-  'qinn', 'kayn', 'octa', 'maybeee', 'itoshi kesu',
+  'qinn', 'hazle', 'octa', 'maybeee', 'itoshi kesu',
   'rendyy', 'alberttt', 'ryzaa', 'erlan', 'muezza',
   'marcel', 'nazara', 'a b o y', 'kennzyyskie', 'frenzyy',
   'karss', 'andoryuuu', 'jiizee', 'zeonn', 'aphro',

@@ -178,10 +178,18 @@
   {
     "region": "MY",
     "team": "RRQMY",
-    "name": "Addboy",
+    "name": "JinZhao",
     "role": "Roam",
-    "photo": "/players/my/rrqmy/addboyy.webp",
-    "source": "https://liquipedia.net/mobilelegends/Addboy"
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/JinZhao"
+  },
+  {
+    "region": "MY",
+    "team": "RRQMY",
+    "name": "Smooth",
+    "role": "EXP Lane",
+    "photo": "/players/my/tr/smooth.webp",
+    "source": "https://liquipedia.net/mobilelegends/Smooth"
   },
   {
     "region": "MY",
@@ -198,14 +206,6 @@
     "role": "Gold Lane",
     "photo": "/players/my/rrqmy/izzshiki.webp",
     "source": "https://liquipedia.net/mobilelegends/Izzshiki"
-  },
-  {
-    "region": "MY",
-    "team": "RRQMY",
-    "name": "JinZhao",
-    "role": "Roam",
-    "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/JinZhao"
   },
   {
     "region": "MY",
@@ -522,10 +522,10 @@
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "Kayn",
+    "name": "Hazle",
     "role": "Jungle",
-    "photo": "/players/id/dewa/kayn.webp",
-    "source": "https://liquipedia.net/mobilelegends/Kayn"
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Hazle"
   },
   {
     "region": "ID",
@@ -554,10 +554,10 @@
   {
     "region": "ID",
     "team": "DEWA",
-    "name": "Hazle",
-    "role": "Jungle",
+    "name": "Shanee",
+    "role": "Roam",
     "photo": null,
-    "source": "https://liquipedia.net/mobilelegends/Hazle"
+    "source": "https://liquipedia.net/mobilelegends/Shanee"
   },
   {
     "region": "ID",
@@ -618,10 +618,10 @@
   {
     "region": "ID",
     "team": "EVOS",
-    "name": "DrianW",
-    "role": "Midlane",
-    "photo": "/players/id/evos/drianw.webp",
-    "source": "https://liquipedia.net/mobilelegends/DrianW"
+    "name": "Kyy",
+    "role": "Roam",
+    "photo": null,
+    "source": "https://liquipedia.net/mobilelegends/Kyy"
   },
   {
     "region": "ID",
